@@ -1,0 +1,28 @@
+# 모든 텍스트 파일은 LF 개행으로 강제 (운영체제 상관없이)
+* text=auto eol=lf
+
+# 이미지/폰트/영상은 binary로 처리 (diff 불필요)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.svg binary
+*.ico binary
+*.mp4 binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+
+# Markdown, JSON, YAML, JS, TS 등은 텍스트로 다룸 (LF 강제)
+*.md text eol=lf
+*.json text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.css text eol=lf
+*.scss text eol=lf
+*.html text eol=lf

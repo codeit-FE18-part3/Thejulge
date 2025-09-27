@@ -1,0 +1,20 @@
+# 리뷰어 자동 추가 활성화
+addReviewers: true
+
+# PR 작성자를 담당자로 자동 할당
+addAssignees: author
+
+# 리뷰어 후보 목록
+reviewers:
+  - sohyun0
+  - gummmmmy0v0
+  - jeschun
+  - BaeZzi813
+
+# A list of keywords to be skipped the process that add reviewers if pull requests include it
+skipKeywords:
+  - wip # Work In Progress
+  - draft # 초안
+  - test # 테스트
+# 모든 리뷰어 추가
+numberOfReviewers: 0

@@ -17,6 +17,7 @@
 /build
 
 # misc
+.DS_*
 .DS_Store
 *.pem
 
@@ -26,7 +27,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
-.env*.local
+.env*
 
 # vercel
 .vercel
@@ -34,3 +35,23 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# storybook
+*storybook.log
+storybook-static
+
+
+
+# Windows shortcuts
+*.lnk
+
+# Windows Installer files
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+
+# Thumbnails
+._*
+.temp

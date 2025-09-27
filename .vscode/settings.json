@@ -1,0 +1,9 @@
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode", // 저장시 프리티어
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit", // eslint --fix 자동 실행
+    "source.organizeImports": "explicit" // import 정리
+  },
+  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"]
+}

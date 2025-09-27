@@ -1,0 +1,36 @@
+# EditorConfig 기본 파일
+# https://editorconfig.org
+
+# 모든 파일에 기본 적용
+root = true
+
+[*]
+# 인코딩
+charset = utf-8
+# 줄 끝 문자
+end_of_line = lf
+# 줄 끝 공백 제거
+trim_trailing_whitespace = true
+# 새 파일 끝에 newline 추가
+insert_final_newline = true
+
+# 들여쓰기
+indent_style = space
+indent_size = 2
+tab_width = 2
+
+# 파일별 추가 설정
+[*.md]
+indent_style = tab
+
+[*.json]
+indent_style = space
+indent_size = 2
+
+[*.{ts,tsx,js,jsx}]
+indent_style = space
+indent_size = 2
+
+[*.{css,scss,sass,less}]
+indent_style = space
+indent_size = 2
