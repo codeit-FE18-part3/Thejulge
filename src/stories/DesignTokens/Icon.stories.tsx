@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 import { ICONS, ICON_SIZES, type IconName, type IconSize } from '@/constants/icon';
 import { Icon } from '@/components/ui';
 

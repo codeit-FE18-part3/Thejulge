@@ -49,49 +49,8 @@ module.exports = {
     // 개발 편의를 위한 완화
     '@typescript-eslint/explicit-function-return-type': 'off', // 함수 반환 타입 명시 선택사항
     'react/no-unescaped-entities': 'off', // JSX 안에 특수문자 직접 사용 허용
-    // 네이밍 컨벤션
-    '@typescript-eslint/naming-convention': [
-      'error',
-      {
-        // 변수 & 함수
-        selector: 'variableLike',
-        format: ['camelCase'],
-      },
-      {
-        // 상수
-        selector: 'variable',
-        modifiers: ['const'],
-        format: ['UPPER_CASE'],
-      },
-      {
-        // 타입, 인터페이스, 클래스
-        selector: 'typeLike',
-        format: ['PascalCase'],
-      },
-      {
-        // enum
-        selector: 'enum',
-        format: ['PascalCase'],
-      },
-    ],
   },
   overrides: [
-    {
-      // config ,pages, stories 컨벤션 완화
-      files: [
-        'src/pages/**/*.tsx',
-        'src/stories/**/*.tsx',
-        'src/stories/**/*.ts',
-        '*.config.ts',
-        '*.config.js',
-        '*.config.mjs',
-        '*.json',
-        '*.d.ts',
-      ],
-      rules: {
-        '@typescript-eslint/naming-convention': 'off',
-      },
-    },
     {
       files: ['*.config.ts', '*.config.js', '*.config.mjs', '*.json', '*.d.ts'],
       rules: {
