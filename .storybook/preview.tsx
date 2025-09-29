@@ -1,4 +1,4 @@
-import type { Preview } from "@storybook/nextjs-vite";
+import type { Preview } from "@storybook/nextjs";
 import { withThemeByClassName } from "@storybook/addon-themes";
 import "@/styles/globals.css";
 import "@/styles/fonts.css";
