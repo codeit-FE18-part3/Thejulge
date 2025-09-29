@@ -13,7 +13,7 @@ export default function App({ Component, pageProps }: AppProps) {
       </Head>
       <Wrapper>
         <Header />
-        <Container>
+        <Container grow={true}>
           <Component {...pageProps} />
         </Container>
       </Wrapper>
