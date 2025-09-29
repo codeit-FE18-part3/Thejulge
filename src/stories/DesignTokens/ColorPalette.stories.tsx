@@ -11,6 +11,7 @@ const colors = [
   'red-200',
   'red-300',
   'red-400',
+  'red-500',
   'blue-100',
   'blue-200',
   'green-100',
