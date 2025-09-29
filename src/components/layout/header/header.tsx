@@ -1,16 +1,17 @@
 import logo from '@/assets/images/logo.svg';
+import { Container } from '@/components/layout';
 import { Icon } from '@/components/ui';
 import { cn } from '@/lib/utils/cn';
 import Image from 'next/image';
 import Link from 'next/link';
-
 const Header = () => {
   return (
-    <header
+    <Container
+      as={'header'}
       className={cn(
         'flex flex-wrap items-center justify-between gap-x-8 gap-y-4',
-        'max-w-[1094px] px-5 py-[10px]',
-        'tablet:flex-nowrap tablet:px-8 tablet:py-[15px]'
+        'max-w-[1094px] py-[10px]',
+        'tablet:flex-nowrap tablet:py-[15px]'
       )}
     >
       <div
@@ -43,7 +44,7 @@ const Header = () => {
           <Icon iconName='notificationOff' iconSize='rg' bigScreenSize='md' ariaLabel='알림' />
         </button>
       </nav>
-    </header>
+    </Container>
   );
 };
 export default Header;
