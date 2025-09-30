@@ -30,6 +30,7 @@ interface DropdownProps<T extends string> {
   className?: string;
 }
 
+// EX : <Dropdown name="formName" label="접근성라벨" values={ADDRESS_CODE} />
 const Dropdown = <T extends string>({
   name,
   label,
