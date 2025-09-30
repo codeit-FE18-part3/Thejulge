@@ -51,7 +51,7 @@ const Dropdown = <T extends string>({
   useClickOutside(dropdownRef, () => setClose());
 
   return (
-    <div className='relative inline-flex' ref={dropdownRef}>
+    <div className={cn('relative inline-flex', className)} ref={dropdownRef}>
       {/* form 제출 대응 */}
       <input type='hidden' name={name} value={selected ?? ''} />
 
@@ -63,8 +63,7 @@ const Dropdown = <T extends string>({
         aria-label={label}
         className={cn(
           DROPDOWN_STYLE['base'],
-          size === 'md' ? DROPDOWN_STYLE['md'] : DROPDOWN_STYLE['sm'],
-          className
+          size === 'md' ? DROPDOWN_STYLE['md'] : DROPDOWN_STYLE['sm']
         )}
         onClick={toggle}
       >
