@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useState } from 'react';
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 interface ToastContextType {
@@ -18,8 +18,19 @@ const ToastProvider = ({ children }: { children: ReactNode }) => {
 
   const showToast = (msg: string) => {
     setMessage(msg);
-    setTimeout(() => setMessage(null), 3000);
   };
+
+  useEffect(() => {
+    if (!message) return;
+
+    const timer = setTimeout(() => {
+      setMessage(null);
+    }, 3000);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  });
 
   const toastRoot = typeof window !== 'undefined' ? document.getElementById('toast-root') : null;
 
@@ -30,7 +41,10 @@ const ToastProvider = ({ children }: { children: ReactNode }) => {
         {toastRoot &&
           createPortal(
             message ? (
-              <div className='fixed bottom-28 right-[38%] rounded-[5px] bg-red-300 px-4 py-[10px] text-white tablet:right-2/4'>
+              <div
+                role='alert'
+                className='fixed bottom-28 left-1/2 -translate-x-1/2 rounded-[5px] bg-red-300 px-4 py-[10px] text-white'
+              >
                 {message}
               </div>
             ) : null,
