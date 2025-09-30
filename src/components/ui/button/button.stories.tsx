@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from '@storybook/react';
 import Link from 'next/link';
 import Button from './button';
 
-/** 버튼 스토리: 최소 설정 + 새 변형만 추가 */
 const meta: Meta<typeof Button> = {
   title: 'UI/Button',
   component: Button,
@@ -41,7 +40,7 @@ export const ApproveReject: Story = {
   ),
 };
 
-/** Link로 렌더링 (as prop 사용 예) — 최소 추가 */
+/* Link로 렌더링 (as prop 사용 예) */
 export const AsLink: Story = {
   args: {
     as: Link,

@@ -1,17 +1,9 @@
-/*
- 사용법 예:
- <Button variant="primary" size="lg" full> 로그인 하기</Button>
- // 페이지에서 Link로 쓰고 싶을 때만 예:
-<Button as={Link} href="/about" variant="secondary">About</Button>
- */
-
 import { ButtonHTMLAttributes, ElementType } from 'react';
 
 type ButtonProps = {
   variant?: 'primary' | 'secondary' | 'disabled' | 'approve' | 'reject';
   size?: 'lg' | 'md' | 'sm';
   full?: boolean;
-  /* 기본은 'button'. 필요 시 as={Link} 처럼 다른 컴포넌트로 렌더 */
   as?: ElementType;
 } & ButtonHTMLAttributes<HTMLButtonElement> & { [key: string]: unknown };
 
