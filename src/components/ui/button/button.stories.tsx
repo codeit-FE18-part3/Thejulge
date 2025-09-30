@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import Link from 'next/link';
 import Button from './button';
 
 /** 버튼 스토리: 최소 설정 + 새 변형만 추가 */
@@ -38,4 +39,15 @@ export const ApproveReject: Story = {
       </Button>
     </div>
   ),
+};
+
+/** Link로 렌더링 (as prop 사용 예) — 최소 추가 */
+export const AsLink: Story = {
+  args: {
+    as: Link,
+    href: '/profile/create',
+    variant: 'primary',
+    full: true,
+    children: '내 프로필 등록하기',
+  },
 };

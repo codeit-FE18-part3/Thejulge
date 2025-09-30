@@ -1,22 +1,25 @@
 /*
  사용법 예:
- <Button variant="primary" size="lg" full>로그인 하기</Button>
+ <Button variant="primary" size="lg" full> 로그인 하기</Button>
+ // 페이지에서 Link로 쓰고 싶을 때만 예:
+<Button as={Link} href="/about" variant="secondary">About</Button>
  */
 
-import { ButtonHTMLAttributes } from 'react';
+import { ButtonHTMLAttributes, ElementType } from 'react';
 
 type ButtonProps = {
   variant?: 'primary' | 'secondary' | 'disabled' | 'approve' | 'reject';
-
   size?: 'lg' | 'md' | 'sm';
-
   full?: boolean;
-} & ButtonHTMLAttributes<HTMLButtonElement>;
+  /* 기본은 'button'. 필요 시 as={Link} 처럼 다른 컴포넌트로 렌더 */
+  as?: ElementType;
+} & ButtonHTMLAttributes<HTMLButtonElement> & { [key: string]: unknown };
 
 export default function Button({
   variant = 'primary',
   size = 'lg',
   full = false,
+  as: Component = 'button',
   children,
   ...props
 }: ButtonProps) {
@@ -48,12 +51,14 @@ export default function Button({
   const baseClass = 'inline-flex items-center justify-center rounded-lg font-medium transition';
 
   return (
-    <button
+    <Component
       className={`${baseClass} ${variantClass} ${sizeClass} ${full ? 'w-full' : ''}`}
-      disabled={variant === 'disabled' || props.disabled}
+      {...(Component === 'button'
+        ? { disabled: variant === 'disabled' || props.disabled }
+        : { 'aria-disabled': variant === 'disabled' || props.disabled })}
       {...props} // EX) type="submit" onClick={handleClick} aria-label="로그인 버튼"
     >
       {children}
-    </button>
+    </Component>
   );
 }
