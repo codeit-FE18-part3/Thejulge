@@ -84,7 +84,7 @@ const Dropdown = <T extends string>({
         <div
           role='listbox'
           aria-label={label}
-          className='shadow-inset-top scroll-bar absolute top-[calc(100%+8px)] z-[1] max-h-56 w-full rounded-md border border-gray-300 bg-white'
+          className='scroll-bar shadow-inset-top absolute top-[calc(100%+8px)] z-[1] max-h-56 w-full rounded-md border border-gray-300 bg-white'
         >
           {values.map(value => (
             <button
