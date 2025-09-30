@@ -1,0 +1,52 @@
+import type { Meta, StoryObj } from '@storybook/nextjs';
+import Link from 'next/link';
+import Button from './button';
+
+const meta: Meta<typeof Button> = {
+  title: 'UI/Button',
+  component: Button,
+  tags: ['autodocs'],
+};
+export default meta;
+
+type Story = StoryObj<typeof Button>;
+
+/** Primary */
+export const Primary: Story = {
+  args: { children: '로그인 하기', variant: 'primary', size: 'lg' },
+};
+
+/** Secondary */
+export const Secondary: Story = {
+  args: { children: '로그인 하기', variant: 'secondary', size: 'lg' },
+};
+
+/** Disabled */
+export const Disabled: Story = {
+  args: { children: '신청 불가', variant: 'disabled', size: 'lg' },
+};
+
+/** 승인/거절 아웃라인 버튼 */
+export const ApproveReject: Story = {
+  render: () => (
+    <div className='flex items-center gap-4'>
+      <Button variant='approve' size='md'>
+        승인하기
+      </Button>
+      <Button variant='reject' size='md'>
+        거절하기
+      </Button>
+    </div>
+  ),
+};
+
+/* Link로 렌더링 (as prop 사용 예) */
+export const AsLink: Story = {
+  args: {
+    as: Link,
+    href: '/profile/create',
+    variant: 'primary',
+    full: true,
+    children: '내 프로필 등록하기',
+  },
+};
