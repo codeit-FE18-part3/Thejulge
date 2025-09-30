@@ -37,11 +37,9 @@ export default function Button({
 }: ButtonProps) {
   // props에서 type/disabled만 분리(중복, 충돌 방지), 나머지는 그대로 전달
   const { type, disabled, ...restProps } = props as ButtonHTMLAttributes<HTMLButtonElement>;
-  const sizeClass = SIZE_CLASS[size];
-  const variantClass = VARIANT_CLASS[variant];
   return (
     <Component
-      className={`${BASE_CLASS} ${variantClass} ${sizeClass} ${full ? 'w-full' : ''}`}
+      className={`${BASE_CLASS} ${VARIANT_CLASS} ${SIZE_CLASS} ${full ? 'w-full' : ''}`}
       {...(Component === 'button'
         ? {
             disabled: variant === 'disabled' || disabled,
