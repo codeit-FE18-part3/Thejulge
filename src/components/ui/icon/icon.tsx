@@ -7,6 +7,7 @@ interface IconProps extends React.HTMLAttributes<HTMLSpanElement> {
   bigScreenSize?: IconSize; // PC에서 사이즈 다를때 사용
   className?: string;
   ariaLabel: string; // 접근성 라벨
+  decorative?: boolean;
 }
 
 /**
@@ -17,7 +18,18 @@ interface IconProps extends React.HTMLAttributes<HTMLSpanElement> {
  */
 
 const Icon = forwardRef<HTMLSpanElement, IconProps>(
-  ({ iconName, iconSize = 'md', bigScreenSize, className, ariaLabel, ...props }, ref) => {
+  (
+    {
+      iconName,
+      iconSize = 'md',
+      bigScreenSize,
+      className,
+      ariaLabel,
+      decorative = false,
+      ...props
+    },
+    ref
+  ) => {
     const url = ICONS[iconName];
     const size = ICON_SIZES[iconSize];
     const bigSize = bigScreenSize ? `tablet:${ICON_SIZES[bigScreenSize]}` : '';
@@ -31,7 +43,8 @@ const Icon = forwardRef<HTMLSpanElement, IconProps>(
           WebkitMaskImage: `url(${url})`,
         }}
         role='img'
-        aria-label={ariaLabel}
+        aria-label={decorative ? undefined : ariaLabel}
+        aria-hidden={decorative}
         {...props}
       />
     );
