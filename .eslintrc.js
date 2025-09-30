@@ -27,6 +27,8 @@ module.exports = {
     'filenames', // 파일이름 강제
   ],
   rules: {
+    //@storybook/react 빨간줄 오류 삭제
+    'storybook/no-renderer-packages': 'off',
     // 절대경로 사용
     'no-relative-import-paths/no-relative-import-paths': [
       'error',
