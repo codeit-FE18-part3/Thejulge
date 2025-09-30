@@ -5,7 +5,6 @@ import '@/styles/globals.css';
 import type { NextPage } from 'next';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
-import Test from './test';
 
 export type NextPageWithLayout<P = object, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: React.ReactNode) => React.ReactNode;
@@ -31,10 +30,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
         <link rel='icon' href='/favicon.ico' sizes='any' />
         <link rel='icon' href='/favicon.png' type='image/png' sizes='192x192' />
       </Head>
-      <ToastProvider>
-        {getLayout(<Component {...pageProps} />)}
-        <Test />
-      </ToastProvider>
+      <ToastProvider>{getLayout(<Component {...pageProps} />)}</ToastProvider>
     </>
   );
 }
