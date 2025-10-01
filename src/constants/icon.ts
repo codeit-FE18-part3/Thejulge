@@ -53,6 +53,7 @@ export const ICONS = {
 export type IconName = keyof typeof ICONS;
 
 export const ICON_SIZES = {
+  'x-sm': 'w-2.5 h-2.5',
   sm: 'w-4 h-4',
   rg: 'w-5 h-5',
   md: 'w-6 h-6',
