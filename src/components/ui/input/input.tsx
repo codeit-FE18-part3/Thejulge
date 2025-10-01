@@ -44,12 +44,12 @@ export default function Input({
             hasError ? 'border-[var(--red-500)]' : '',
             hasError ? '' : 'focus:border-[var(--red-500)]',
             isDisabled ? 'cursor-not-allowed bg-[var(--gray-100)]' : '',
-            suffix ? 'pr-12' : '', // 우측 단위 있을 때 텍스트 여백
+            suffix ? 'pr-10' : '', // md 드롭다운과 동일한 오른쪽 여백
           ].join(' ')}
         />
 
         {suffix && (
-          <span className='pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-[var(--gray-500)]'>
+          <span className='pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-sm text-[var(--gray-500)]'>
             {suffix}
           </span>
         )}
