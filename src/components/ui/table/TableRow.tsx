@@ -10,14 +10,14 @@ const TD_BASE = 'border-b px-2 py3';
 const TD_STATUS = 'border-b px-2 py-[9px]';
 
 export default function TableRow({ rowData, variant }: TableTypeVariant) {
+  const { STRAT, END, duration } = getTime(rowData.startsAt, rowData.workhour);
+
   return (
     <tr className='text-left'>
       <td className={TD_BASE}>{rowData.name}</td>
       {variant === 'employee' ? (
         <>
-          <td className={TD_BASE}>
-            {`${getTime(rowData.startsAt, 0)} ~ ${getTime(rowData.startsAt, rowData.workhour)} (${rowData.workhour}시간)`}
-          </td>
+          <td className={TD_BASE}>{`${STRAT} ~ ${END} (${duration})`}</td>
           <td className={TD_BASE}>{rowData.hourlyPay}</td>
         </>
       ) : (
