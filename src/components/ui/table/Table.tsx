@@ -1,10 +1,11 @@
 import TableRow from '@/components/ui/table/TableRow';
 import { TableRowProps } from '@/components/ui/table/TableRowProps';
+import { UserType } from '@/types/user';
 
 interface TableProps {
   data: TableRowProps[];
   headers: string[];
-  userType: 'employer' | 'employee';
+  userType: UserType;
 }
 
 // <Table headers={headers} data={data} userType={type} /> type은 확인이 좀 더 필요합니다
