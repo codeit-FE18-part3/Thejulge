@@ -13,7 +13,7 @@ export default function Table({ data, headers, userType }: TableProps) {
   return (
     <div className='overflow-x-auto rounded-lg border border-gray-200'>
       <table className='min-w-full'>
-        <tbody>
+        <thead>
           <tr className='bg-red-100'>
             {headers.map((header, index) => (
               <th key={index} className='px-2 py-3 text-left text-sm font-normal'>
@@ -21,6 +21,8 @@ export default function Table({ data, headers, userType }: TableProps) {
               </th>
             ))}
           </tr>
+        </thead>
+        <tbody>
           {data.map((row, index) => (
             <TableRow key={index} rowData={row} variant={userType} />
           ))}
