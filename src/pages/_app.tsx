@@ -1,5 +1,6 @@
-import { Container, Header, Wrapper } from '@/components/layout';
+import { Header, Wrapper } from '@/components/layout';
 import Footer from '@/components/layout/footer/footer';
+
 import ToastProvider from '@/context/toastContext/toastContext';
 import '@/styles/fonts.css';
 import '@/styles/globals.css';
@@ -18,9 +19,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
     (page => (
       <Wrapper>
         <Header />
-        <Container as='main' grow>
-          {page}
-        </Container>
+        <main className='grow'>{page}</main>
         <Footer />
       </Wrapper>
     ));

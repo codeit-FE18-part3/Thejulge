@@ -77,6 +77,9 @@ const config: Config = {
         tablet: '744px',
         desktop: '1028px',
       },
+      boxShadow: {
+        'inset-top': '0 -4px 25px 0 rgba(0,0,0,0.1)',
+      },
     },
   },
   plugins: [],

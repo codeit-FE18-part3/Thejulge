@@ -34,7 +34,7 @@ module.exports = {
       'error',
       { allowSameFolder: true, rootDir: 'src', prefix: '@' },
     ],
-
+    'prettier/prettier': 'off',
     // Typescript
     '@typescript-eslint/no-explicit-any': 'error', // any 사용 금지
     '@typescript-eslint/prefer-nullish-coalescing': 'warn', // ?? 연산자 사용 권장
