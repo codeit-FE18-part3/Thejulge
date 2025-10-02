@@ -1,4 +1,3 @@
-// context/MockAuthProvider.tsx
 import { AuthContext } from '@/context/authProvider';
 import type { User, UserRole } from '@/types/user';
 import { ReactNode } from 'react';
