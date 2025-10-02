@@ -3,15 +3,6 @@ import useAuth from '@/hooks/useAuth';
 export default function AuthRolePreview() {
   const { role, user } = useAuth();
 
-  if (role === 'guest') {
-    return (
-      <div style={{ padding: 12, border: '1px solid #ccc', borderRadius: 8 }}>
-        <h2>비로그인 상태 (게스트 UI)</h2>
-        <p>role === 'guest'</p>
-      </div>
-    );
-  }
-
   if (role === 'employer') {
     return (
       <div style={{ padding: 12, border: '1px solid #ccc', borderRadius: 8 }}>
@@ -36,5 +27,12 @@ export default function AuthRolePreview() {
     );
   }
 
-  return <div>알 수 없는 권한</div>;
+  return (
+    <div>
+      <div style={{ padding: 12, border: '1px solid #ccc', borderRadius: 8 }}>
+        <h2>비로그인 상태 (게스트 UI)</h2>
+        <p>role === 'guest'</p>
+      </div>
+    </div>
+  );
 }
