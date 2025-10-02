@@ -1,5 +1,7 @@
 import { Header, Wrapper } from '@/components/layout';
-import ToastProvider from '@/context/toastContext/toastContext';
+import Footer from '@/components/layout/footer/footer';
+import AppProvider from '@/context/appProvider';
+
 import '@/styles/fonts.css';
 import '@/styles/globals.css';
 import type { NextPage } from 'next';
@@ -18,6 +20,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
       <Wrapper>
         <Header />
         <main className='grow'>{page}</main>
+        <Footer />
       </Wrapper>
     ));
 
@@ -28,7 +31,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
         <link rel='icon' href='/favicon.ico' sizes='any' />
         <link rel='icon' href='/favicon.png' type='image/png' sizes='192x192' />
       </Head>
-      <ToastProvider>{getLayout(<Component {...pageProps} />)}</ToastProvider>
+      <AppProvider>{getLayout(<Component {...pageProps} />)}</AppProvider>
     </>
   );
 }
