@@ -63,7 +63,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     // TODO: 유저 업데이트 구현
   };
 
-  // 👇 타입 강제된 value 객체
   const value: AuthContextValue = {
     ...values,
     isLogin,
