@@ -3,7 +3,6 @@ import type { Meta, StoryObj } from '@storybook/react';
 import AuthRolePreview from './authRolePreview';
 import { MockAuthProvider } from './mockAuthProvider';
 
-/* -------------------- Mock Users -------------------- */
 const employerUser: User = {
   id: '1',
   email: 'boss@test.com',
@@ -31,12 +30,10 @@ const employeeUser: User = {
   shop: null,
 };
 
-/* -------------------- Args 타입 정의 -------------------- */
 interface PlaygroundArgs {
   role: 'guest' | 'employer' | 'employee';
 }
 
-/* -------------------- Meta -------------------- */
 const meta: Meta<typeof AuthRolePreview> = {
   title: 'Auth/AuthRolePreview',
   component: AuthRolePreview,
@@ -50,7 +47,6 @@ const meta: Meta<typeof AuthRolePreview> = {
 };
 export default meta;
 
-/* -------------------- Playground Story -------------------- */
 type Story = StoryObj<PlaygroundArgs>;
 
 export const Playground: Story = {
