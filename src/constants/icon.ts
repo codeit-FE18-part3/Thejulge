@@ -1,3 +1,4 @@
+import acceptedBadge from '@/assets/icon/ic-accepted-badge.svg';
 import arrowUp from '@/assets/icon/ic-arrow-up.svg';
 import calendar from '@/assets/icon/ic-calendar.svg';
 import camera from '@/assets/icon/ic-camera.svg';
@@ -17,6 +18,7 @@ import notificationOn from '@/assets/icon/ic-notification-on.svg';
 import phone from '@/assets/icon/ic-phone.svg';
 import radioOff from '@/assets/icon/ic-radio-off.svg';
 import radioOn from '@/assets/icon/ic-radio-on.svg';
+import rejectedBadge from '@/assets/icon/ic-rejected-badge.svg';
 import search from '@/assets/icon/ic-search.svg';
 import successCircle from '@/assets/icon/ic-success-circle.svg';
 import success from '@/assets/icon/ic-success.svg';
@@ -24,6 +26,7 @@ import warningCircle from '@/assets/icon/ic-warning-circle.svg';
 import warning from '@/assets/icon/ic-warning.svg';
 
 export const ICONS = {
+  acceptedBadge: acceptedBadge.src,
   arrowUp: arrowUp.src,
   calendar: calendar.src,
   camera: camera.src,
@@ -43,6 +46,7 @@ export const ICONS = {
   phone: phone.src,
   radioOff: radioOff.src,
   radioOn: radioOn.src,
+  rejectedBadge: rejectedBadge.src,
   search: search.src,
   successCircle: successCircle.src,
   success: success.src,
