@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import AuthRolePreview from './authRolePreview';
 import { MockAuthProvider } from './mockAuthProvider';
 
+/* -------------------- Mock Users -------------------- */
 const employerUser: User = {
   id: '1',
   email: 'boss@test.com',
@@ -30,39 +31,43 @@ const employeeUser: User = {
   shop: null,
 };
 
-export default {
+/* -------------------- Args 타입 정의 -------------------- */
+interface PlaygroundArgs {
+  role: 'guest' | 'employer' | 'employee';
+}
+
+/* -------------------- Meta -------------------- */
+const meta: Meta<typeof AuthRolePreview> = {
   title: 'Auth/AuthRolePreview',
   component: AuthRolePreview,
-} satisfies Meta<typeof AuthRolePreview>;
-
-type Story = StoryObj<typeof AuthRolePreview>;
-
-export const Guest: Story = {
-  decorators: [
-    Story => (
-      <MockAuthProvider user={null}>
-        <Story />
-      </MockAuthProvider>
-    ),
-  ],
+  tags: ['autodocs'],
+  argTypes: {
+    role: {
+      control: 'select',
+      options: ['guest', 'employer', 'employee'],
+    },
+  },
 };
+export default meta;
 
-export const Employer: Story = {
-  decorators: [
-    Story => (
-      <MockAuthProvider user={employerUser}>
-        <Story />
-      </MockAuthProvider>
-    ),
-  ],
-};
+/* -------------------- Playground Story -------------------- */
+type Story = StoryObj<PlaygroundArgs>;
 
-export const Employee: Story = {
+export const Playground: Story = {
+  args: {
+    role: 'guest', // ✅ 기본값 지정
+  },
   decorators: [
-    Story => (
-      <MockAuthProvider user={employeeUser}>
-        <Story />
-      </MockAuthProvider>
-    ),
+    (Story, context) => {
+      const { role } = context.args as PlaygroundArgs;
+
+      const user = role === 'employer' ? employerUser : role === 'employee' ? employeeUser : null;
+
+      return (
+        <MockAuthProvider role={role} user={user}>
+          <Story />
+        </MockAuthProvider>
+      );
+    },
   ],
 };

@@ -17,7 +17,7 @@ export type UserResponse = ApiResponse<UserBase>;
 
 /* -------------------- 유저 -------------------- */
 export type UserType = 'employer' | 'employee';
-
+export type UserRole = UserType | 'guest';
 export interface UserBase {
   id: string;
   email: string;

@@ -1,37 +1,36 @@
 import useAuth from '@/hooks/useAuth';
 
 export default function AuthRolePreview() {
-  const { user, isLogin } = useAuth();
+  const { role, user } = useAuth();
 
-  if (!isLogin) {
+  if (role === 'guest') {
     return (
-      <div>
-        비로그인 상태 (게스트 UI)
-        <br />
-        !isLogin
+      <div style={{ padding: 12, border: '1px solid #ccc', borderRadius: 8 }}>
+        <h2>비로그인 상태 (게스트 UI)</h2>
+        <p>role === 'guest'</p>
       </div>
     );
   }
 
-  if (user?.type === 'employer') {
+  if (role === 'employer') {
     return (
       <div style={{ padding: 12, border: '1px solid #ccc', borderRadius: 8 }}>
         <h2>사장님 전용 화면</h2>
-        <p>user?.type === 'employer'</p>
+        <p>role === 'employer'</p>
         <p>
-          여기서는 <strong>내 가게 관리 employer</strong> UI를 보여주면 됩니다.
+          <strong>{user?.name}</strong>님의 가게 관리 화면
         </p>
       </div>
     );
   }
 
-  if (user?.type === 'employee') {
+  if (role === 'employee') {
     return (
       <div style={{ padding: 12, border: '1px solid #ccc', borderRadius: 8 }}>
-        <h2>알바생 전용 화면 </h2>
-        <p> user?.type === 'employee' </p>
+        <h2>알바생 전용 화면</h2>
+        <p>role === 'employee'</p>
         <p>
-          여기서는 <strong>내 프로필 </strong> UI를 보여주면 됩니다.
+          <strong>{user?.name}</strong>님의 프로필 화면
         </p>
       </div>
     );

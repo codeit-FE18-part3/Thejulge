@@ -1,4 +1,4 @@
-import { LoginRequest, User, UserRequest } from '@/types/user';
+import { LoginRequest, User, UserRequest, UserRole } from '@/types/user';
 import { createContext, ReactNode, useState } from 'react';
 
 /**
@@ -16,39 +16,65 @@ import { createContext, ReactNode, useState } from 'react';
  * 추후 AuthContext (토큰,로그인 상태 관리) / UserContext (프로필 전용) 로 관심사 분리 리팩토링 고려
  *
  */
-interface AuthContextValue {
-  user: User | null; //
+
+type AuthState = {
+  user: User | null;
   isPending: boolean;
+};
+interface AuthContextValue extends AuthState {
   isLogin: boolean;
+  role: UserRole;
   login: (credentials: LoginRequest) => Promise<void>;
   logout: () => void;
   signup: (data: UserRequest) => Promise<void>;
   getUser: () => Promise<void>;
   updateUser: (data: Partial<User>) => Promise<void>;
 }
-
+const initialState: AuthState = {
+  user: null,
+  isPending: true,
+};
 export const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [values, setValues] = useState({
-    user: null,
-    isPending: true,
-  });
+  const [values, setValues] = useState<AuthState>(initialState);
   const [token, setToken] = useState<string | null>(null);
 
   const isLogin = !!token;
+  const role: UserRole = !isLogin
+    ? 'guest'
+    : values.user?.type === 'employer'
+      ? 'employer'
+      : 'employee';
 
-  const login: AuthContextValue['login'] = async credentials => {};
-  const logout: AuthContextValue['logout'] = () => {};
-  const getUser: AuthContextValue['getUser'] = async () => {};
-  const signup: AuthContextValue['signup'] = async data => {};
-  const updateUser: AuthContextValue['updateUser'] = async data => {};
-  return (
-    <AuthContext.Provider
-      value={{ ...values, isLogin, login, logout, signup, getUser, updateUser }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+  const login: AuthContextValue['login'] = async credentials => {
+    // TODO: 로그인 구현 (API 요청 후 setValues, setToken)
+  };
+  const logout: AuthContextValue['logout'] = () => {
+    // TODO: 로그아웃 구현 (setValues, setToken 초기화)
+  };
+  const signup: AuthContextValue['signup'] = async data => {
+    // TODO: 회원가입 구현
+  };
+  const getUser: AuthContextValue['getUser'] = async () => {
+    // TODO: 유저 조회 구현
+  };
+  const updateUser: AuthContextValue['updateUser'] = async data => {
+    // TODO: 유저 업데이트 구현
+  };
+
+  // 👇 타입 강제된 value 객체
+  const value: AuthContextValue = {
+    ...values,
+    isLogin,
+    role,
+    login,
+    logout,
+    signup,
+    getUser,
+    updateUser,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 export default AuthProvider;
