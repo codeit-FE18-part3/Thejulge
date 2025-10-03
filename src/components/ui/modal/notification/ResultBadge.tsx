@@ -12,8 +12,7 @@ export default function ResultBadge({ result }: ResultBadgeProps) {
   return (
     <Icon
       iconName='resultBadge'
-      iconSize='x-sm'
-      className={ICON_COLORS[result]}
+      className={`${ICON_COLORS[result]} h-[5px] w-[5px]`}
       ariaLabel={result === 'accepted' ? '승인 상태' : '거절 상태'}
     />
   );
