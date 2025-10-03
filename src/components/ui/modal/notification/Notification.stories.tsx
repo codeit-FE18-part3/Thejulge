@@ -1,5 +1,5 @@
 import { Meta, StoryFn } from '@storybook/nextjs';
-import Notification from './Notification';
+import Notification, { Alert } from './Notification';
 
 /* eslint-disable no-console */
 
@@ -14,14 +14,11 @@ const Template: StoryFn<typeof Notification> = args => <Notification {...args} /
 
 export const Default = Template.bind({});
 Default.args = {
-  isOpen: true,
-  onClose: () => console.log('Close clicked'),
-  onRead: (id: string) => console.log('Read notification', id),
   alerts: [
     {
       id: '1',
       read: false,
-      createdAt: new Date().toISOString(),
+      createdAt: '2025-10-03T14:14:00Z',
       result: 'accepted',
       shop: {
         item: {
@@ -51,7 +48,7 @@ Default.args = {
     {
       id: '2',
       read: true,
-      createdAt: new Date().toISOString(),
+      createdAt: '2025-10-02T10:50:00Z',
       result: 'rejected',
       shop: {
         item: {
@@ -78,5 +75,95 @@ Default.args = {
         href: '/notice/notice2',
       },
     },
-  ],
+    {
+      id: '3',
+      read: false,
+      createdAt: '2025-10-02T08:20:00Z',
+      result: 'accepted',
+      shop: {
+        item: {
+          id: 'shop3',
+          name: '도서관 C',
+          category: '도서관',
+          address1: '서울 마포구',
+          address2: '상암동 456-78',
+          description: '조용한 도서관',
+          imageUrl: 'https://via.placeholder.com/150',
+          originalHourlyPay: 10000,
+        },
+        href: '/shop/shop3',
+      },
+      notice: {
+        item: {
+          id: 'notice3',
+          hourlyPay: 10000,
+          description: '도서관 알바',
+          startsAt: '2025-10-03T11:00:00Z',
+          workhour: 4,
+          closed: false,
+        },
+        href: '/notice/notice3',
+      },
+    },
+    {
+      id: '4',
+      read: true,
+      createdAt: '2025-10-01T11:20:00Z',
+      result: 'rejected',
+      shop: {
+        item: {
+          id: 'shop4',
+          name: '헬스장 D',
+          category: '헬스장',
+          address1: '서울 송파구',
+          address2: '잠실동 789-01',
+          description: '피트니스 센터',
+          imageUrl: 'https://via.placeholder.com/150',
+          originalHourlyPay: 18000,
+        },
+        href: '/shop/shop4',
+      },
+      notice: {
+        item: {
+          id: 'notice4',
+          hourlyPay: 18000,
+          description: '헬스장 알바',
+          startsAt: '2025-10-04T09:00:00Z',
+          workhour: 5,
+          closed: false,
+        },
+        href: '/notice/notice4',
+      },
+    },
+    {
+      id: '5',
+      read: false,
+      createdAt: '2025-08-02T11:20:00Z',
+      shop: {
+        item: {
+          id: 'shop5',
+          name: '미용실 E',
+          category: '미용실',
+          address1: '서울 강서구',
+          address2: '등촌동 234-56',
+          description: '트렌디한 미용실',
+          imageUrl: 'https://via.placeholder.com/150',
+          originalHourlyPay: 22000,
+        },
+        href: '/shop/shop5',
+      },
+      notice: {
+        item: {
+          id: 'notice5',
+          hourlyPay: 22000,
+          description: '미용실 알바',
+          startsAt: '2025-10-05T09:00:00Z',
+          workhour: 6,
+          closed: false,
+        },
+        href: '/notice/notice5',
+      },
+    },
+  ] as Alert[],
+  onRead: (id: string) => console.log('Read notification', id),
 };

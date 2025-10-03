@@ -23,6 +23,9 @@ interface NotificationProps {
 export default function Notification({ alerts, onRead }: NotificationProps) {
   const [isOpen, setIsOpen] = useState(false);
   const notificationCount = alerts.filter(alert => !alert.read).length;
+  const SORTED_ALERTS = [...alerts].sort(
+    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+  );
 
   return (
     <>
@@ -45,7 +48,7 @@ export default function Notification({ alerts, onRead }: NotificationProps) {
             </div>
           </div>
           <div></div>
-          {alerts.length === 0 ? (
+          {SORTED_ALERTS.length === 0 ? (
             <div className='flex flex-1 items-center justify-center'>
               <p>알림이 없습니다.</p>
             </div>

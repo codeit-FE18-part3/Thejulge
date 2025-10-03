@@ -1,4 +1,5 @@
 import { getTime } from '@/lib/utils/getTime';
+import { timeAgo } from '@/lib/utils/timeAgo';
 import { Alert } from './Notification';
 import ResultBadge from './ResultBadge';
 
@@ -29,7 +30,7 @@ export default function NotificationMessage({
             <span className={RESULT_STYLES[alert.result]}>{RESULT_TEXT}</span>
             되었어요.
           </p>
-          <span>{new Date(alert.createdAt).toLocaleString()}</span>
+          <span>{timeAgo(alert.createdAt)}</span>
         </div>
       </button>
     </div>
