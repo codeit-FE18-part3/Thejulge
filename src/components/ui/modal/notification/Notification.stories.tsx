@@ -47,7 +47,7 @@ Default.args = {
     },
     {
       id: '2',
-      read: true,
+      read: false,
       createdAt: '2025-10-02T10:50:00Z',
       result: 'rejected',
       shop: {
@@ -77,7 +77,7 @@ Default.args = {
     },
     {
       id: '3',
-      read: false,
+      read: true,
       createdAt: '2025-10-02T08:20:00Z',
       result: 'accepted',
       shop: {
@@ -133,35 +133,6 @@ Default.args = {
           closed: false,
         },
         href: '/notice/notice4',
-      },
-    },
-    {
-      id: '5',
-      read: false,
-      createdAt: '2025-08-02T11:20:00Z',
-      shop: {
-        item: {
-          id: 'shop5',
-          name: '미용실 E',
-          category: '미용실',
-          address1: '서울 강서구',
-          address2: '등촌동 234-56',
-          description: '트렌디한 미용실',
-          imageUrl: 'https://via.placeholder.com/150',
-          originalHourlyPay: 22000,
-        },
-        href: '/shop/shop5',
-      },
-      notice: {
-        item: {
-          id: 'notice5',
-          hourlyPay: 22000,
-          description: '미용실 알바',
-          startsAt: '2025-10-05T09:00:00Z',
-          workhour: 6,
-          closed: false,
-        },
-        href: '/notice/notice5',
       },
     },
   ] as Alert[],
