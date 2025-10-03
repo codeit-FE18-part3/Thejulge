@@ -32,7 +32,12 @@ const Icon = forwardRef<HTMLSpanElement, IconProps>(
   ) => {
     const url = ICONS[iconName];
     const size = ICON_SIZES[iconSize];
-    const bigSize = bigScreenSize ? `tablet:${ICON_SIZES[bigScreenSize]}` : '';
+    const bigSize = bigScreenSize
+      ? ICON_SIZES[bigScreenSize]
+          .split(' ')
+          .map(token => `tablet:${token}`)
+          .join(' ')
+      : '';
 
     return (
       <span
