@@ -1,5 +1,5 @@
 import { Meta, StoryFn } from '@storybook/nextjs';
-import Notification, { Alert } from './Notification';
+import Notification from './Notification';
 
 /* eslint-disable no-console */
 
@@ -12,7 +12,7 @@ export default meta;
 
 const Template: StoryFn<typeof Notification> = args => <Notification {...args} />;
 
-export const Default = Template;
+export const Default = Template.bind({});
 Default.args = {
   isOpen: true,
   onClose: () => console.log('Close clicked'),
@@ -36,6 +36,17 @@ Default.args = {
         },
         href: '/shop/shop1',
       },
+      notice: {
+        item: {
+          id: 'notice1',
+          hourlyPay: 15000,
+          description: '맛집 알바',
+          startsAt: '2025-10-01T09:00:00Z',
+          workhour: 8,
+          closed: false,
+        },
+        href: '/notice/notice1',
+      },
     },
     {
       id: '2',
@@ -55,25 +66,17 @@ Default.args = {
         },
         href: '/shop/shop2',
       },
-    },
-    {
-      id: '3',
-      read: false,
-      createdAt: new Date().toISOString(),
-      result: 'accepted',
-      shop: {
+      notice: {
         item: {
-          id: 'shop3',
-          name: '편의점 C',
-          category: '편의점',
-          address1: '서울 마포구',
-          address2: '합정동 111-22',
-          description: '24시간 편의점',
-          imageUrl: 'https://via.placeholder.com/150',
-          originalHourlyPay: 10000,
+          id: 'notice2',
+          hourlyPay: 12000,
+          description: '카페 알바',
+          startsAt: '2025-10-02T10:00:00Z',
+          workhour: 6,
+          closed: false,
         },
-        href: '/shop/shop3',
+        href: '/notice/notice2',
       },
     },
-  ] as Alert[],
+  ],
 };

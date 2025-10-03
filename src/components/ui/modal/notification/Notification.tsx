@@ -1,4 +1,5 @@
 import Icon from '@/components/ui/icon/icon';
+import { Notice } from '@/types/notice';
 import { Shop } from '@/types/shop';
 import { useState } from 'react';
 import NotificationMessage from './NotificationMessage';
@@ -8,7 +9,8 @@ export interface Alert {
   createdAt: string;
   result: 'accepted' | 'rejected';
   read: boolean;
-  shop?: { item: Shop; href?: string };
+  shop: { item: Shop; href?: string };
+  notice: { item: Notice; href?: string };
 }
 
 interface NotificationProps {
