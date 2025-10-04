@@ -2,7 +2,7 @@
 import { cva, type VariantProps } from 'class-variance-authority';
 
 export const postWrapper = cva(
-  'rounded-xl  border border-gray-200 p-3 tablet:rounded-2xl tablet:p-4'
+  'block rounded-xl  border border-gray-200 p-3 tablet:rounded-2xl tablet:p-4'
 );
 
 export const postImageWrapper = cva(
@@ -46,7 +46,7 @@ export const workInfoIcon = cva('', {
 });
 
 export const workPayLayout = cva(
-  'mt-4 flex flex-wrap items-center justify-between tablet:flex-nowrap'
+  'mt-4 flex flex-wrap items-center justify-between gap-x-3 tablet:flex-nowrap'
 );
 
 export const postBadge = cva('flex items-center gap-0.5 rounded-full py-2 tablet:px-3', {
