@@ -1,4 +1,4 @@
-export type UserType = 'employer' | 'employee';
+import type { UserType } from '@/types/user';
 
 export const fetchTableData = async (userType: UserType) => {
   return new Promise<{ headers: string[]; data: unknown[] }>(resolve => {

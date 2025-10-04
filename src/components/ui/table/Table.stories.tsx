@@ -1,8 +1,9 @@
 import Table from '@/components/ui/table/Table';
 import { TableRowProps } from '@/components/ui/table/TableRowProps';
+import { UserType } from '@/types/user';
 import { Meta, StoryObj } from '@storybook/nextjs';
 import { useEffect, useState } from 'react';
-import { fetchTableData, UserType } from './testApi';
+import { fetchTableData } from './testApi';
 
 const meta: Meta<typeof Table> = {
   title: 'UI/Table',
@@ -39,5 +40,5 @@ export const TableExample: Story = {
   args: {
     userType: 'employer',
   },
-  render: args => <TableWithTestApi userType={args.userType} />,
+  render: args => <TableWithTestApi userType={args.userType as UserType} />,
 };
