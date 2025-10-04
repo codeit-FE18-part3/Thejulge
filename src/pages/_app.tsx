@@ -1,5 +1,5 @@
-import { Header, Wrapper } from '@/components/layout';
-import Footer from '@/components/layout/footer/footer';
+import { Footer, Header, Wrapper } from '@/components/layout';
+
 import AppProvider from '@/context/appProvider';
 
 import '@/styles/fonts.css';
