@@ -35,6 +35,9 @@
 
   --background: #f8f9fa;
 
+  --modal-frame: #f9f9f9;
+  --modal-dimmed: rgba(0, 0, 0, 0.7);
+  
   /* font size */
 
   /* Caption */
@@ -71,8 +74,6 @@
   --lh-heading-l: 1.286; /* 36/28 ≈ 129% */
   --ls-heading-l: 0.02em;
 
-  --modal-frame: #f9f9f9;
-  --modal-dimmed: rgba(0, 0, 0, 0.7);
 }
 /* 다크모드 */
 .dark {
