@@ -1,28 +1,28 @@
 function formatDate(date: Date): string {
-  const YEAR = date.getFullYear();
-  const MONTH = String(date.getMonth() + 1).padStart(2, '0');
-  const DAY = String(date.getDate()).padStart(2, '0');
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
 
-  return `${YEAR}.${MONTH}.${DAY}`;
+  return `${year}.${month}.${day}`;
 }
 
 function formatTime(date: Date): string {
-  const HOURS = String(date.getHours()).padStart(2, '0');
-  const MINUTES = String(date.getMinutes()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
 
-  return `${HOURS}:${MINUTES}`;
+  return `${hours}:${minutes}`;
 }
 
 export function getTime(startsAt: string, workhour: number) {
-  const START_DATE = new Date(startsAt);
-  const END_DATE = new Date(startsAt);
+  const startDate = new Date(startsAt);
+  const endDate = new Date(startsAt);
 
-  END_DATE.setHours(END_DATE.getHours() + workhour);
+  endDate.setHours(endDate.getHours() + workhour);
 
   return {
-    DATE: formatDate(START_DATE),
-    START_TIME: formatTime(START_DATE),
-    END_TIME: formatTime(END_DATE),
-    DURATION: `${workhour}시간`,
+    date: formatDate(startDate),
+    startTime: formatTime(startDate),
+    endTime: formatTime(endDate),
+    duration: `${workhour}시간`,
   };
 }
