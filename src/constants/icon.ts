@@ -17,6 +17,7 @@ import notificationOn from '@/assets/icon/ic-notification-on.svg';
 import phone from '@/assets/icon/ic-phone.svg';
 import radioOff from '@/assets/icon/ic-radio-off.svg';
 import radioOn from '@/assets/icon/ic-radio-on.svg';
+import resultBadge from '@/assets/icon/ic-result-badge.svg';
 import search from '@/assets/icon/ic-search.svg';
 import successCircle from '@/assets/icon/ic-success-circle.svg';
 import success from '@/assets/icon/ic-success.svg';
@@ -24,6 +25,7 @@ import warningCircle from '@/assets/icon/ic-warning-circle.svg';
 import warning from '@/assets/icon/ic-warning.svg';
 
 export const ICONS = {
+  resultBadge: resultBadge.src,
   arrowUp: arrowUp.src,
   calendar: calendar.src,
   camera: camera.src,
