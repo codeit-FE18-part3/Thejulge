@@ -1,6 +1,8 @@
 import { User } from './user';
 
-export interface Shop {
+/* -------------------- 가게 -------------------- */
+// 가게등록
+export interface ShopBase {
   id: string;
   name: string;
   category: string;
@@ -9,8 +11,11 @@ export interface Shop {
   description: string;
   imageUrl: string;
   originalHourlyPay: number;
+}
+// 가게정보 조회
+export interface Shop extends ShopBase {
   user?: {
     item: User;
-    href?: string;
+    href: string;
   };
 }
