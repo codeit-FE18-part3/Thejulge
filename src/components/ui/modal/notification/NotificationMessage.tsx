@@ -29,8 +29,8 @@ export default function NotificationMessage({
               'text-gray-400': alert.read,
             })}
           >
-            {alert.shop.item.name} ({DATE_RANGE.DATE} {DATE_RANGE.START_TIME} ~{' '}
-            {DATE_RANGE.END_TIME}) 공고 지원이{' '}
+            {`${alert.shop.item.name} (${DATE_RANGE.DATE} ${DATE_RANGE.START_TIME} ~ 
+            ${DATE_RANGE.END_TIME}) 공고 지원이 `}
             <span
               className={clsx({
                 'text-gray-500': alert.read,
