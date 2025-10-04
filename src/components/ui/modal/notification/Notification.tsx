@@ -24,7 +24,7 @@ export default function Notification({ alerts, onRead }: NotificationProps) {
   const [isOpen, setIsOpen] = useState(false);
   const notificationCount = alerts.filter(alert => !alert.read).length;
   const SORTED_ALERTS = [...alerts].sort(
-    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
 
   return (
@@ -54,7 +54,7 @@ export default function Notification({ alerts, onRead }: NotificationProps) {
             </div>
           ) : (
             <div className='flex flex-col items-center gap-4'>
-              {alerts.map(alert => (
+              {SORTED_ALERTS.map(alert => (
                 <NotificationMessage key={alert.id} alert={alert} onRead={onRead} />
               ))}
             </div>

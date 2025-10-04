@@ -23,10 +23,9 @@ export default function NotificationMessage({
       item: { startsAt, workhour },
     },
   } = alert;
+
   const RESULT_TEXT = result === 'accepted' ? '승인' : '거절';
-
   const DATE_RANGE = getTime(startsAt, workhour);
-
   const NOTIFICATION_MESSAGE_CONTAINER = clsx(
     'w-full gap-2 break-words rounded border border-gray-200 bg-white px-3 py-4'
   );
