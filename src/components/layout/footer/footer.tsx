@@ -11,10 +11,10 @@ const Footer = () => {
             ©codeit - 2023
           </div>
           <div className='order-1 flex gap-[30px] font-normal text-gray-500'>
-            <Link href={'/'} className='text-body-s hover:text-gray-300 tablet:text-body-m'>
+            <Link href={'/'} className='text-body-s hover:text-gray-700 tablet:text-body-m'>
               Privacy Policy
             </Link>
-            <Link href={'/'} className='text-body-s hover:text-gray-300 tablet:text-body-m'>
+            <Link href={'/'} className='text-body-s hover:text-gray-700 tablet:text-body-m'>
               FAQ
             </Link>
           </div>
