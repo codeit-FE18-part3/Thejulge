@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import AuthProvider from './authProvider';
-import ToastProvider from './toastContext/toastContext';
+import { ToastProvider } from './toastContext';
 
 const AppProvider = ({ children }: { children: ReactNode }) => {
   return (
