@@ -1,6 +1,6 @@
 /* -------------------- 공고 -------------------- */
 
-import { Shop } from './shop';
+import { ShopSummary } from './shop';
 
 // 공고 등록
 export interface NoticeBase {
@@ -10,24 +10,11 @@ export interface NoticeBase {
   description: string;
 }
 
-// 공고 목록 및 알림 목록 조회
+// 공고 목록 및 알림 목록
 export interface Notice extends NoticeBase {
   id: string;
   closed: boolean;
 }
 
-// 공고 조회 , 특정 공고 조회
-export interface NoticeDetail extends Notice {
-  shop?: {
-    item: Shop;
-    href: string;
-  };
-  currentUserApplication?: {
-    item: {
-      id: string;
-      status: ApplicationStatus;
-      createdAt: string;
-    };
-  };
-}
-export type ApplicationStatus = 'pending' | 'accepted' | 'rejected' | 'canceled';
+
+export type PostCard = Notice & ShopSummary & { href: string };

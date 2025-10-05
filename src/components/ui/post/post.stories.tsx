@@ -1,41 +1,20 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { Post } from '.';
-import type { NoticeDetail } from '@/types/notice';
+import type { PostCard } from '@/types/notice';
 
-const upcomingNotice: NoticeDetail = {
-  id: 'notice-upcoming',
+const baseNotice: PostCard = {
+  id: 'notice-001',
   hourlyPay: 18000,
-  startsAt: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(), // 내일
+  startsAt: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(),
   workhour: 4,
-  description: '주말 오후 근무자를 모집합니다.',
+  description: '주말 점심 시간대 근무자를 모집합니다.',
   closed: false,
-  shop: {
-    href: '/shops/shop-bridge',
-    item: {
-      id: 'shop-bridge',
-      name: '한강 브런치 카페',
-      category: '카페',
-      address1: '서울시 용산구',
-      address2: '한강로 2가 123-45',
-      description: '한강 뷰를 자랑하는 주말 전용 브런치 카페입니다.',
-      imageUrl: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=800&auto=format&fit=crop',
-      originalHourlyPay: 15000,
-    },
-  },
-};
-
-const expiredNotice: NoticeDetail = {
-  ...upcomingNotice,
-  id: 'notice-expired',
-  startsAt: new Date(Date.now() - 1000 * 60 * 60 * 6).toISOString(), // 6시간 전 시작
-  hourlyPay: 20000,
-};
-
-const closedNotice: NoticeDetail = {
-  ...expiredNotice,
-  id: 'notice-closed',
-  closed: true,
+  name: '한강 브런치 카페',
+  address1: '서울시 용산구',
+  imageUrl: 'https://picsum.photos/id/1080/640/360',
+  originalHourlyPay: 15000,
+  href: '/notices/notice-001',
 };
 
 const meta = {
@@ -43,9 +22,6 @@ const meta = {
   component: Post,
   parameters: {
     layout: 'centered',
-  },
-  args: {
-    link: '/notices/notice-upcoming',
   },
   tags: ['autodocs'],
 } satisfies Meta<typeof Post>;
@@ -56,20 +32,33 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    notice: upcomingNotice,
+    notice: baseNotice,
   },
 };
 
 export const Expired: Story = {
   args: {
-    notice: expiredNotice,
-    link: '/notices/notice-expired',
+    notice: {
+      ...baseNotice,
+      id: 'notice-002',
+      startsAt: '2023-08-01T11:00:00Z',
+      hourlyPay: 20000,
+      originalHourlyPay: 13000,
+      href: '/notices/notice-002',
+    },
   },
 };
 
 export const Closed: Story = {
   args: {
-    notice: closedNotice,
-    link: '/notices/notice-closed',
+    notice: {
+      ...baseNotice,
+      id: 'notice-003',
+      closed: true,
+      hourlyPay: 9500,
+      originalHourlyPay: 9000,
+      startsAt: '2023-07-01T09:00:00Z',
+      href: '/notices/notice-003',
+    },
   },
 };

@@ -3,7 +3,7 @@ import { calcPayIncreasePercent } from '@/lib/utils/calcPayIncrease';
 import { cn } from '@/lib/utils/cn';
 import { formatNumber } from '@/lib/utils/formatNumber';
 import { getTime } from '@/lib/utils/getTime';
-import { NoticeDetail } from '@/types/notice';
+import type { PostCard } from '@/types/notice';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useMemo } from 'react';
@@ -22,9 +22,9 @@ import {
   type PostStatusVariant,
 } from './post.styles';
 type NoticeStatus = 'open' | 'expired' | 'closed';
+
 interface PostProps {
-  notice: NoticeDetail;
-  link: string;
+  notice: PostCard;
 }
 const STATUS_LABEL = {
   expired: '지난 공고',
@@ -37,31 +37,37 @@ const getNoticeStatus = (closed: boolean, startsAt: string): NoticeStatus => {
   if (closed) return 'closed';
   return hasShiftStarted(startsAt) ? 'expired' : 'open';
 };
-const Post = ({ notice, link }: PostProps) => {
-  const { hourlyPay, startsAt, workhour, closed, shop } = notice;
+
+const Post = ({ notice }: PostProps) => {
+  const {
+    hourlyPay,
+    startsAt,
+    workhour,
+    closed,
+    originalHourlyPay,
+    imageUrl,
+    name,
+    address1,
+    href,
+  } = notice;
   const status = useMemo(() => getNoticeStatus(closed, startsAt), [closed, startsAt]);
   const payIncreasePercent = useMemo(
-    () => calcPayIncreasePercent(hourlyPay, shop?.item.originalHourlyPay ?? 0),
-    [hourlyPay, shop?.item.originalHourlyPay]
+    () => calcPayIncreasePercent(hourlyPay, originalHourlyPay),
+    [hourlyPay, originalHourlyPay]
   );
-
-  if (!shop)
-    return <div className='text-center text-heading-s text-gray-400'>가게 정보가 없습니다.</div>;
-
-  const { item } = shop;
   const { date, startTime, endTime } = getTime(startsAt, workhour);
   const statusVariant: PostStatusVariant = status === 'open' ? 'open' : 'inactive';
   const payIncreaseLabel =
     payIncreasePercent && (payIncreasePercent > 100 ? '100% 이상' : `${payIncreasePercent}%`);
   return (
-    <Link href={link} className={postWrapper()}>
+    <Link href={href} className={postWrapper()}>
       <div className={postImageWrapper()}>
-        <Image src={item.imageUrl} alt={`${item.name} 가게 이미지`} fill className='object-cover' />
+        <Image src={imageUrl} alt={`${name} 가게 이미지`} fill className='object-cover' />
         {status !== 'open' && <div className={postImageDimmed()}>{STATUS_LABEL[status]}</div>}
       </div>
       <div className={cn('mt-4', 'tablet:mt-6')}>
         <ul className='flex flex-col flex-nowrap gap-2'>
-          <li className={postHeading({ status: statusVariant })}>{item.name}</li>
+          <li className={postHeading({ status: statusVariant })}>{name}</li>
           <li className={workInfoLayout()}>
             <Icon
               iconName='clock'
@@ -80,7 +86,7 @@ const Post = ({ notice, link }: PostProps) => {
               ariaLabel='근무위치'
               className={workInfoIcon({ status: statusVariant })}
             />
-            <p className={workInfoText({ status: statusVariant })}>{item.address1}</p>
+            <p className={workInfoText({ status: statusVariant })}>{address1}</p>
           </li>
         </ul>
         <div className={workPayLayout()}>

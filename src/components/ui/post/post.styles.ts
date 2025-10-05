@@ -6,7 +6,7 @@ export const postWrapper = cva(
 );
 
 export const postImageWrapper = cva(
-  'relative rounded-xl overflow-hidden h-[84px] tablet:h-[160px]'
+  'relative rounded-xl overflow-hidden h-[120px] tablet:h-[160px]'
 );
 
 export const postImageDimmed = cva(
@@ -49,7 +49,7 @@ export const workPayLayout = cva(
   'mt-4 flex flex-wrap items-center justify-between gap-x-3 tablet:flex-nowrap'
 );
 
-export const postBadge = cva('flex items-center gap-0.5 rounded-full py-2 tablet:px-3', {
+export const postBadge = cva('flex items-center gap-x-0.5 rounded-full tablet:py-2 tablet:px-3', {
   variants: {
     status: {
       open: 'tablet:bg-red-400',

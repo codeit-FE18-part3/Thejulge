@@ -19,3 +19,5 @@ export interface Shop extends ShopBase {
     href: string;
   };
 }
+
+export type ShopSummary = Pick<ShopBase, 'name' | 'address1' | 'imageUrl' | 'originalHourlyPay'>;
