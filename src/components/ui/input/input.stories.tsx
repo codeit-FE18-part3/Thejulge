@@ -2,6 +2,7 @@
 import Button from '@/components/ui/button/button';
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import { useState } from 'react';
+import DateTimeInput from './DateTimeInput';
 import Input from './input';
 
 const meta: Meta<typeof Input> = {
@@ -81,4 +82,13 @@ export const MiniFormDemo: Story = {
       </div>
     );
   },
+};
+
+// 날짜 입력 인풋 //
+export const DateTimeInputStory: StoryObj = {
+  render: () => (
+    <div>
+      <DateTimeInput />
+    </div>
+  ),
 };
