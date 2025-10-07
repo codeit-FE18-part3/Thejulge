@@ -1,4 +1,3 @@
-import { getDaysInMonth } from '@/lib/utils/getDaysInMonth';
 import { CalendarProps, SelectMode } from '@/types/calendar';
 import { useState } from 'react';
 import CalendarHeader from './CalendarHeader';
@@ -41,37 +40,10 @@ export default function Calendar({ value, onSelect }: CalendarProps) {
     setSelectMode(prev => (prev === 'day' ? 'month' : prev === 'month' ? 'year' : 'day'));
   };
 
-  const days = getDaysInMonth(currentMonth.getFullYear(), currentMonth.getMonth());
-
   return (
     <div className='mt-3 w-80 rounded-xl border bg-white p-4'>
       <CalendarHeader />
-      {selectMode === 'day' && (
-        <>
-          <div className='text-md mb-3 grid grid-cols-7 text-center font-medium text-gray-500'>
-            {['일', '월', '화', '수', '목', '금', '토'].map(day => (
-              <div key={day}>{day}</div>
-            ))}
-          </div>
-          <div className='text-md grid grid-cols-7 gap-1 text-center'>
-            {days.map((date, i) => {
-              if (!date) return <div key={i}></div>;
-              const isSelected = date.toDateString() === currendDay.toDateString();
-              return (
-                <button
-                  key={i}
-                  onClick={() => handleSelect(date)}
-                  className={`rounded-lg py-1.5 transition ${
-                    isSelected ? 'bg-blue-200 font-semibold text-white' : 'hover:bg-blue-100'
-                  }`}
-                >
-                  {date.getDate()}
-                </button>
-              );
-            })}
-          </div>
-        </>
-      )}
+      {selectMode === 'day' && <></>}
 
       {selectMode === 'month' && (
         <div className='grid grid-cols-3 gap-2 text-center'>
