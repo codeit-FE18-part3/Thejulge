@@ -1,7 +1,4 @@
-interface YearViewProps {
-  currentMonth: Date;
-  onSelect: (year: number) => void;
-}
+import { YearViewProps } from '@/types/calendar';
 
 export default function YearViewMode({ currentMonth, onSelect }: YearViewProps) {
   const START_YEAR = Math.floor(currentMonth.getFullYear() / 10) * 10;

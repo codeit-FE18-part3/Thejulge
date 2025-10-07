@@ -1,10 +1,5 @@
 import { getDaysInMonth } from '@/lib/utils/getDaysInMonth';
-
-interface DayViewProps {
-  currentMonth: Date;
-  currentDay: Date;
-  onSelect: (date: Date) => void;
-}
+import { DayViewProps } from '@/types/calendar';
 
 export default function DayViewMode({ currentMonth, currentDay, onSelect }: DayViewProps) {
   const DAYS = getDaysInMonth(currentMonth.getFullYear(), currentMonth.getMonth());

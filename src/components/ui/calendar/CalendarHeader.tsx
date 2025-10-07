@@ -1,13 +1,6 @@
 import { Icon } from '@/components/ui/icon';
-import { SelectMode } from '@/types/calendar';
+import { CalendarHeaderProps } from '@/types/calendar';
 import { clsx } from 'clsx';
-
-interface CalendarHeaderProps {
-  selectMode: SelectMode;
-  currentMonth: Date;
-  onToggleMode: () => void;
-  onChange: (offset: number) => void;
-}
 
 export default function CalendarHeader({
   selectMode,

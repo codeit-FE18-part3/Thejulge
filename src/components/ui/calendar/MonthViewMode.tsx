@@ -1,6 +1,4 @@
-interface MonthViewProps {
-  onSelect: (month: number) => void;
-}
+import { MonthViewProps } from '@/types/calendar';
 
 export default function MonthViewMode({ onSelect: onSelectMonth }: MonthViewProps) {
   return (
