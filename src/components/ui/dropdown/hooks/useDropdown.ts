@@ -1,5 +1,5 @@
 import { RefObject } from 'react';
-import useDropdownPosition from './._useDropdownPosition';
+import useDropdownPosition from './useDropdownPosition';
 import useDropdownScroll from './useDropdownScroll';
 import useKeyboardNavigation from './useKeyboardNavigation';
 
