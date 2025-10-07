@@ -1,6 +1,8 @@
 import { CalendarProps, SelectMode } from '@/types/calendar';
 import { useState } from 'react';
 import CalendarHeader from './CalendarHeader';
+import DayViewMode from './DayViewMode';
+import MonthViewMode from './MonthViewMode';
 
 export default function Calendar({ value, onSelect }: CalendarProps) {
   const [currendDay, setCurrentDay] = useState<Date>(value ?? new Date());
@@ -43,24 +45,9 @@ export default function Calendar({ value, onSelect }: CalendarProps) {
   return (
     <div className='mt-3 w-80 rounded-xl border bg-white p-4'>
       <CalendarHeader />
-      {selectMode === 'day' && <></>}
+      {selectMode === 'day' && <DayViewMode />}
 
-      {selectMode === 'month' && (
-        <div className='grid grid-cols-3 gap-2 text-center'>
-          {Array.from({ length: 12 }).map((_, i) => (
-            <button
-              key={i}
-              onClick={() => {
-                setCurrentMonth(new Date(currentMonth.getFullYear(), i, 1));
-                setSelectMode('day');
-              }}
-              className='rounded-lg py-2 hover:bg-blue-100'
-            >
-              {i + 1}월
-            </button>
-          ))}
-        </div>
-      )}
+      {selectMode === 'month' && <MonthViewMode />}
 
       {selectMode === 'year' && (
         <div className='grid grid-cols-3 gap-2 text-center'>
