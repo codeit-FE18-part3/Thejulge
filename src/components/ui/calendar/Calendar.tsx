@@ -50,24 +50,7 @@ export default function Calendar({ value, onSelect }: CalendarProps) {
       {selectMode === 'month' && <MonthViewMode />}
 
       {selectMode === 'year' && (
-        <div className='grid grid-cols-3 gap-2 text-center'>
-          {Array.from({ length: 10 }).map((_, i) => {
-            const startYear = Math.floor(currentMonth.getFullYear() / 10) * 10;
-            const year = startYear + i;
-            return (
-              <button
-                key={year}
-                onClick={() => {
-                  setCurrentMonth(new Date(year, currentMonth.getMonth(), 1));
-                  setSelectMode('month');
-                }}
-                className='rounded-lg py-2 hover:bg-blue-100'
-              >
-                {year}
-              </button>
-            );
-          })}
-        </div>
+
       )}
 
       <div className='mt-3 text-right'>
