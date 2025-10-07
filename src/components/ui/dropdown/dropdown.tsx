@@ -1,28 +1,16 @@
 import { Icon } from '@/components/ui/icon';
 import useClickOutside from '@/hooks/useClickOutside';
+import useEscapeKey from '@/hooks/useEscapeKey';
+import useSafeRef from '@/hooks/useSafeRef';
 import useToggle from '@/hooks/useToggle';
 import { cn } from '@/lib/utils/cn';
-import { useRef, useState } from 'react';
-const DROPDOWN_STYLE = {
-  base: 'flex-1 text-left min-w-[110px]',
-  md: 'base-input !pr-10',
-  sm: 'rounded-md bg-gray-100 py-1.5 pl-3 pr-7 text-body-s font-bold',
-} as const;
-const DROPDOWN_ICON_STYLE = {
-  base: 'absolute top-1/2 -translate-y-1/2',
-  md: 'right-5',
-  sm: 'right-3',
-} as const;
-
-const DROPDOWN_ITEM_STYLE = {
-  base: 'border-b-[1px] last:border-b-0 block w-full whitespace-nowrap border-gray-200 px-5 text-body-s hover:bg-gray-50',
-  md: 'py-3',
-  sm: 'py-2',
-} as const;
+import { useState } from 'react';
+import { DROPDOWN_ICON_STYLE, DROPDOWN_ITEM_STYLE, DROPDOWN_STYLE } from './dropdown.styles';
+import useDropdown from './hooks/useDropdown';
 
 interface DropdownProps<T extends string> {
   name: string;
-  label: string;
+  areaLabel: string;
   values: readonly T[];
   size?: 'md' | 'sm';
   defaultValue?: T;
@@ -30,10 +18,10 @@ interface DropdownProps<T extends string> {
   className?: string;
 }
 
-// EX : <Dropdown name="formName" label="접근성라벨" values={ADDRESS_CODE} />
+// EX : <Dropdown name="formName" areaLabel="접근성라벨" values={ADDRESS_CODE} />
 const Dropdown = <T extends string>({
   name,
-  label,
+  areaLabel: label,
   values,
   size = 'md',
   defaultValue,
@@ -42,24 +30,32 @@ const Dropdown = <T extends string>({
 }: DropdownProps<T>) => {
   const { value: isOpen, toggle, setClose } = useToggle();
   const [selected, setSelected] = useState<T | undefined>(defaultValue);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
+  const [attachDropdownRef, dropdownRef] = useSafeRef<HTMLDivElement>();
+  const [attachTriggerRef, triggerRef] = useSafeRef<HTMLButtonElement>();
+  const [attachListRef, listRef] = useSafeRef<HTMLDivElement>();
   const handleSelect = (value: T) => {
     setSelected(value);
     setClose();
   };
 
-  useClickOutside(dropdownRef, () => setClose());
-
+  const { cursorIndex, position } = useDropdown({
+    values,
+    isOpen,
+    listRef,
+    triggerRef,
+    onSelect: handleSelect,
+  });
+  useClickOutside(dropdownRef, setClose);
+  useEscapeKey(setClose);
   return (
-    <div className={cn('relative inline-flex', className)} ref={dropdownRef}>
+    <div className={cn('relative inline-flex', className)} ref={attachDropdownRef}>
       {/* form 제출 대응 */}
       <input type='hidden' name={name} value={selected ?? ''} />
 
       {/* 옵션 버튼 */}
       <button
+        ref={attachTriggerRef}
         type='button'
-        aria-haspopup='listbox'
         aria-expanded={isOpen}
         aria-label={label}
         className={cn(
@@ -83,21 +79,26 @@ const Dropdown = <T extends string>({
       {/* 옵션 리스트 */}
       {isOpen && (
         <div
+          ref={attachListRef}
           role='listbox'
           aria-label={label}
-          className='scroll-bar shadow-inset-top absolute top-[calc(100%+8px)] z-[1] max-h-56 w-full rounded-md border border-gray-300 bg-white'
+          className={cn(
+            'scroll-bar absolute z-[1] max-h-56 w-full rounded-md border border-gray-300 bg-white shadow-inset-top',
+            position === 'top' ? 'bottom-[calc(100%+8px)]' : 'top-[calc(100%+8px)]'
+          )}
         >
-          {values.map(value => (
+          {values.map((value, index) => (
             <button
               key={value}
               role='option'
               aria-selected={selected === value}
+              onClick={() => handleSelect(value)}
               className={cn(
                 DROPDOWN_ITEM_STYLE['base'],
                 size === 'md' ? DROPDOWN_ITEM_STYLE['md'] : DROPDOWN_ITEM_STYLE['sm'],
-                selected === value && 'bg-red-100 font-bold'
+                selected === value && 'bg-red-200 font-bold',
+                cursorIndex === index && 'bg-gray-100'
               )}
-              onClick={() => handleSelect(value)}
             >
               {value}
             </button>
