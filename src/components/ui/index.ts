@@ -4,4 +4,4 @@ export { Dropdown } from './dropdown';
 export { Icon } from './icon';
 export { Input } from './input';
 export { Modal, Notification } from './modal';
-
+export { Post } from './post';

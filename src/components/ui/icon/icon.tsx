@@ -1,10 +1,17 @@
-import { ICONS, ICON_SIZES, type IconName, type IconSize } from '@/constants/icon';
+import {
+  ICONS,
+  ICON_RESPONSIVE_SIZES,
+  ICON_SIZES,
+  type IconName,
+  type IconResponsiveSize,
+  type IconSize,
+} from '@/constants/icon';
 import { cn } from '@/lib/utils/cn';
 import { forwardRef } from 'react';
 interface IconProps extends React.HTMLAttributes<HTMLSpanElement> {
   iconName: IconName;
   iconSize?: IconSize; // 모바일 기본 사이즈
-  bigScreenSize?: IconSize; // PC에서 사이즈 다를때 사용
+  bigScreenSize?: IconResponsiveSize; // PC에서 사이즈 다를때 사용
   className?: string;
   ariaLabel: string; // 접근성 라벨
   decorative?: boolean;
@@ -32,7 +39,7 @@ const Icon = forwardRef<HTMLSpanElement, IconProps>(
   ) => {
     const url = ICONS[iconName];
     const size = ICON_SIZES[iconSize];
-    const bigSize = bigScreenSize ? `tablet:${ICON_SIZES[bigScreenSize]}` : '';
+    const bigSize = bigScreenSize ? ICON_RESPONSIVE_SIZES[bigScreenSize] : '';
 
     return (
       <span

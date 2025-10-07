@@ -63,3 +63,13 @@ export const ICON_SIZES = {
 } as const;
 
 export type IconSize = keyof typeof ICON_SIZES;
+
+export const ICON_RESPONSIVE_SIZES = {
+  'x-sm': 'tablet:w-2.5 tablet:h-2.5',
+  sm: 'tablet:w-4 tablet:h-4',
+  rg: 'tablet:w-5 tablet:h-5',
+  md: 'tablet:w-6 tablet:h-6',
+  lg: 'tablet:w-8 tablet:h-8',
+} as const;
+
+export type IconResponsiveSize = keyof typeof ICON_RESPONSIVE_SIZES;

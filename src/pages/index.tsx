@@ -1,3 +1,9 @@
+import PostWrapper from '@/components/ui/post/postWrapper';
+
 export default function Home() {
-  return <></>;
+  return (
+    <>
+      <PostWrapper />
+    </>
+  );
 }

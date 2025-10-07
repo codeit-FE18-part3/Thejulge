@@ -1,7 +1,5 @@
 import { Footer, Header, Wrapper } from '@/components/layout';
-
 import AppProvider from '@/context/appProvider';
-
 import '@/styles/fonts.css';
 import '@/styles/globals.css';
 import type { NextPage } from 'next';

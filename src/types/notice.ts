@@ -1,14 +1,20 @@
-import { User } from './user';
+/* -------------------- 공고 -------------------- */
 
-export interface Notice {
-  id: string;
+import { ShopSummary } from './shop';
+
+// 공고 등록
+export interface NoticeBase {
   hourlyPay: number;
-  description: string;
-  startsAt: string;
+  startsAt: string; // RFC 3339
   workhour: number;
-  closed: boolean;
-  user?: {
-    item: User;
-    href?: string;
-  };
+  description: string;
 }
+
+// 공고 목록 및 알림 목록
+export interface Notice extends NoticeBase {
+  id: string;
+  closed: boolean;
+}
+
+
+export type PostCard = Notice & ShopSummary & { href: string };
