@@ -1,9 +1,11 @@
+import {
+  CalendarHeader,
+  DayViewMode,
+  MonthViewMode,
+  YearViewMode,
+} from '@/components/ui/calendar/';
 import { CalendarProps, SelectMode } from '@/types/calendar';
 import { useState } from 'react';
-import CalendarHeader from './CalendarHeader';
-import DayViewMode from './DayViewMode';
-import MonthViewMode from './MonthViewMode';
-import YearViewMode from './YearViewMode';
 
 export default function Calendar({ value, onSelect }: CalendarProps) {
   const [currentDay, setCurrentDay] = useState<Date>(value ?? new Date());

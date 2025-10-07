@@ -1,4 +1,10 @@
-export { Calendar } from '@/components/ui/calendar';
+export {
+  Calendar,
+  CalendarHeader,
+  DayViewMode,
+  MonthViewMode,
+  YearViewMode,
+} from '@/components/ui/calendar';
 export { DateTimeInput, Input } from '@/components/ui/input';
 export { Table } from '@/components/ui/table';
 export { Button } from './button';
