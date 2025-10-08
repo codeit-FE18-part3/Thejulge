@@ -12,7 +12,7 @@ const meta: Meta<typeof Dropdown> = {
   tags: ['autodocs'],
   args: {
     name: 'status',
-    label: '카테고리',
+    areaLabel: '카테고리',
     placeholder: '카테고리를 선택하세요',
     values: CATEGORY_CODE, // 기본값
   },
