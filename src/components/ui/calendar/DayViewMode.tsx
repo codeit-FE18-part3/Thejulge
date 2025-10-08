@@ -1,8 +1,8 @@
-import { getDaysInMonth } from '@/lib/utils/getDaysInMonth';
+import { fillCalendarDays } from '@/lib/utils/fillCalendarDays';
 import { DayViewProps } from '@/types/calendar';
 
 export default function DayViewMode({ currentMonth, currentDay, onSelect }: DayViewProps) {
-  const DAYS = getDaysInMonth(currentMonth.getFullYear(), currentMonth.getMonth());
+  const DAYS = fillCalendarDays(currentMonth.getFullYear(), currentMonth.getMonth());
   const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
 
   return (
