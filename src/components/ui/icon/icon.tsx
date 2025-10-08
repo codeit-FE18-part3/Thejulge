@@ -13,7 +13,7 @@ interface IconProps extends React.HTMLAttributes<HTMLSpanElement> {
   iconSize?: IconSize; // 모바일 기본 사이즈
   bigScreenSize?: IconResponsiveSize; // PC에서 사이즈 다를때 사용
   className?: string;
-  ariaLabel: string; // 접근성 라벨
+  ariaLabel?: string; // 접근성 라벨
   decorative?: boolean;
 }
 
