@@ -6,7 +6,6 @@ import { getTime } from '@/lib/utils/getTime';
 import type { PostCard } from '@/types/notice';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useMemo } from 'react';
 import {
   badgeIcon,
   badgeText,
@@ -48,19 +47,18 @@ const Post = ({ notice }: PostProps) => {
     imageUrl,
     name,
     address1,
-    href,
+    shopId,
   } = notice;
-  const status = useMemo(() => getNoticeStatus(closed, startsAt), [closed, startsAt]);
-  const payIncreasePercent = useMemo(
-    () => calcPayIncreasePercent(hourlyPay, originalHourlyPay),
-    [hourlyPay, originalHourlyPay]
-  );
+  const status = getNoticeStatus(closed, startsAt);
+  const payIncreasePercent = calcPayIncreasePercent(hourlyPay, originalHourlyPay);
   const { date, startTime, endTime } = getTime(startsAt, workhour);
   const statusVariant: PostStatusVariant = status === 'open' ? 'open' : 'inactive';
   const payIncreaseLabel =
     payIncreasePercent && (payIncreasePercent > 100 ? '100% 이상' : `${payIncreasePercent}%`);
+  const href = `/notices/${shopId}`;
+
   return (
-    <Link href={href} className={postWrapper()}>
+    <Link href={href} className={postWrapper()} aria-label={`${name} 공고 상세로 이동`}>
       <div className={postImageWrapper()}>
         <Image src={imageUrl} alt={`${name} 가게 이미지`} fill className='object-cover' />
         {status !== 'open' && <div className={postImageDimmed()}>{STATUS_LABEL[status]}</div>}
@@ -102,7 +100,7 @@ const Post = ({ notice }: PostProps) => {
                 iconName='arrowUp'
                 iconSize='sm'
                 bigScreenSize='rg'
-                ariaLabel='시급정보'
+                decorative
                 className={badgeIcon({ status: statusVariant })}
               />
             </div>
