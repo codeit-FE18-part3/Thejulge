@@ -1,5 +1,5 @@
 import { Calendar } from '@/components/ui/calendar';
-import { formatDate } from '@/lib/utils/timeFormatter';
+import { formatDate } from '@/lib/utils/dateFormatter';
 import { useCallback, useState } from 'react';
 import Input from './input';
 

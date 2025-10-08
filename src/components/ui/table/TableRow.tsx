@@ -1,5 +1,5 @@
 import { TableRowProps } from '@/components/ui/table/TableRowProps';
-import { getTime } from '@/lib/utils/timeFormatter';
+import { getTime } from '@/lib/utils/dateFormatter';
 
 interface TableTypeVariant {
   rowData: TableRowProps;

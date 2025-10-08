@@ -1,5 +1,5 @@
 import TimeSelector from '@/components/ui/calendar/TimeSelector';
-import { formatTime } from '@/lib/utils/timeFormatter';
+import { formatTime } from '@/lib/utils/dateFormatter';
 import { Period } from '@/types/calendar';
 import { useCallback, useState } from 'react';
 import Input from './input';
@@ -20,24 +20,61 @@ export default function TimeInput() {
   // 시간 선택
   const handleTimeSelect = useCallback(
     (value: string) => {
-      const [selectedPeriod, time] = value.split(' ');
-      const [hours, minutes] = time.split(':').map(Number);
+      const parts = value.split(' ');
+      const periodValue = parts.length === 2 ? (parts[0] as Period) : period;
+      const timePart = parts.length === 2 ? parts[1] : parts[0];
+
+      const [hours, minutes] = timePart.split(':').map(Number);
       if (isNaN(hours) || isNaN(minutes)) return;
 
       const baseDate = selectedTime ?? new Date();
       const newDate = new Date(baseDate);
-
       newDate.setHours(hours, minutes);
 
-      updateTime(newDate, selectedPeriod as Period);
+      updateTime(newDate, periodValue);
     },
-    [selectedTime, updateTime]
+    [selectedTime, updateTime, period]
   );
 
   // typing
   const handleTimeInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
+    const newTypedNumbers = e.target.value.replace(/[^0-9]/g, '');
+    const typedLength = newTypedNumbers.length;
+
+    setInputValue(newTypedNumbers);
+
+    if (typedLength > 4) {
+      const hours = parseInt(newTypedNumbers.slice(0, typedLength - 2));
+
+      if (isNaN(hours) || hours < 1 || hours > 12) {
+        setInputValue(newTypedNumbers.slice(-1));
+        return;
+      }
+    }
+
+    if (typedLength < 3) return;
+
+    const hoursTyped = newTypedNumbers.slice(0, typedLength - 2);
+    const minutesTyped = newTypedNumbers.slice(-2);
+
+    const h = parseInt(hoursTyped);
+    const m = parseInt(minutesTyped);
+
+    if (!isNaN(h) && !isNaN(m)) {
+      if (!(h >= 1 && h <= 12 && m >= 0 && m < 60)) return;
+
+      const periodValue: Period = h > 12 ? '오후' : '오전';
+
+      const baseDate = selectedTime ?? new Date();
+      const newDate = new Date(baseDate);
+      newDate.setHours(h, m);
+
+      updateTime(newDate, periodValue);
+    }
   };
+
+  const hours = selectedTime ? String(selectedTime.getHours() % 12 || 12).padStart(2, '0') : '12';
+  const minutes = selectedTime ? String(selectedTime.getMinutes()).padStart(2, '0') : '00';
 
   return (
     <div className='relative w-full'>
@@ -48,10 +85,14 @@ export default function TimeInput() {
         onClick={() => setOpen(prev => !prev)}
         onChange={handleTimeInputChange}
       />
+
       {open && (
         <div>
           <TimeSelector
             onSelect={handleTimeSelect}
+            period={period}
+            hours={hours}
+            minutes={minutes}
             value={selectedTime ? formatTime(selectedTime) : ''}
           />
         </div>

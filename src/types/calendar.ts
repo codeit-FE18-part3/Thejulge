@@ -35,5 +35,8 @@ export type Period = '오전' | '오후';
 
 export interface TimeSelectorProps {
   value?: string;
+  period: Period;
+  hours: string;
+  minutes: string;
   onSelect?: (value: string) => void;
 }
