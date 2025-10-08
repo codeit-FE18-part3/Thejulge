@@ -13,14 +13,6 @@ export function formatTime(date: Date): string {
   return `${hours}:${minutes}`;
 }
 
-// 문자열 -> DATE 변환
-export function parsedDateTime(value: string): Date | null {
-  const ISO_STRING = value.replace(' ', 'T');
-  const DATE = new Date(ISO_STRING);
-  return isNaN(DATE.getTime()) ? null : DATE;
-}
-
-// DATE -> 'YYYY-MM-DD HH:mm' 변환
 export function formatDateTime(date: Date | null): string {
   return date ? `${formatDate(date)} ${formatTime(date)}` : '';
 }

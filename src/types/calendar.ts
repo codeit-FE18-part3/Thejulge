@@ -30,8 +30,10 @@ export type CalendarDay = {
   isCurrentMonth: boolean;
 };
 
-// Time Calendar 관련
-export interface TimeCalendarProps {
-  value: string;
-  onChange: (value: string) => void;
+// Time Selector 관련
+export type Period = '오전' | '오후';
+
+export interface TimeSelectorProps {
+  value?: string;
+  onSelect?: (value: string) => void;
 }

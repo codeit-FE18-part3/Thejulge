@@ -38,6 +38,7 @@ export default function Calendar({ value, onSelect }: CalendarProps) {
     setCurrentMonth(TODAY);
     setCurrentDay(TODAY);
     setSelectMode('day');
+    onSelect?.(TODAY);
   };
 
   // 모드 전환

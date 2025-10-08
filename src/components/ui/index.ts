@@ -3,9 +3,10 @@ export {
   CalendarHeader,
   DayViewMode,
   MonthViewMode,
+  TimeSelector,
   YearViewMode,
 } from '@/components/ui/calendar';
-export { DateTimeInput, Input } from '@/components/ui/input';
+export { DateInput, Input, TimeInput } from '@/components/ui/input';
 export { Table } from '@/components/ui/table';
 export { Button } from './button';
 export { Dropdown } from './dropdown';
