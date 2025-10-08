@@ -1,3 +1,5 @@
+// Calendar 관련
+
 export type SelectMode = 'day' | 'month' | 'year';
 
 export interface CalendarProps {
@@ -25,4 +27,10 @@ export interface MonthViewProps {
 export interface YearViewProps {
   currentMonth: Date;
   onSelect: (year: number) => void;
+}
+
+// Time Calendar 관련
+export interface TimeCalendarProps {
+  value: string;
+  onChange: (value: string) => void;
 }

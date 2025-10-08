@@ -1,4 +1,6 @@
 import { Calendar } from '@/components/ui/calendar';
+import TimeCalendar from '@/components/ui/calendar/TimeCalendar';
+import { formatDate, formatTime } from '@/lib/utils/getTime';
 import { useState } from 'react';
 import Input from './input';
 
@@ -7,15 +9,16 @@ export default function DateTimeInput() {
   const [selectedDateTime, setSelectedDateTime] = useState<Date | null>(null);
   const [inputValue, setInputValue] = useState('');
 
-  const parseDateTime = (value: string): Date | null => {
-    const date = new Date(value.replace(' ', 'T'));
-    return isNaN(date.getTime()) ? null : date;
+  // 문자열 -> DATE 변환
+  const parsedDateTime = (value: string): Date | null => {
+    const ISO_STRING = value.replace(' ', 'T');
+    const DATE = new Date(ISO_STRING);
+    return isNaN(DATE.getTime()) ? null : DATE;
   };
 
-  const formatDateTime = (date: Date | null): string => {
-    if (!date) return '';
-    return date.toISOString().slice(0, 16).replace('T', ' ');
-  };
+  // DATE -> 'YYYY-MM-DD HH:mm' 변환
+  const formatDateTime = (date: Date | null): string =>
+    date ? `${formatDate(date)} ${formatTime(date)}` : '';
 
   const updateDateTime = (date: Date) => {
     setSelectedDateTime(date);
@@ -23,37 +26,38 @@ export default function DateTimeInput() {
   };
 
   const handleDateSelect = (date: Date) => {
-    const baseTime = selectedDateTime ?? new Date();
+    const baseDateTime = selectedDateTime ?? new Date();
     const newDateTime = new Date(date);
-    newDateTime.setHours(baseTime.getHours(), baseTime.getMinutes());
+    newDateTime.setHours(baseDateTime.getHours(), baseDateTime.getMinutes());
     updateDateTime(newDateTime);
   };
 
-  const handleTimeSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const [hours, minutes] = e.target.value.split(':').map(Number);
-    const baseTime = selectedDateTime ?? new Date();
-    const newDateTime = new Date(baseTime);
+  const handleTimeSelect = (value: string) => {
+    const [hours, minutes] = value.split(':').map(Number);
+    if (isNaN(hours) || isNaN(minutes)) return;
+
+    const baseDateTime = selectedDateTime ?? new Date();
+    const newDateTime = new Date(baseDateTime);
+
     newDateTime.setHours(hours, minutes);
     updateDateTime(newDateTime);
   };
 
   const handleDateTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value.replace(/\D/g, '');
-
-    if (value.length > 4) value = value.slice(0, 4) + '-' + value.slice(4);
-    if (value.length > 7) value = value.slice(0, 7) + '-' + value.slice(7);
-    if (value.length > 10) value = value.slice(0, 10) + ' ' + value.slice(10);
-    if (value.length > 13) value = value.slice(0, 13) + ':' + value.slice(13);
-    if (value.length > 16) value = value.slice(0, 16);
-
+    const value = e.target.value;
     setInputValue(value);
 
-    const parsed = parseDateTime(value);
+    const parsed = parsedDateTime(value);
     if (parsed) setSelectedDateTime(parsed);
   };
 
+  const getTimeValue = (): string =>
+    selectedDateTime
+      ? `${String(selectedDateTime.getHours()).padStart(2, '0')}:${String(selectedDateTime.getMinutes()).padStart(2, '0')}`
+      : '';
+
   return (
-    <div>
+    <div className='relative w-full'>
       <Input
         id='datetime'
         label='날짜 및 시간 선택'
@@ -66,12 +70,8 @@ export default function DateTimeInput() {
       {open && (
         <div>
           <Calendar onSelect={handleDateSelect} value={selectedDateTime ?? new Date()} />
-          <div>
-            <input
-              type='time'
-              onChange={handleTimeSelect}
-              value={selectedDateTime ? selectedDateTime.toTimeString().slice(0, 5) : ''}
-            />
+          <div className='flexitems-center mt-2 gap-2'>
+            <TimeCalendar value={getTimeValue()} onChange={handleTimeSelect} />
           </div>
         </div>
       )}
