@@ -17,18 +17,13 @@ export interface CalendarHeaderProps extends BaseCalendarProps {
   onChange: (offset: number) => void;
 }
 
-export interface DayViewProps extends BaseCalendarProps {
-  currentDay: Date;
-  onSelect: (date: Date) => void;
+export interface CalendarViewProps<T> extends BaseCalendarProps {
+  onSelect: (value: T) => void;
 }
 
-export interface MonthViewProps {
-  onSelect: (month: number) => void;
-}
-
-export interface YearViewProps extends BaseCalendarProps {
-  onSelect: (year: number) => void;
-}
+export type DayViewProps = CalendarViewProps<Date> & { currentDay: Date };
+export type MonthViewProps = CalendarViewProps<number>;
+export type YearViewProps = CalendarViewProps<number>;
 
 // Time Calendar 관련
 export interface TimeCalendarProps {
