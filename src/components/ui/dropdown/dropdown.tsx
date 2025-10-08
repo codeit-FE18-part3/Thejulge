@@ -4,38 +4,40 @@ import useEscapeKey from '@/hooks/useEscapeKey';
 import useSafeRef from '@/hooks/useSafeRef';
 import useToggle from '@/hooks/useToggle';
 import { cn } from '@/lib/utils/cn';
-import { useState } from 'react';
 import { DROPDOWN_ICON_STYLE, DROPDOWN_ITEM_STYLE, DROPDOWN_STYLE } from './dropdown.styles';
 import useDropdown from './hooks/useDropdown';
 
 interface DropdownProps<T extends string> {
   name: string;
-  areaLabel: string;
+  ariaLabel: string;
+  selected: T | undefined; // Controlled value
   values: readonly T[];
   size?: 'md' | 'sm';
-  defaultValue?: T;
   placeholder?: string;
   className?: string;
+  onChange: (value: T) => void;
 }
 
-// EX : <Dropdown name="formName" areaLabel="접근성라벨" values={ADDRESS_CODE} />
+// EX : <Dropdown name="formName" ariaLabel="접근성라벨" values={ADDRESS_CODE} />
 const Dropdown = <T extends string>({
   name,
-  areaLabel: label,
+  ariaLabel,
   values,
   size = 'md',
-  defaultValue,
+  selected,
   placeholder = '선택해주세요',
   className,
+  onChange,
 }: DropdownProps<T>) => {
   const { value: isOpen, toggle, setClose } = useToggle();
-  const [selected, setSelected] = useState<T | undefined>(defaultValue);
   const [attachDropdownRef, dropdownRef] = useSafeRef<HTMLDivElement>();
   const [attachTriggerRef, triggerRef] = useSafeRef<HTMLButtonElement>();
   const [attachListRef, listRef] = useSafeRef<HTMLDivElement>();
-  const handleSelect = (value: T) => {
-    setSelected(value);
+
+  const handleSelect = (val: T) => {
+    onChange(val);
     setClose();
+    // triggerRef.current?.focus();
   };
 
   const { cursorIndex, position } = useDropdown({
@@ -57,7 +59,7 @@ const Dropdown = <T extends string>({
         ref={attachTriggerRef}
         type='button'
         aria-expanded={isOpen}
-        aria-label={label}
+        aria-label={ariaLabel}
         className={cn(
           DROPDOWN_STYLE['base'],
           size === 'md' ? DROPDOWN_STYLE['md'] : DROPDOWN_STYLE['sm']
@@ -68,7 +70,7 @@ const Dropdown = <T extends string>({
         <Icon
           iconName={isOpen ? 'dropdownUp' : 'dropdownDown'}
           iconSize={size === 'md' ? 'sm' : 'x-sm'}
-          ariaLabel='옵션선택'
+          decorative
           className={cn(
             DROPDOWN_ICON_STYLE['base'],
             size === 'md' ? DROPDOWN_ICON_STYLE['md'] : DROPDOWN_ICON_STYLE['sm']
@@ -81,7 +83,7 @@ const Dropdown = <T extends string>({
         <div
           ref={attachListRef}
           role='listbox'
-          aria-label={label}
+          aria-label={ariaLabel}
           className={cn(
             'scroll-bar absolute z-[1] max-h-56 w-full rounded-md border border-gray-300 bg-white shadow-inset-top',
             position === 'top' ? 'bottom-[calc(100%+8px)]' : 'top-[calc(100%+8px)]'
