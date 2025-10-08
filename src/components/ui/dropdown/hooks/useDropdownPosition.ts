@@ -1,6 +1,6 @@
 import { RefObject, useEffect, useState } from 'react';
 
-const useDropdownPosition = (triggerRef: RefObject<HTMLButtonElement>) => {
+const useDropdownPosition = (triggerRef: RefObject<HTMLButtonElement>, threshold = 300) => {
   const [position, setPosition] = useState<'top' | 'bottom'>('bottom');
 
   useEffect(() => {
@@ -10,7 +10,7 @@ const useDropdownPosition = (triggerRef: RefObject<HTMLButtonElement>) => {
     const updatePosition = () => {
       const rect = trigger.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
-      setPosition(viewportHeight - rect.bottom < 300 ? 'top' : 'bottom');
+      setPosition(viewportHeight - rect.bottom < threshold ? 'top' : 'bottom');
     };
 
     updatePosition();
@@ -20,7 +20,7 @@ const useDropdownPosition = (triggerRef: RefObject<HTMLButtonElement>) => {
       window.removeEventListener('resize', updatePosition);
       window.removeEventListener('scroll', updatePosition, true);
     };
-  }, [triggerRef]);
+  }, [triggerRef, threshold]);
 
   return position;
 };
