@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { Post } from '.';
 import type { PostCard } from '@/types/notice';
+import { Post } from '.';
 
 const baseNotice: PostCard = {
   id: 'notice-001',
@@ -14,7 +14,7 @@ const baseNotice: PostCard = {
   address1: '서울시 용산구',
   imageUrl: 'https://picsum.photos/id/1080/640/360',
   originalHourlyPay: 15000,
-  href: '/notices/notice-001',
+  shopId: 'notice-001',
 };
 
 const meta = {
@@ -44,7 +44,7 @@ export const Expired: Story = {
       startsAt: '2023-08-01T11:00:00Z',
       hourlyPay: 20000,
       originalHourlyPay: 13000,
-      href: '/notices/notice-002',
+      shopId: 'notice-002',
     },
   },
 };
@@ -58,7 +58,7 @@ export const Closed: Story = {
       hourlyPay: 9500,
       originalHourlyPay: 9000,
       startsAt: '2023-07-01T09:00:00Z',
-      href: '/notices/notice-003',
+      shopId: 'notice-003',
     },
   },
 };

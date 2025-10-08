@@ -2,7 +2,7 @@
 import { cva, type VariantProps } from 'class-variance-authority';
 
 export const postWrapper = cva(
-  'block rounded-xl  border border-gray-200 p-3 tablet:rounded-2xl tablet:p-4'
+  'block rounded-xl border border-gray-200 p-3 tablet:rounded-2xl tablet:p-4'
 );
 
 export const postImageWrapper = cva(

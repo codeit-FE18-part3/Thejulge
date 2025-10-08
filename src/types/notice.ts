@@ -16,5 +16,4 @@ export interface Notice extends NoticeBase {
   closed: boolean;
 }
 
-
-export type PostCard = Notice & ShopSummary & { href: string };
+export type PostCard = Notice & ShopSummary & { shopId: string };
