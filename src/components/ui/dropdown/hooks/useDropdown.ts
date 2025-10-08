@@ -19,14 +19,13 @@ const useDropdown = <T extends string>({
   onSelect,
 }: UseDropdownProps<T>) => {
   const position = useDropdownPosition(triggerRef);
-  const { cursorIndex, setCursorIndex } = useKeyboardNavigation({ isOpen, values, onSelect });
+  const { cursorIndex } = useKeyboardNavigation({ isOpen, values, onSelect });
 
   useDropdownScroll(listRef, cursorIndex);
 
   return {
     cursorIndex,
     position,
-    setCursorIndex,
   };
 };
 
