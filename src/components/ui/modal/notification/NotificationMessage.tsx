@@ -1,5 +1,5 @@
-import { getTime } from '@/lib/utils/getTime';
 import { timeAgo } from '@/lib/utils/timeAgo';
+import { getTime } from '@/lib/utils/timeFormatter';
 import { clsx } from 'clsx';
 import { Alert } from './Notification';
 import ResultBadge from './ResultBadge';

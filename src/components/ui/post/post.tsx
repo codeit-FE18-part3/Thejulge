@@ -2,7 +2,7 @@ import { Icon } from '@/components/ui/icon';
 import { calcPayIncreasePercent } from '@/lib/utils/calcPayIncrease';
 import { cn } from '@/lib/utils/cn';
 import { formatNumber } from '@/lib/utils/formatNumber';
-import { getTime } from '@/lib/utils/getTime';
+import { getTime } from '@/lib/utils/timeFormatter';
 import type { PostCard } from '@/types/notice';
 import Image from 'next/image';
 import Link from 'next/link';

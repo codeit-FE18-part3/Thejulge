@@ -1,6 +1,6 @@
 import { Calendar } from '@/components/ui/calendar';
 import TimeCalendar from '@/components/ui/calendar/TimeCalendar';
-import { formatDate, formatTime } from '@/lib/utils/getTime';
+import { formatDateTime, parsedDateTime } from '@/lib/utils/timeFormatter';
 import { useState } from 'react';
 import Input from './input';
 
@@ -8,17 +8,6 @@ export default function DateTimeInput() {
   const [open, setOpen] = useState(false);
   const [selectedDateTime, setSelectedDateTime] = useState<Date | null>(null);
   const [inputValue, setInputValue] = useState('');
-
-  // 문자열 -> DATE 변환
-  const parsedDateTime = (value: string): Date | null => {
-    const ISO_STRING = value.replace(' ', 'T');
-    const DATE = new Date(ISO_STRING);
-    return isNaN(DATE.getTime()) ? null : DATE;
-  };
-
-  // DATE -> 'YYYY-MM-DD HH:mm' 변환
-  const formatDateTime = (date: Date | null): string =>
-    date ? `${formatDate(date)} ${formatTime(date)}` : '';
 
   const updateDateTime = (date: Date) => {
     setSelectedDateTime(date);
@@ -70,7 +59,7 @@ export default function DateTimeInput() {
       {open && (
         <div>
           <Calendar onSelect={handleDateSelect} value={selectedDateTime ?? new Date()} />
-          <div className='flexitems-center mt-2 gap-2'>
+          <div className='mt-2'>
             <TimeCalendar value={getTimeValue()} onChange={handleTimeSelect} />
           </div>
         </div>
