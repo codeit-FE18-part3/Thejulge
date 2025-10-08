@@ -13,18 +13,17 @@ export default function DayViewMode({ currentMonth, currentDay, onSelect }: DayV
         ))}
       </div>
       <div className='text-md grid grid-cols-7 gap-1 text-center'>
-        {DAYS.map((date, i) => {
-          if (!date) return <div key={i}></div>;
-          const isSelected = date.toDateString() === currentDay.toDateString();
+        {DAYS.map((day, i) => {
+          const isSelected = day.date.toDateString() === currentDay.toDateString();
           return (
             <button
               key={i}
-              onClick={() => onSelect(date)}
+              onClick={() => onSelect(day.date)}
               className={`rounded-lg py-1.5 transition ${
                 isSelected ? 'bg-blue-200 font-semibold text-white' : 'hover:bg-blue-100'
-              }`}
+              } ${day.isCurrentMonth ? '' : 'text-gray-400'}`}
             >
-              {date.getDate()}
+              {day.date.getDate()}
             </button>
           );
         })}

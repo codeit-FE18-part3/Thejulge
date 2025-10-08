@@ -1,5 +1,7 @@
+import { CalendarDay } from '@/types/calendar';
+
 export const fillCalendarDays = (year: number, month: number) => {
-  const days: Date[] = [];
+  const days: CalendarDay[] = [];
 
   const firstDayOfMonth = new Date(year, month, 1);
   const fisrtDay = firstDayOfMonth.getDay(); // 첫 날 요일
@@ -11,20 +13,23 @@ export const fillCalendarDays = (year: number, month: number) => {
   // => 지난 달 날짜 2번(일, 월)
   // 30 - 2 + 1 + i -> 29, 30 채워 넣음
   for (let i = 0; i < fisrtDay; i++) {
-    days.push(new Date(year, month - 1, prevMonthLast - fisrtDay + 1 + i));
+    days.push({
+      date: new Date(year, month - 1, prevMonthLast - fisrtDay + 1 + i),
+      isCurrentMonth: false,
+    });
   }
 
   // 이번 달 날짜 채우기
   const lastDate = new Date(year, month + 1, 0).getDate();
   for (let i = 1; i <= lastDate; i++) {
-    days.push(new Date(year, month, i));
+    days.push({ date: new Date(year, month, i), isCurrentMonth: true });
   }
 
   // 다음 달 날짜 채우기
   const totalCells = Math.ceil(days.length / 7) * 7;
   const nextMonthDayCount = totalCells - days.length;
   for (let i = 1; i <= nextMonthDayCount; i++) {
-    days.push(new Date(year, month + 1, i));
+    days.push({ date: new Date(year, month + 1, i), isCurrentMonth: false });
   }
 
   return days;
