@@ -15,11 +15,13 @@ const SearchBar = ({ initValue = '' }) => {
       router.push('/');
       return;
     }
-    return router.push(`/search?q=${keyword}`);
+    router.push({ pathname: '/search', query: { q: keyword } });
   };
 
   return (
     <form
+      role='search'
+      aria-label='공고 검색'
       className={cn('relative order-1 w-full grow', 'tablet:order-none')}
       onSubmit={handleSubmit}
     >
@@ -30,9 +32,12 @@ const SearchBar = ({ initValue = '' }) => {
         ariaLabel='검색'
       />
       <input
-        type='text'
-        id='shopSearchKeyWord'
-        name='shopSearchKeyWord'
+        type='search'
+        id='q'
+        name='q'
+        aria-label='검색어'
+        autoComplete='off'
+        enterKeyHint='search'
         value={keyword}
         onChange={handleChange}
         className={cn(
