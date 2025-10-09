@@ -1,14 +1,22 @@
 import TimeSelector from '@/components/ui/calendar/TimeSelector';
+import useClickOutside from '@/hooks/useClickOutside';
+import useToggle from '@/hooks/useToggle';
 import { formatTime } from '@/lib/utils/dateFormatter';
 import { Period } from '@/types/calendar';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import Input from './input';
 
 export default function TimeInput() {
-  const [open, setOpen] = useState(false);
+  const { value: open, toggle, setClose } = useToggle(false);
   const [period, setPeriod] = useState<Period>('오전');
   const [selectedTime, setSelectedTime] = useState<Date | null>(null);
   const [inputValue, setInputValue] = useState(''); // typing 사용
+
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  useClickOutside(wrapperRef, () => {
+    if (open) setClose();
+  });
 
   // 시간 업데이트 중앙 관리
   const updateTime = useCallback((date: Date, selectedPeriod: Period) => {
@@ -77,17 +85,17 @@ export default function TimeInput() {
   const minutes = selectedTime ? String(selectedTime.getMinutes()).padStart(2, '0') : '00';
 
   return (
-    <div className='relative w-full'>
+    <div ref={wrapperRef} className='relative w-full'>
       <Input
         value={inputValue ? `${period} ${inputValue}` : ''}
         label='시간 선택'
         placeholder='오전 12:30'
-        onClick={() => setOpen(prev => !prev)}
+        onClick={toggle}
         onChange={handleTimeInputChange}
       />
 
       {open && (
-        <div>
+        <div className='absolute'>
           <TimeSelector
             onSelect={handleTimeSelect}
             period={period}

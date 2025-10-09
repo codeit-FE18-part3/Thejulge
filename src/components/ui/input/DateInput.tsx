@@ -1,12 +1,20 @@
 import { Calendar } from '@/components/ui/calendar';
+import useClickOutside from '@/hooks/useClickOutside';
+import useToggle from '@/hooks/useToggle';
 import { formatDate, formatWithDots } from '@/lib/utils/dateFormatter';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import Input from './input';
 
 export default function DateInput() {
-  const [open, setOpen] = useState(false);
+  const { value: open, toggle, setClose } = useToggle(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [inputValue, setInputValue] = useState(''); // typing 사용
+
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  useClickOutside(wrapperRef, () => {
+    if (open) setClose();
+  });
 
   // 날짜 업데이트 중앙 관리
   const updateDate = useCallback((date: Date) => {
@@ -18,9 +26,9 @@ export default function DateInput() {
   const handleDateSelect = useCallback(
     (date: Date) => {
       updateDate(date);
-      setInputValue(formatDate(date));
+      setClose();
     },
-    [updateDate]
+    [updateDate, setClose]
   );
 
   // typing
@@ -75,18 +83,18 @@ export default function DateInput() {
   };
 
   return (
-    <div className='relative w-full'>
+    <div ref={wrapperRef} className='relative w-full'>
       <Input
         id='date'
         label='날짜 선택'
         placeholder={`${formatDate(new Date())}`}
         value={inputValue}
-        onClick={() => setOpen(prev => !prev)}
+        onClick={toggle}
         onChange={handleDateInputChange}
       />
 
       {open && (
-        <div>
+        <div className='absolute'>
           <Calendar onSelect={handleDateSelect} value={selectedDate ?? new Date()} />
         </div>
       )}
