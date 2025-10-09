@@ -18,16 +18,12 @@ const NAV_ITEMS: Record<UserRole, NavItems[]> = {
   employer: [{ href: '/my-shop', label: '내 가게' }],
 };
 
-const getNavVariant = (isLogin: boolean, role: UserRole): UserRole =>
-  !isLogin ? 'guest' : role === 'employer' ? 'employer' : 'employee';
-
 const Nav = () => {
   const { role, isLogin, logout } = useAuth();
-  const navVariant = getNavVariant(isLogin, role);
 
   return (
     <nav className={cn('flex shrink-0 items-center gap-4 text-body-m font-bold', 'desktop:gap-10')}>
-      {NAV_ITEMS[navVariant].map(({ href, label }) => (
+      {NAV_ITEMS[role].map(({ href, label }) => (
         <Link key={href} href={href}>
           {label}
         </Link>
