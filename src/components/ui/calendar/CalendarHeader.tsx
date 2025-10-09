@@ -26,7 +26,7 @@ export default function CalendarHeader({
         return `${startYear} - ${endYear}`;
       }
       default:
-        return '';
+        return '  ';
     }
   }, [selectMode, currentMonth]);
 

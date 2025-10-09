@@ -1,5 +1,7 @@
+import { cn } from '@/lib/utils/cn';
 import { fillCalendarDays } from '@/lib/utils/fillCalendarDays';
 import { DayViewProps } from '@/types/calendar';
+import { clsx } from 'clsx';
 
 export default function DayViewMode({ currentMonth, currentDay, onSelect }: DayViewProps) {
   const DAYS = fillCalendarDays(currentMonth.getFullYear(), currentMonth.getMonth());
@@ -8,9 +10,11 @@ export default function DayViewMode({ currentMonth, currentDay, onSelect }: DayV
   const TODAY = new Date();
   TODAY.setHours(0, 0, 0, 0);
 
+  const DAY_CALENDAR_CLASS = clsx('text-md grid grid-cols-7 text-center');
+
   return (
     <>
-      <div className='text-md mb-3 grid grid-cols-7 text-center font-medium text-gray-500'>
+      <div className={`${DAY_CALENDAR_CLASS} mb-3 font-medium text-gray-500`}>
         {WEEKDAYS.map((day, i) => {
           const headerClass = i === 0 ? 'text-red-400' : i === 6 ? 'text-blue-200' : '';
 
@@ -22,33 +26,39 @@ export default function DayViewMode({ currentMonth, currentDay, onSelect }: DayV
         })}
       </div>
 
-      <div className='text-md grid grid-cols-7 gap-1 text-center'>
-        {DAYS.map((day, i) => {
-          const isDisabled = day.date < TODAY;
-          const isSelected = day.date.toDateString() === currentDay.toDateString();
-          const dayOfWeek = day.date.getDay();
-          const dayClass = isDisabled
+      <div className={`${DAY_CALENDAR_CLASS} gap-1`}>
+        {DAYS.map((dayObj, i) => {
+          const { date, isCurrentMonth } = dayObj;
+
+          const isDisabled = date < TODAY;
+          const isSelected = date.toDateString() === currentDay.toDateString();
+          const dayOfWeek = date.getDay();
+
+          const DAY_CELL_CLASS = isDisabled
             ? 'text-gray-500'
-            : day.isCurrentMonth && dayOfWeek === 0
+            : isCurrentMonth && dayOfWeek === 0
               ? 'text-red-400'
-              : day.isCurrentMonth && dayOfWeek === 6
+              : isCurrentMonth && dayOfWeek === 6
                 ? 'text-blue-200'
                 : '';
 
           return (
             <button
               key={i}
-              onClick={() => !isDisabled && onSelect(day.date)}
+              onClick={() => !isDisabled && onSelect(date)}
               disabled={isDisabled}
-              className={`rounded-lg py-1.5 transition ${
+              className={cn(
+                'rounded-lg py-1.5 transition',
                 isSelected
                   ? 'bg-blue-200 font-semibold text-white'
                   : !isDisabled
                     ? 'hover:bg-blue-100'
-                    : ''
-              } ${dayClass} ${!isDisabled && !day.isCurrentMonth ? 'text-gray-400' : ''}`}
+                    : '',
+                DAY_CELL_CLASS,
+                !isDisabled && !isCurrentMonth && 'text-gray-400'
+              )}
             >
-              {day.date.getDate()}
+              {date.getDate()}
             </button>
           );
         })}
