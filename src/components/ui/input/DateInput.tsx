@@ -26,9 +26,8 @@ export default function DateInput() {
   const handleDateSelect = useCallback(
     (date: Date) => {
       updateDate(date);
-      setClose();
     },
-    [updateDate, setClose]
+    [updateDate]
   );
 
   // typing
