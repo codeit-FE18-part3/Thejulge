@@ -2,8 +2,9 @@ import { ButtonHTMLAttributes, ElementType } from 'react';
 
 type ButtonProps = {
   variant?: 'primary' | 'secondary' | 'disabled' | 'approve' | 'reject';
-  size?: 'lg' | 'md' | 'sm';
+  size?: 'lg' | 'md' | 'sm' | 'xs38' | 'lgFixed';
   full?: boolean;
+  className?: string;
   as?: ElementType;
 } & ButtonHTMLAttributes<HTMLButtonElement> & { [key: string]: unknown };
 
@@ -15,6 +16,8 @@ const SIZE_CLASS = {
   lg: 'h-12 px-4 text-base sm:h-14 sm:px-6 sm:text-lg',
   md: 'h-10 px-4 text-sm  sm:h-11 sm:px-5 sm:text-base',
   sm: 'h-8  px-3 text-sm  sm:h-9  sm:px-4 sm:text-base',
+  xs38: 'h-[38px] px-3.5 text-sm sm:h-12 sm:px-5 sm:text-base',
+  lgFixed: 'h-12 px-5 text-base sm:h-12 sm:px-5 sm:text-base',
 } as const;
 
 /* 3) variant에 따른 색상/테두리 */
@@ -33,6 +36,7 @@ export default function Button({
   full = false,
   as: Component = 'button',
   children,
+  className,
   ...props
 }: ButtonProps) {
   // props에서 type/disabled만 분리(중복, 충돌 방지), 나머지는 그대로 전달
@@ -41,7 +45,7 @@ export default function Button({
   const variantClass = VARIANT_CLASS[variant];
   return (
     <Component
-      className={`${BASE_CLASS} ${variantClass} ${sizeClass} ${full ? 'w-full' : ''}`}
+      className={`${BASE_CLASS} ${variantClass} ${sizeClass} ${full ? 'w-full' : ''} ${className ?? ''}`}
       {...(Component === 'button'
         ? {
             disabled: variant === 'disabled' || disabled,
