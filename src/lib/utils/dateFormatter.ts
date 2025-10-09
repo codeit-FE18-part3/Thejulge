@@ -30,3 +30,14 @@ export function getTime(startsAt: string, workhour: number) {
     duration: `${workhour}시간`,
   };
 }
+
+export function formatWithDots(numbers: string) {
+  const year = numbers.slice(0, 4);
+  const month = numbers.slice(4, 6);
+  const day = numbers.slice(6, 8);
+
+  if (month && day) return `${year}.${month}.${day}`;
+  if (month) return `${year}.${month}`;
+  if (year) return `${year}`;
+  return numbers;
+}

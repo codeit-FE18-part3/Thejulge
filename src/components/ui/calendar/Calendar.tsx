@@ -13,8 +13,15 @@ export default function Calendar({ value, onSelect }: CalendarProps) {
   const [selectMode, setSelectMode] = useState<SelectMode>('day');
 
   const TODAY = new Date();
+  TODAY.setHours(0, 0, 0, 0);
 
   const handleSelect = (date: Date) => {
+    const selectedDate = new Date(date);
+    selectedDate.setHours(0, 0, 0, 0);
+
+    if (selectedDate < TODAY) {
+      return;
+    }
     setCurrentDay(date);
     setCurrentMonth(new Date(date.getFullYear(), date.getMonth(), 1));
     onSelect?.(date);
