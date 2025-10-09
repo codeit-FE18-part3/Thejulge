@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils/cn';
 import { Period, TimeSelectorProps } from '@/types/calendar';
 import { useState } from 'react';
 import { ScrollList } from './TimeSelector.styles';
@@ -16,31 +17,45 @@ export default function TimeSelector({ onSelect, period, hours, minutes }: TimeS
     onSelect?.(`${p} ${h}:${m}`);
   };
 
-  const handleSelectPeriod = (p: Period) => {
-    setCurrentPeriod(p);
-    notifySelect(p, currentHour, currentMinute);
+  const handleSelect = (type: 'period' | 'hour' | 'minute', value: string) => {
+    const updates = {
+      period: () => setCurrentPeriod(value as Period),
+      hour: () => setCurrentHour(value),
+      minute: () => setCurrentMinute(value),
+    };
+
+    updates[type]();
+
+    notifySelect(
+      type === 'period' ? (value as Period) : currentPeriod,
+      type === 'hour' ? value : currentHour,
+      type === 'minute' ? value : currentMinute
+    );
   };
 
-  const handleSelectHour = (h: string) => {
-    setCurrentHour(h);
-    notifySelect(currentPeriod, h, currentMinute);
-  };
+  const TIME_SELECTOR_WRAPPER_CLASS =
+    'mt-3 flex w-80 items-center justify-center gap-6 rounded-lg border bg-white p-4';
 
-  const handleSelectMinute = (m: string) => {
-    setCurrentMinute(m);
-    notifySelect(currentPeriod, currentHour, m);
-  };
+  const BASE_PERIOD_CLASS = 'rounded-lg px-4 py-2 font-semibold transition';
+  const BASE_TIME_CLASS = 'rounded px-3 py-1 transition';
+
+  const selectPeriodClass = (p: Period) =>
+    cn(
+      BASE_PERIOD_CLASS,
+      currentPeriod === p ? 'bg-blue-200 text-white' : 'bg-gray-100 hover:bg-gray-200'
+    );
+
+  const selectTimeClass = (value: string, currentValue: string) =>
+    cn(BASE_TIME_CLASS, currentValue === value ? 'bg-blue-200 text-white' : 'hover:bg-gray-100');
 
   return (
-    <div className='mt-3 flex w-80 items-center justify-center gap-6 rounded-lg border bg-white p-4'>
+    <div className={TIME_SELECTOR_WRAPPER_CLASS}>
       <div className='flex flex-col gap-4 p-2'>
         {['오전', '오후'].map(p => (
           <button
             key={p}
-            className={`rounded-lg px-4 py-2 font-semibold transition ${
-              currentPeriod === p ? 'bg-blue-200 text-white' : 'bg-gray-100 hover:bg-gray-200'
-            }`}
-            onClick={() => handleSelectPeriod(p as Period)}
+            className={selectPeriodClass(p as Period)}
+            onClick={() => handleSelect('period', p)}
           >
             {p}
           </button>
@@ -53,10 +68,8 @@ export default function TimeSelector({ onSelect, period, hours, minutes }: TimeS
             {hoursList.map(h => (
               <button
                 key={h}
-                className={`rounded px-3 py-1 transition ${
-                  currentHour === h ? 'bg-blue-200 text-white' : 'hover:bg-gray-100'
-                }`}
-                onClick={() => handleSelectHour(h)}
+                className={selectTimeClass(h, currentHour)}
+                onClick={() => handleSelect('hour', h)}
               >
                 {h}
               </button>
@@ -69,10 +82,8 @@ export default function TimeSelector({ onSelect, period, hours, minutes }: TimeS
             {minutesList.map(m => (
               <button
                 key={m}
-                className={`rounded px-3 py-1 transition ${
-                  currentMinute === m ? 'bg-blue-200 text-white' : 'hover:bg-gray-100'
-                }`}
-                onClick={() => handleSelectMinute(m)}
+                className={selectTimeClass(m, currentMinute)}
+                onClick={() => handleSelect('minute', m)}
               >
                 {m}
               </button>
