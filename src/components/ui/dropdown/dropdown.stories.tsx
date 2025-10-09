@@ -12,7 +12,7 @@ const meta: Meta<typeof Dropdown> = {
   tags: ['autodocs'],
   args: {
     name: 'status',
-    areaLabel: '카테고리',
+    ariaLabel: '카테고리',
     placeholder: '카테고리를 선택하세요',
     values: CATEGORY_CODE, // 기본값
   },
@@ -44,6 +44,6 @@ export const Small: Story = {
 
 export const WithDefaultValue: Story = {
   args: {
-    defaultValue: CATEGORY_CODE[1],
+    selected: CATEGORY_CODE[1],
   },
 };
