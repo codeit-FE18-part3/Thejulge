@@ -1,4 +1,4 @@
-import Post from '@/components/ui/post/post';
+import Post from '@/components/ui/card/post/post';
 import type { PostCard } from '@/types/notice';
 import mockResponse from './mockData.json';
 

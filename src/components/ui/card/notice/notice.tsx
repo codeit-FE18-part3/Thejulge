@@ -3,10 +3,10 @@ import { cardLayout } from '@/components/ui/card/card.styles';
 import { cn } from '@/lib/utils/cn';
 import { NoticeCard } from '@/types/notice';
 import { ReactNode } from 'react';
+import NoticeHeader from './components/noticeHeader';
+import NoticeImage from './components/noticeImage';
+import NoticeInfo from './components/noticeInfo';
 import { noticeFrame, noticeWrapper } from './notice.styles';
-import NoticeHeader from './noticeHeader';
-import NoticeImage from './noticeImage';
-import NoticeInfo from './noticeInfo';
 
 export type NoticeVariant = 'notice' | 'shop';
 

@@ -1,6 +1,6 @@
 import type { NoticeCard } from '@/types/notice';
 import type { Meta, StoryObj } from '@storybook/react';
-import { Notice } from '.';
+import Notice from './notice';
 
 const oneDayMs = 24 * 60 * 60 * 1000;
 

@@ -1,5 +1,5 @@
+import { noticeImageWrapper } from '@/components/ui/card/notice/notice.styles';
 import Image from 'next/image';
-import { noticeImageWrapper } from './notice.styles';
 
 interface NoticeImageProps {
   name?: string;

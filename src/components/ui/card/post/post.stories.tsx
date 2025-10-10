@@ -1,7 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react';
-
 import type { PostCard } from '@/types/notice';
-import { Post } from '.';
+import type { Meta, StoryObj } from '@storybook/react';
+import Post from './post';
 
 const baseNotice: PostCard = {
   id: 'notice-001',

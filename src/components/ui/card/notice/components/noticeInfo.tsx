@@ -1,12 +1,18 @@
 import { cardLayout } from '@/components/ui/card/card.styles';
+import { NoticeVariant } from '@/components/ui/card/notice/notice';
+import {
+  badgeText,
+  noticeButton,
+  noticeInfoWrapper,
+  noticeLabel,
+  payBadge,
+} from '@/components/ui/card/notice/notice.styles';
 import { Icon } from '@/components/ui/icon';
 import { calcPayIncreasePercent } from '@/lib/utils/calcPayIncrease';
 import { getTime } from '@/lib/utils/dateFormatter';
 import { formatNumber } from '@/lib/utils/formatNumber';
 import { NoticeCard } from '@/types/notice';
 import { ReactNode } from 'react';
-import { NoticeVariant } from './notice';
-import { badgeText, noticeButton, noticeInfoWrapper, noticeLabel, payBadge } from './notice.styles';
 import NoticeHeader from './noticeHeader';
 
 interface NoticeInfoProps<T extends Partial<NoticeCard>> {

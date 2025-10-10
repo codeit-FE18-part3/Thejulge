@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import Notice from '@/components/ui/notice/notice';
+import Notice from '@/components/ui/card/notice/notice';
 import { getNoticeStatus } from '@/lib/utils/getNoticeStatus';
 import type { NoticeCard } from '@/types/notice';
 import { NoticeShopCard } from '@/types/shop';

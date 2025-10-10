@@ -1,5 +1,5 @@
 import { cardLayout } from '@/components/ui/card/card.styles';
-import { noticeLabel } from './notice.styles';
+import { noticeLabel } from '@/components/ui/card/notice/notice.styles';
 
 interface NoticeHeaderProps {
   name?: string;
