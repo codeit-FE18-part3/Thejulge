@@ -1,72 +1,98 @@
-import { LoginRequest, User, UserRequest, UserRole } from '@/types/user';
-import { createContext, ReactNode, useState } from 'react';
+// 목적: 앱 전역에서 로그인/유저 상태를 관리하고, 인증 관련 함수를 제공한다.
+// 특징: 토큰과 사용자 ID를 내부에서 관리하고, 외부는 파생 상태와 동작 함수만 사용한다.
 
-/**
- * @TODO
- * token은 AuthProvider 내부에서만 관리하고 외부에는 파생된 상태(isLogin, user 같은 권한)만 소비하는 설계
- * 컴포넌트에서 토큰 문자열을 직접 다룰일을 막을 수 있음 (보안/ 유지보수측면)
- * 토큰 저장 위치(Storage, cookie 등)를 변경해야 할때도 컨텍스트 안에서만 토큰이 사용되기 때문에 외부 코드를 건드릴 일이 없음
- * token을 간접적으로 사용하는 저장,삭제,업데이트와 같은 액션은 내부 함수로 작성하고 Provider 외부로 노출하면 관리에 용이함
- * 외부는 파생된 상태값만 받아서 적절한 권한 처리만 하면 된다.
- *
- * AuthContextValue의 함수는 전부 void 값으로 지정했으나 구현에 따라
- * return 값이 필요할 경우 type/user 에서 맞는 타입 지정
- *
- * 초반 설계는 AuthContext에서 구현을 하다가
- * 추후 AuthContext (토큰,로그인 상태 관리) / UserContext (프로필 전용) 로 관심사 분리 리팩토링 고려
- *
- */
+import { apiLogin, apiSignup } from '@/api/auth'; // 로그인/회원가입 API
+import { apiGetUser, apiUpdateUser } from '@/api/users'; // 내 정보 API
+import type { LoginRequest, User, UserRequest, UserRole } from '@/types/user';
+import { createContext, ReactNode, useEffect, useMemo, useState } from 'react';
 
-type AuthState = {
-  user: User | null;
-  isPending: boolean;
-};
-interface AuthContextValue extends AuthState {
-  isLogin: boolean;
-  role: UserRole;
+type AuthContextValue = {
+  isLogin: boolean; // 토큰 보유 여부
+  role: UserRole; // 'guest' | 'employee' | 'employer'
+  user: User | null; // 로그인 상태일 때의 내 정보
   login: (credentials: LoginRequest) => Promise<void>;
   logout: () => void;
   signup: (data: UserRequest) => Promise<void>;
   getUser: () => Promise<void>;
-  updateUser: (data: Partial<User>) => Promise<void>;
-}
-const initialState: AuthState = {
-  user: null,
-  isPending: true,
+  updateUser: (patch: Partial<User>) => Promise<void>;
 };
-export const AuthContext = createContext<AuthContextValue | undefined>(undefined);
+
+export const AuthContext = createContext<AuthContextValue | null>(null);
+
+// 로컬 스토리지 키: 읽기 쉬운 이름으로 고정
+const TOKEN_KEY = 'thejulge_token';
+const USER_ID_KEY = 'thejulge_user_id';
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [values, setValues] = useState<AuthState>(initialState);
+  // 핵심 상태: 토큰, 사용자 ID, 사용자 정보
   const [token, setToken] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
+  // 파생 상태: 로그인 여부, 역할
   const isLogin = !!token;
-  const role: UserRole = !isLogin
-    ? 'guest'
-    : values.user?.type === 'employer'
-      ? 'employer'
-      : 'employee';
+  const role: UserRole = useMemo(() => (user ? user.type : 'guest'), [user]);
 
+  // 앱 시작 시, 저장소에 남아있는 토큰/사용자 ID 복원
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const storedToken = localStorage.getItem(TOKEN_KEY);
+    const storedUserId = localStorage.getItem(USER_ID_KEY);
+    if (storedToken) setToken(storedToken);
+    if (storedUserId) setUserId(storedUserId);
+  }, []);
+
+  // 로그인: /token → 토큰과 사용자 ID 저장 → 즉시 내 정보 동기화
   const login: AuthContextValue['login'] = async credentials => {
-    // TODO: 로그인 구현 (API 요청 후 setValues, setToken)
+    const res = await apiLogin(credentials);
+    const newToken = res.item.token;
+    const newUserId = res.item.user.item.id;
+
+    setToken(newToken);
+    setUserId(newUserId);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(TOKEN_KEY, newToken);
+      localStorage.setItem(USER_ID_KEY, newUserId);
+    }
+
+    const me = await apiGetUser(newUserId);
+    setUser(me);
   };
+
+  // 로그아웃: 상태와 저장소 모두 비우기
   const logout: AuthContextValue['logout'] = () => {
-    // TODO: 로그아웃 구현 (setValues, setToken 초기화)
+    setToken(null);
+    setUser(null);
+    setUserId(null);
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(USER_ID_KEY);
+    }
   };
+
+  // 회원가입: /users 성공만 확인(페이지에서 라우팅 처리)
   const signup: AuthContextValue['signup'] = async data => {
-    // TODO: 회원가입 구현
+    await apiSignup(data);
   };
+
+  // 내 정보 재조회
   const getUser: AuthContextValue['getUser'] = async () => {
-    // TODO: 유저 조회 구현
+    if (!userId) throw new Error('로그인이 필요합니다');
+    const me = await apiGetUser(userId);
+    setUser(me);
   };
-  const updateUser: AuthContextValue['updateUser'] = async data => {
-    // TODO: 유저 업데이트 구현
+
+  // 내 정보 수정
+  const updateUser: AuthContextValue['updateUser'] = async patch => {
+    if (!userId) throw new Error('로그인이 필요합니다');
+    const updated = await apiUpdateUser(userId, patch);
+    setUser(updated);
   };
 
   const value: AuthContextValue = {
-    ...values,
     isLogin,
     role,
+    user,
     login,
     logout,
     signup,
@@ -76,4 +102,5 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
+
 export default AuthProvider;
