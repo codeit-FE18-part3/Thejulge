@@ -1,8 +1,8 @@
 import { cardLayout } from '@/components/ui/card/card.styles';
 import { Icon } from '@/components/ui/icon';
 import { calcPayIncreasePercent } from '@/lib/utils/calcPayIncrease';
+import { getTime } from '@/lib/utils/dateFormatter';
 import { formatNumber } from '@/lib/utils/formatNumber';
-import { getTime } from '@/lib/utils/getTime';
 import { NoticeCard } from '@/types/notice';
 import { ReactNode } from 'react';
 import { NoticeVariant } from './notice';
