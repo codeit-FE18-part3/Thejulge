@@ -1,0 +1,231 @@
+{
+  "offset": 0,
+  "limit": 3,
+  "address": [],
+  "count": 6,
+  "hasNext": false,
+  "items": [
+    {
+      "item": {
+        "id": "notice-001",
+        "hourlyPay": 18000,
+        "startsAt": "2025-10-11T11:00:00Z",
+        "workhour": 4,
+        "description": "주말 점심 시간대 근무자를 모집합니다.",
+        "closed": false,
+        "shop": {
+          "item": {
+            "id": "shop-bridge",
+            "name": "한강 브런치 카페",
+            "category": "카페",
+            "address1": "서울시 용산구",
+            "address2": "한강로 2가 123-45",
+            "description": "한강 뷰를 자랑하는 브런치 카페",
+            "imageUrl": "https://picsum.photos/id/1080/640/360",
+            "originalHourlyPay": 18000
+          },
+          "href": "/shops/shop-bridge"
+        }
+      },
+      "links": [
+        {
+          "rel": "self",
+          "description": "공고 상세",
+          "method": "GET",
+          "href": "/notices/notice-001"
+        },
+        {
+          "rel": "shop",
+          "description": "가게 상세",
+          "method": "GET",
+          "href": "/shops/shop-bridge"
+        }
+      ]
+    },
+    {
+      "item": {
+        "id": "notice-002",
+        "hourlyPay": 20000,
+        "startsAt": "2026-08-15T18:30:00Z",
+        "workhour": 5,
+        "description": "저녁 피크 타임 대응 인력을 찾습니다.",
+        "closed": false,
+        "shop": {
+          "item": {
+            "id": "shop-chicken",
+            "name": "홍대 치킨 공방",
+            "category": "음식점",
+            "address1": "서울시 마포구",
+            "address2": "어울마당로 35",
+            "description": "수제 치킨 전문점",
+            "imageUrl": "https://picsum.photos/id/292/640/360",
+            "originalHourlyPay": 13000
+          },
+          "href": "/shops/shop-chicken"
+        }
+      },
+      "links": [
+        {
+          "rel": "self",
+          "description": "공고 상세",
+          "method": "GET",
+          "href": "/notices/notice-002"
+        },
+        {
+          "rel": "shop",
+          "description": "가게 상세",
+          "method": "GET",
+          "href": "/shops/shop-chicken"
+        }
+      ]
+    },
+    {
+      "item": {
+        "id": "notice-003",
+        "hourlyPay": 9500,
+        "startsAt": "2023-07-10T09:00:00Z",
+        "workhour": 6,
+        "description": "오전 반찬 포장 보조 인력을 찾습니다.",
+        "closed": true,
+        "shop": {
+          "item": {
+            "id": "shop-deli",
+            "name": "성수 반찬가게",
+            "category": "식품",
+            "address1": "서울시 성동구",
+            "address2": "성수일로 55",
+            "description": "수제로 만든 반찬 판매점",
+            "imageUrl": "https://picsum.photos/id/1060/640/360",
+            "originalHourlyPay": 9000
+          },
+          "href": "/shops/shop-deli"
+        }
+      },
+      "links": [
+        {
+          "rel": "self",
+          "description": "공고 상세",
+          "method": "GET",
+          "href": "/notices/notice-003"
+        },
+        {
+          "rel": "shop",
+          "description": "가게 상세",
+          "method": "GET",
+          "href": "/shops/shop-deli"
+        }
+      ]
+    },
+    {
+      "item": {
+        "id": "notice-004",
+        "hourlyPay": 16000,
+        "startsAt": "2025-09-10T10:00:00Z",
+        "workhour": 5,
+        "description": "평일 오전 카운터 지원 인력을 모집합니다.",
+        "closed": false,
+        "shop": {
+          "item": {
+            "id": "shop-bakery",
+            "name": "합정 베이커리",
+            "category": "카페",
+            "address1": "서울시 마포구",
+            "address2": "합정역로 80",
+            "description": "천연 발효종으로 빵을 만드는 베이커리",
+            "imageUrl": "https://picsum.photos/id/1040/640/360",
+            "originalHourlyPay": 14000
+          },
+          "href": "/shops/shop-bakery"
+        }
+      },
+      "links": [
+        {
+          "rel": "self",
+          "description": "공고 상세",
+          "method": "GET",
+          "href": "/notices/notice-004"
+        },
+        {
+          "rel": "shop",
+          "description": "가게 상세",
+          "method": "GET",
+          "href": "/shops/shop-bakery"
+        }
+      ]
+    },
+    {
+      "item": {
+        "id": "notice-005",
+        "hourlyPay": 10000,
+        "startsAt": "2025-09-05T14:00:00Z",
+        "workhour": 3,
+        "description": "오후 피크 시간대 서빙 인력을 찾습니다.",
+        "closed": false,
+        "shop": {
+          "item": {
+            "id": "shop-ramen",
+            "name": "이태원 라멘집",
+            "category": "일식",
+            "address1": "서울시 용산구",
+            "address2": "이태원동 123-10",
+            "description": "후쿠오카식 진한 육수 라멘",
+            "imageUrl": "https://picsum.photos/id/1050/640/360",
+            "originalHourlyPay": 10000
+          },
+          "href": "/shops/shop-ramen"
+        }
+      },
+      "links": [
+        {
+          "rel": "self",
+          "description": "공고 상세",
+          "method": "GET",
+          "href": "/notices/notice-005"
+        },
+        {
+          "rel": "shop",
+          "description": "가게 상세",
+          "method": "GET",
+          "href": "/shops/shop-ramen"
+        }
+      ]
+    },
+    {
+      "item": {
+        "id": "notice-006",
+        "hourlyPay": 9000,
+        "startsAt": "2023-07-15T07:00:00Z",
+        "workhour": 4,
+        "description": "새벽 도넛 포장 보조 인력을 찾습니다.",
+        "closed": true,
+        "shop": {
+          "item": {
+            "id": "shop-donut",
+            "name": "망원 도넛 하우스",
+            "category": "디저트",
+            "address1": "서울시 마포구",
+            "address2": "망원로 67",
+            "description": "수제 도넛 전문점",
+            "imageUrl": "https://picsum.photos/id/1062/640/360",
+            "originalHourlyPay": 8500
+          },
+          "href": "/shops/shop-donut"
+        }
+      },
+      "links": [
+        {
+          "rel": "self",
+          "description": "공고 상세",
+          "method": "GET",
+          "href": "/notices/notice-006"
+        },
+        {
+          "rel": "shop",
+          "description": "가게 상세",
+          "method": "GET",
+          "href": "/shops/shop-donut"
+        }
+      ]
+    }
+  ]
+}
