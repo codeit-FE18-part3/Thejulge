@@ -1,4 +1,4 @@
-import { getTime } from '@/lib/utils/getTime';
+import { getTime } from '@/lib/utils/dateFormatter';
 import { timeAgo } from '@/lib/utils/timeAgo';
 import { clsx } from 'clsx';
 import { Alert } from './Notification';
