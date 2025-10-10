@@ -36,9 +36,9 @@ export default function DayViewMode({ currentMonth, currentDay, onSelect }: DayV
 
           const DAY_CELL_CLASS = isDisabled
             ? 'text-gray-500'
-            : isCurrentMonth && dayOfWeek === 0
+            : !isSelected && isCurrentMonth && dayOfWeek === 0
               ? 'text-red-400'
-              : isCurrentMonth && dayOfWeek === 6
+              : !isSelected && isCurrentMonth && dayOfWeek === 6
                 ? 'text-blue-200'
                 : '';
 

@@ -1,4 +1,13 @@
 // Calendar 관련
+export type DateInputProps = {
+  id?: string;
+  label?: string;
+  className?: string;
+  value?: Date | null;
+  onChange?: (date: Date | null) => void;
+  requiredMark?: boolean;
+  error?: string;
+};
 
 export type SelectMode = 'day' | 'month' | 'year';
 
