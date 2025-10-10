@@ -2,11 +2,11 @@ import { cn } from '@/lib/utils/cn';
 import { InputHTMLAttributes, ReactNode } from 'react';
 
 type Props = {
-  label?: string;            // 라벨 텍스트
-  requiredMark?: boolean;    // 라벨 옆 * 표시
-  error?: string;            // 에러 문구(있으면 빨간 테두리/문구)
-  suffix?: ReactNode;        // 우측 단위/아이콘(예: '원')
-  className?: string;        // 외부 커스텀 클래스
+  label?: string; // 라벨 텍스트
+  requiredMark?: boolean; // 라벨 옆 * 표시
+  error?: string; // 에러 문구(있으면 빨간 테두리/문구)
+  suffix?: ReactNode; // 우측 단위/아이콘(예: '원')
+  className?: string; // 외부 커스텀 클래스
 } & InputHTMLAttributes<HTMLInputElement>;
 
 export default function Input({
@@ -30,18 +30,18 @@ export default function Input({
         <label
           htmlFor={id}
           className={cn(
-            'text-black text-sm',
+            'text-sm text-black',
             // 팀 토큰의 line-height 반영 (Body-S)
             'leading-[var(--lh-body-s)]'
           )}
         >
           {label}
-          {requiredMark && <span className="ml-0.5 text-red-500">*</span>}
+          {requiredMark && <span className='ml-0.5 text-red-500'>*</span>}
         </label>
       )}
 
       {/* Field */}
-      <div className="relative">
+      <div className='relative'>
         <input
           id={id}
           disabled={isDisabled}

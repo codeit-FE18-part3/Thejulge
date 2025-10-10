@@ -2,9 +2,9 @@ import { cardLayout, CardStatusVariant } from '@/components/ui/card/card.styles'
 import { Icon } from '@/components/ui/icon';
 import { calcPayIncreasePercent } from '@/lib/utils/calcPayIncrease';
 import { cn } from '@/lib/utils/cn';
+import { getTime } from '@/lib/utils/dateFormatter';
 import { formatNumber } from '@/lib/utils/formatNumber';
 import { getNoticeStatus } from '@/lib/utils/getNoticeStatus';
-import { getTime } from '@/lib/utils/getTime';
 import type { PostCard } from '@/types/notice';
 import Image from 'next/image';
 import Link from 'next/link';
