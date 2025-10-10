@@ -8,7 +8,6 @@ const baseNotice: PostCard = {
   hourlyPay: 18000,
   startsAt: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString(),
   workhour: 4,
-  description: '주말 점심 시간대 근무자를 모집합니다.',
   closed: false,
   name: '한강 브런치 카페',
   address1: '서울시 용산구',
