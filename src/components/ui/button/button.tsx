@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils/cn';
 import { ButtonHTMLAttributes, ElementType } from 'react';
 
 type ButtonProps = {
@@ -45,7 +46,7 @@ export default function Button({
   const variantClass = VARIANT_CLASS[variant];
   return (
     <Component
-      className={`${BASE_CLASS} ${variantClass} ${sizeClass} ${full ? 'w-full' : ''} ${className ?? ''}`}
+      className={cn(BASE_CLASS, variantClass, sizeClass, full && 'w-full', className)}
       {...(Component === 'button'
         ? {
             disabled: variant === 'disabled' || disabled,
