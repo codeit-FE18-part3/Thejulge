@@ -74,7 +74,7 @@ const FilterBody = ({ formData, onChange }: FilterBodyProps) => {
           </div>
         )}
       </li>
-      <li>
+      {/* <li>
         <DateInput
           id='filterStartAt'
           label='시작일'
@@ -82,7 +82,7 @@ const FilterBody = ({ formData, onChange }: FilterBodyProps) => {
           value={startAt}
           onChange={handleDateChange}
         />
-      </li>
+      </li> */}
       <li className='flex items-end gap-3'>
         <Input
           id='filterPay'
