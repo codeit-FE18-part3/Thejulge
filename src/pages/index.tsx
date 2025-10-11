@@ -1,5 +1,6 @@
+import NoticeWrapper from '@/components/ui/card/notice/mockData/noticeWrapper';
+import PostWrapper from '@/components/ui/card/post/mockData/postWrapper';
 import Filter from '@/components/ui/filter/filter';
-import PostWrapper from '@/components/ui/post/postWrapper';
 
 export default function Home() {
   return (
@@ -8,6 +9,7 @@ export default function Home() {
         <button> 여기가 버튼임 </button>
         <Filter className='right-0 top-0 min-[480px]:top-full' />
       </div>
+      <NoticeWrapper />
       <PostWrapper />
     </>
   );

@@ -57,9 +57,7 @@ function ModalHeader({ variant, title }: { variant: Variant; title: string }) {
           ariaLabel={`${variant} glyph`}
         />
       </span>
-      <h2 className='font-medium leading-[var(--lh-modal)] text-[var(--fs-modal)] text-black'>
-        {title}
-      </h2>
+      <h2 className='text-modal font-medium text-black'>{title}</h2>
     </div>
   );
 }
@@ -67,11 +65,7 @@ function ModalHeader({ variant, title }: { variant: Variant; title: string }) {
 /** Body (optional) */
 function ModalBody({ description }: { description?: ReactNode }) {
   if (!description) return null;
-  return (
-    <div className='px-6 py-4 leading-[var(--lh-body-m)] text-[var(--fs-body-m)] text-black'>
-      {description}
-    </div>
-  );
+  return <div className='px-6 py-4 text-modal text-black'>{description}</div>;
 }
 
 /** Footer */

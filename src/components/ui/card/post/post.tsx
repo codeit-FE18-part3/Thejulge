@@ -1,27 +1,22 @@
+import { cardLayout, CardStatusVariant } from '@/components/ui/card/card.styles';
 import { Icon } from '@/components/ui/icon';
 import { calcPayIncreasePercent } from '@/lib/utils/calcPayIncrease';
 import { cn } from '@/lib/utils/cn';
 import { getTime } from '@/lib/utils/dateFormatter';
 import { formatNumber } from '@/lib/utils/formatNumber';
+import { getNoticeStatus } from '@/lib/utils/getNoticeStatus';
 import type { PostCard } from '@/types/notice';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useMemo } from 'react';
 import {
   badgeIcon,
   badgeText,
-  postBadge,
-  postHeading,
+  payBadge,
+  payLayout,
+  postFrame,
   postImageDimmed,
   postImageWrapper,
-  postWrapper,
-  workInfoIcon,
-  workInfoLayout,
-  workInfoText,
-  workPayLayout,
-  type PostStatusVariant,
 } from './post.styles';
-type NoticeStatus = 'open' | 'expired' | 'closed';
 
 interface PostProps {
   notice: PostCard;
@@ -30,13 +25,6 @@ const STATUS_LABEL = {
   expired: '지난 공고',
   closed: '공고 마감',
 } as const;
-
-const hasShiftStarted = (startsAt: string) => Date.now() >= new Date(startsAt).getTime();
-
-const getNoticeStatus = (closed: boolean, startsAt: string): NoticeStatus => {
-  if (closed) return 'closed';
-  return hasShiftStarted(startsAt) ? 'expired' : 'open';
-};
 
 const Post = ({ notice }: PostProps) => {
   const {
@@ -48,53 +36,64 @@ const Post = ({ notice }: PostProps) => {
     imageUrl,
     name,
     address1,
-    href,
+    shopId,
   } = notice;
-  const status = useMemo(() => getNoticeStatus(closed, startsAt), [closed, startsAt]);
-  const payIncreasePercent = useMemo(
-    () => calcPayIncreasePercent(hourlyPay, originalHourlyPay),
-    [hourlyPay, originalHourlyPay]
-  );
+  const status = getNoticeStatus(closed, startsAt);
+  const payIncreasePercent = calcPayIncreasePercent(hourlyPay, originalHourlyPay);
   const { date, startTime, endTime } = getTime(startsAt, workhour);
-  const statusVariant: PostStatusVariant = status === 'open' ? 'open' : 'inactive';
+  const statusVariant: CardStatusVariant = status === 'open' ? 'open' : 'inactive';
   const payIncreaseLabel =
     payIncreasePercent && (payIncreasePercent > 100 ? '100% 이상' : `${payIncreasePercent}%`);
+  const href = `/notices/${shopId}`;
+
   return (
-    <Link href={href} className={postWrapper()}>
+    <Link href={href} className={postFrame()} aria-label={`${name} 공고 상세로 이동`}>
       <div className={postImageWrapper()}>
-        <Image src={imageUrl} alt={`${name} 가게 이미지`} fill className='object-cover' />
+        <Image
+          src={imageUrl}
+          alt={`${name} 가게 이미지`}
+          fill
+          sizes='(max-width: 744px) 120px, 160px'
+          className='object-cover'
+        />
         {status !== 'open' && <div className={postImageDimmed()}>{STATUS_LABEL[status]}</div>}
       </div>
       <div className={cn('mt-4', 'tablet:mt-6')}>
         <ul className='flex flex-col flex-nowrap gap-2'>
-          <li className={postHeading({ status: statusVariant })}>{name}</li>
-          <li className={workInfoLayout()}>
+          <li className={cardLayout.heading({ size: 'sm', status: statusVariant })}>{name}</li>
+          <li className={cardLayout.infoLayout()}>
             <Icon
               iconName='clock'
               iconSize='sm'
               ariaLabel='근무시간'
-              className={workInfoIcon({ status: statusVariant })}
+              className={cardLayout.infoIcon({ status: statusVariant })}
             />
-            <p className={workInfoText({ status: statusVariant })}>
+            <p className={cardLayout.info({ status: statusVariant })}>
               {date} {startTime} ~ {endTime} ({workhour}시간)
             </p>
           </li>
-          <li className={workInfoLayout()}>
+          <li className={cardLayout.infoLayout()}>
             <Icon
               iconName='map'
               iconSize='sm'
               ariaLabel='근무위치'
-              className={workInfoIcon({ status: statusVariant })}
+              className={cardLayout.infoIcon({ status: statusVariant })}
             />
-            <p className={workInfoText({ status: statusVariant })}>{address1}</p>
+            <p className={cardLayout.info({ status: statusVariant })}>{address1}</p>
           </li>
         </ul>
-        <div className={workPayLayout()}>
-          <span className={postHeading({ status: statusVariant, className: 'w-full' })}>
+        <div className={payLayout()}>
+          <span
+            className={cardLayout.heading({
+              size: 'sm',
+              status: statusVariant,
+              className: 'w-full tracking-wide',
+            })}
+          >
             {formatNumber(hourlyPay)}원
           </span>
           {payIncreasePercent !== null && (
-            <div className={postBadge({ status: statusVariant })}>
+            <div className={payBadge({ status: statusVariant })}>
               <span className={badgeText({ status: statusVariant })}>
                 기존 시급 {payIncreaseLabel}
               </span>
@@ -102,7 +101,7 @@ const Post = ({ notice }: PostProps) => {
                 iconName='arrowUp'
                 iconSize='sm'
                 bigScreenSize='rg'
-                ariaLabel='시급정보'
+                decorative
                 className={badgeIcon({ status: statusVariant })}
               />
             </div>
