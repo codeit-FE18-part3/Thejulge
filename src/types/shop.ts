@@ -22,11 +22,11 @@ export interface Shop extends ShopBase {
 
 export type ShopSummary = Pick<ShopBase, 'name' | 'address1' | 'imageUrl' | 'originalHourlyPay'>;
 
-export type NoticeShopCard = {
+export interface NoticeShopCard {
   shopId: string;
   name: string;
   category: string;
   address1: string;
   imageUrl: string;
   shopDescription: string;
-};
+}

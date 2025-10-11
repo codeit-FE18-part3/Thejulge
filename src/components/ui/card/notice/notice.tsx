@@ -1,15 +1,11 @@
 import { Container } from '@/components/layout';
-import { cardLayout } from '@/components/ui/card/card.styles';
-import { cn } from '@/lib/utils/cn';
 import { NoticeCard } from '@/types/notice';
 import { ReactNode } from 'react';
-import NoticeHeader from './components/noticeHeader';
-import NoticeImage from './components/noticeImage';
-import NoticeInfo from './components/noticeInfo';
-import { noticeFrame, noticeWrapper } from './notice.styles';
+import RenderNotice from './components/renderNotice';
+import RenderShop from './components/renderShop';
+import { noticeWrapper } from './notice.styles';
 
 export type NoticeVariant = 'notice' | 'shop';
-
 interface NoticeProps<T extends Partial<NoticeCard>> {
   notice: T;
   variant?: NoticeVariant;
@@ -33,43 +29,46 @@ const Notice = <T extends Partial<NoticeCard>>({
     imageUrl,
     originalHourlyPay,
   } = notice;
-  const noticeVariantValue = {
-    hourlyPay,
-    originalHourlyPay,
-    startsAt,
-    workhour,
-    address1,
-    shopDescription,
+
+  const noticeValue = {
+    hourlyPay: hourlyPay ?? 0,
+    originalHourlyPay: originalHourlyPay ?? 0,
+    startsAt: startsAt ?? '',
+    workhour: workhour ?? 0,
+    address1: address1 ?? '',
+    shopDescription: shopDescription ?? '',
   };
-  const shopVariantValue = {
+
+  const noticeItem = {
     name,
     category,
-    address1,
-    shopDescription,
+    imageUrl,
+    description,
+    variant: 'notice' as const,
+    value: noticeValue,
   };
+
+  const shopValue = {
+    name: name ?? '',
+    category: category ?? '',
+    address1: address1 ?? '',
+    imageUrl: imageUrl ?? '',
+    shopDescription: shopDescription ?? '',
+  };
+
+  const shopItem = {
+    name,
+    imageUrl,
+    variant: 'shop' as const,
+    value: shopValue,
+  };
+
   return (
     <Container className={noticeWrapper()}>
-      {variant === 'notice' && (
-        <>
-          <NoticeHeader name={name} category={category} />
-          <section className={noticeFrame()}>
-            <NoticeImage name={name} imageUrl={imageUrl} />
-            <NoticeInfo variant={variant} value={noticeVariantValue} buttonComponent={children} />
-          </section>
-          <section className='flex flex-col gap-3 rounded-xl bg-gray-100 p-8'>
-            <h3 className='text-body-l font-bold'>공고 설명</h3>
-            <p className='text-body-l'>{description}</p>
-          </section>
-        </>
-      )}
-      {variant === 'shop' && (
-        <>
-          <h2 className={cardLayout.heading({ size: 'lg' })}>내 가게</h2>
-          <section className={cn(noticeFrame(), 'bg-red-100')}>
-            <NoticeImage name={name} imageUrl={imageUrl} />
-            <NoticeInfo variant={variant} value={shopVariantValue} buttonComponent={children} />
-          </section>
-        </>
+      {variant === 'notice' ? (
+        <RenderNotice items={noticeItem} buttonComponent={children} />
+      ) : (
+        <RenderShop items={shopItem} buttonComponent={children} />
       )}
     </Container>
   );
