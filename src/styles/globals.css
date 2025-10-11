@@ -37,7 +37,7 @@
 
   --modal-frame: #f9f9f9;
   --modal-dimmed: rgba(0, 0, 0, 0.7);
-  
+
   /* font size */
 
   /* Caption */
@@ -73,7 +73,6 @@
   --fs-heading-l: 1.75rem; /* 28px */
   --lh-heading-l: 1.286; /* 36/28 ≈ 129% */
   --ls-heading-l: 0.02em;
-
 }
 /* 다크모드 */
 .dark {
@@ -164,7 +163,7 @@ body {
 .scroll-bar {
   overflow: auto;
   scrollbar-width: thin;
-  scrollbar-color: var(--gray-400) transparent;
+  scrollbar-color: var(--gray-300) transparent;
   scroll-behavior: smooth;
   &::-webkit-scrollbar {
     width: 10px;
@@ -177,9 +176,33 @@ body {
   }
   &::-webkit-scrollbar-thumb {
     border-radius: 40px;
-    background-color: var(--gray-400);
+    background-color: var(--gray-300);
   }
   &::-webkit-scrollbar-corner {
     background: transparent;
   }
+}
+
+/* Number button reset */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox  */
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+/* Safari icon reset */
+input::-webkit-contacts-auto-fill-button {
+  visibility: hidden;
+  display: none !important;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+}
+.icon-btn {
+  line-height: 0;
 }

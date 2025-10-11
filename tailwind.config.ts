@@ -45,6 +45,7 @@ const config: Config = {
         },
         white: 'var(--white)',
         black: 'var(--black)',
+        background: 'var(--background)',
 
         'modal-frame': 'var(--modal-frame)',
         'modal-dimmed': 'var(--modal-dimmed)',
