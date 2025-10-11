@@ -4,7 +4,7 @@ export type DateInputProps = {
   label?: string;
   className?: string;
   value?: Date | null;
-  onChange?: (date: Date | null) => void;
+  onChange?: (date: Date | string) => void;
   requiredMark?: boolean;
   error?: string;
 };

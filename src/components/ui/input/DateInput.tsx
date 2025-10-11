@@ -37,7 +37,10 @@ export default function DateInput({
     (date: Date) => {
       setSelectedDate(date);
       setInputValue(formatDate(date));
-      onChange?.(date);
+
+      const rfc3339String = date.toISOString();
+
+      onChange?.(rfc3339String);
     },
     [onChange]
   );
@@ -106,7 +109,7 @@ export default function DateInput({
   };
 
   return (
-    <div ref={wrapperRef} className='relative w-full'>
+    <div ref={wrapperRef} className='relative max-w-md'>
       <Input
         id={id}
         label={label}
@@ -117,10 +120,11 @@ export default function DateInput({
         requiredMark={requiredMark}
         className={className}
         error={dateError || error}
+        autoComplete='off'
       />
 
       {open && (
-        <div className='absolute'>
+        <div className='z-1 absolute w-full'>
           <Calendar onSelect={handleDateSelect} value={selectedDate ?? new Date()} />
         </div>
       )}

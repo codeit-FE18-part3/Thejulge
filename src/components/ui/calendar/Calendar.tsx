@@ -54,7 +54,7 @@ export default function Calendar({ value, onSelect }: CalendarProps) {
   };
 
   return (
-    <div className='mt-3 w-80 rounded-xl border bg-white p-4'>
+    <div className='relative mt-3 aspect-square rounded-xl border bg-white p-4'>
       <CalendarHeader
         selectMode={selectMode}
         currentMonth={currentMonth}
@@ -85,11 +85,12 @@ export default function Calendar({ value, onSelect }: CalendarProps) {
         />
       )}
 
-      <div className='mt-3 text-right'>
-        <button onClick={handleToday} className='text-sm text-blue-200 hover:underline'>
-          오늘로 이동
-        </button>
-      </div>
+      <button
+        onClick={handleToday}
+        className='absolute bottom-5 right-5 text-sm text-blue-200 hover:underline'
+      >
+        오늘로 이동
+      </button>
     </div>
   );
 }

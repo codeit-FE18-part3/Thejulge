@@ -31,12 +31,12 @@ export default function CalendarHeader({
   }, [selectMode, currentMonth]);
 
   return (
-    <div className='mb-3 flex items-center justify-between'>
+    <div className='mb-5 mt-3 flex items-center justify-between'>
       <button onClick={() => onChange(-1)} className={CALENDAR_ARROW_CLASS}>
         <Icon iconName='chevronLeft' iconSize='md' ariaLabel='이전으로 이동' />
       </button>
 
-      <button onClick={onToggleMode} className='text-lg font-semibold hover:underline'>
+      <button onClick={onToggleMode} className='text-xl font-semibold hover:underline'>
         {headerLabel}
       </button>
 
