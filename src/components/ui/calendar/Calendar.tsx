@@ -54,7 +54,7 @@ export default function Calendar({ value, onSelect }: CalendarProps) {
   };
 
   return (
-    <div className='relative mt-3 aspect-square rounded-xl border bg-white p-4'>
+    <div className='relative mt-3 min-h-[480px] rounded-xl border bg-white p-4'>
       <CalendarHeader
         selectMode={selectMode}
         currentMonth={currentMonth}
