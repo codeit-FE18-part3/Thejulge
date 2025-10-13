@@ -37,10 +37,7 @@ export default function DateInput({
     (date: Date) => {
       setSelectedDate(date);
       setInputValue(formatDate(date));
-
-      const rfc3339String = date.toISOString();
-
-      onChange?.(rfc3339String);
+      onChange?.(date);
     },
     [onChange]
   );
