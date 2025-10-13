@@ -26,7 +26,7 @@ export default function DayViewMode({ currentMonth, currentDay, onSelect }: DayV
         })}
       </div>
 
-      <div className={`${DAY_CALENDAR_CLASS} gap-1`}>
+      <div className={`${DAY_CALENDAR_CLASS} min-h-[300px] gap-1`}>
         {DAYS.map((dayObj, i) => {
           const { date, isCurrentMonth } = dayObj;
 
@@ -48,7 +48,7 @@ export default function DayViewMode({ currentMonth, currentDay, onSelect }: DayV
               onClick={() => !isDisabled && onSelect(date)}
               disabled={isDisabled}
               className={cn(
-                'h-[3rem] w-[3rem] rounded-lg py-1.5 transition',
+                'h-[3rem] w-[3rem] rounded-lg transition',
                 isSelected
                   ? 'bg-blue-200 font-semibold text-white'
                   : !isDisabled
