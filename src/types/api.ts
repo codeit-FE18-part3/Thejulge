@@ -35,3 +35,17 @@ export interface AuthResponse {
   token: string;
   user: { item: User; href: string };
 }
+
+export type sort = 'time' | 'pay' | 'hour' | 'shop' | undefined;
+export interface FilterQueryParams {
+  address?: string[];
+  startsAtGte?: string;
+  hourlyPayGte?: number;
+}
+
+export interface QueryParams extends FilterQueryParams {
+  offset?: number;
+  limit?: number;
+  keyword?: string;
+  sort?: sort;
+}

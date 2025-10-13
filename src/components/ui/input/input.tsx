@@ -30,9 +30,9 @@ export default function Input({
         <label
           htmlFor={id}
           className={cn(
-            'text-sm text-black',
+            'text-base text-black',
             // 팀 토큰의 line-height 반영 (Body-S)
-            'leading-[var(--lh-body-s)]'
+            'leading-[var(--lh-body-l)]'
           )}
         >
           {label}
@@ -65,7 +65,7 @@ export default function Input({
           <span
             className={cn(
               'pointer-events-none absolute right-5 top-1/2 -translate-y-1/2',
-              'text-sm text-gray-500'
+              'text-base text-block'
             )}
           >
             {suffix}

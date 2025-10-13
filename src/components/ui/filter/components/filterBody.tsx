@@ -1,0 +1,105 @@
+import { filterLayout } from '@/components/ui/filter/filter.styles';
+import { Icon } from '@/components/ui/icon';
+import { DateInput, Input } from '@/components/ui/input';
+import { ADDRESS_CODE } from '@/constants/dropdown';
+import { parseRFC3339 } from '@/lib/utils/dateFormatter';
+import { formatNumber } from '@/lib/utils/formatNumber';
+import { FilterQueryParams } from '@/types/api';
+import { ChangeEvent, useMemo } from 'react';
+
+interface FilterBodyProps {
+  formData: FilterQueryParams;
+  onChange: (updater: (prev: FilterQueryParams) => FilterQueryParams) => void;
+}
+
+const FilterBody = ({ formData, onChange }: FilterBodyProps) => {
+  const startAt = parseRFC3339(formData.startsAtGte);
+  const pay = useMemo(
+    () => (formData.hourlyPayGte ? formatNumber(formData.hourlyPayGte) : ''),
+    [formData.hourlyPayGte]
+  );
+  const locations = formData.address ?? [];
+  const locationList = ADDRESS_CODE;
+
+  const addLocation = (loc: string) => {
+    if (locations.includes(loc)) return;
+    onChange(prev => ({ ...prev, address: [...locations, loc] }));
+  };
+
+  const removeLocation = (loc: string) => {
+    const next = locations.filter(v => v !== loc);
+    onChange(prev => ({ ...prev, address: next }));
+  };
+
+  const handleDateChange = (date: Date | null) => {
+    const rfc3339String = date?.toISOString();
+    onChange(prev => ({ ...prev, startsAtGte: rfc3339String }));
+  };
+
+  const handlePayChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
+    const digits = target.value.replace(/[^0-9]/g, '');
+    onChange(prev => ({ ...prev, hourlyPayGte: Number(digits) }));
+  };
+
+  return (
+    <ul className={filterLayout.body()}>
+      <li>
+        <p className='mb-2 text-base'>위치</p>
+        <ul className={filterLayout.locationWrapper()}>
+          {locationList.map(value => (
+            <li key={value} className='w-full mobile:w-[calc(50%-6px)]'>
+              <button
+                type='button'
+                className={filterLayout.location()}
+                onClick={() => addLocation(value)}
+              >
+                {value}
+              </button>
+            </li>
+          ))}
+        </ul>
+        {locations.length !== 0 && (
+          <div className='mt-3 flex flex-wrap gap-2'>
+            {locations.map(value => (
+              <button
+                key={value}
+                type='button'
+                className={filterLayout.locationSelected()}
+                onClick={() => removeLocation(value)}
+              >
+                <span className='text-inherit'>{value}</span>
+                <Icon iconName='close' iconSize='sm' className='bg-red-500' />
+              </button>
+            ))}
+          </div>
+        )}
+      </li>
+      {/* @TODO DateInput 기능 완성 시 작업 */}
+      {/* <li>
+        <DateInput
+          id='filterStartAt'
+          label='시작일'
+          className='gap-2'
+          value={startAt}
+          onChange={handleDateChange}
+        />
+      </li> */}
+      <li className='flex items-end gap-3'>
+        <Input
+          id='filterPay'
+          type='text'
+          inputMode='numeric'
+          pattern='[0-9]*'
+          label='금액'
+          placeholder='0'
+          suffix='원'
+          className='gap-2'
+          value={pay}
+          onChange={handlePayChange}
+        />
+        <p className='whitespace-nowrap pb-4'>이상부터</p>
+      </li>
+    </ul>
+  );
+};
+export default FilterBody;
