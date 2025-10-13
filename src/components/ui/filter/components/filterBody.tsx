@@ -1,15 +1,15 @@
 import { filterLayout } from '@/components/ui/filter/filter.styles';
 import { Icon } from '@/components/ui/icon';
-import { DateInput, Input } from '@/components/ui/input';
+import { Input } from '@/components/ui/input';
 import { ADDRESS_CODE } from '@/constants/dropdown';
 import { parseRFC3339 } from '@/lib/utils/dateFormatter';
 import { formatNumber } from '@/lib/utils/formatNumber';
-import { FilterQueryParams } from '@/types/api';
+import { FilterQuery } from '@/types/api';
 import { ChangeEvent, useMemo } from 'react';
 
 interface FilterBodyProps {
-  formData: FilterQueryParams;
-  onChange: (updater: (prev: FilterQueryParams) => FilterQueryParams) => void;
+  formData: FilterQuery;
+  onChange: (updater: (prev: FilterQuery) => FilterQuery) => void;
 }
 
 const FilterBody = ({ formData, onChange }: FilterBodyProps) => {
