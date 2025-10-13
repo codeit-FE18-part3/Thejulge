@@ -25,7 +25,6 @@ const toPostCard = ({ item }: RawNotice): PostCard => {
 
 const PostWrapper = () => {
   const notices: PostCard[] = mockResponse.items.map(toPostCard);
-
   return (
     <div className='grid grid-cols-2 gap-6 desktop:grid-cols-3'>
       {notices.map(notice => (

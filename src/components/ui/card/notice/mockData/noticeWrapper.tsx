@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import Notice from '@/components/ui/card/notice/notice';
 import { getNoticeStatus } from '@/lib/utils/getNoticeStatus';
-import type { NoticeCard } from '@/types/notice';
+import { type NoticeCard } from '@/types/notice';
 import { NoticeShopCard } from '@/types/shop';
 import Link from 'next/link';
 import mockResponse from './mockData.json';
