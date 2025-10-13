@@ -7,7 +7,7 @@ import { useCallback, useRef, useState } from 'react';
 import Input from './input';
 
 export default function TimeInput() {
-  const { value: open, toggle, setClose } = useToggle(false);
+  const { isOpen, toggle, setClose } = useToggle(false);
   const [period, setPeriod] = useState<Period>('오전');
   const [selectedTime, setSelectedTime] = useState<Date | null>(null);
   const [inputValue, setInputValue] = useState(''); // typing 사용
@@ -15,7 +15,7 @@ export default function TimeInput() {
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   useClickOutside(wrapperRef, () => {
-    if (open) setClose();
+    if (isOpen) setClose();
   });
 
   // 시간 업데이트 중앙 관리
@@ -94,7 +94,7 @@ export default function TimeInput() {
         onChange={handleTimeInputChange}
       />
 
-      {open && (
+      {isOpen && (
         <div className='z-1 absolute'>
           <TimeSelector
             onSelect={handleTimeSelect}
