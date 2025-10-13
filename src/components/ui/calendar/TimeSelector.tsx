@@ -34,7 +34,7 @@ export default function TimeSelector({ onSelect, period, hours, minutes }: TimeS
   };
 
   const TIME_SELECTOR_WRAPPER_CLASS =
-    'mt-3 flex w-80 items-center justify-center gap-6 rounded-lg border bg-white p-4';
+    'mt-3 flex items-center justify-center gap-6 rounded-lg border bg-white p-3';
 
   const BASE_PERIOD_CLASS = 'rounded-lg px-4 py-2 font-semibold transition';
   const BASE_TIME_CLASS = 'rounded px-3 py-1 transition';
@@ -50,7 +50,7 @@ export default function TimeSelector({ onSelect, period, hours, minutes }: TimeS
 
   return (
     <div className={TIME_SELECTOR_WRAPPER_CLASS}>
-      <div className='flex flex-col gap-4 p-2'>
+      <div className='flex flex-col gap-3 p-2'>
         {['오전', '오후'].map(p => (
           <button
             key={p}

@@ -11,5 +11,6 @@ export { Table } from '@/components/ui/table';
 export { Button } from './button';
 export { Notice, Post } from './card';
 export { Dropdown } from './dropdown';
+export { Filter } from './filter';
 export { Icon } from './icon';
 export { Modal, Notification } from './modal';

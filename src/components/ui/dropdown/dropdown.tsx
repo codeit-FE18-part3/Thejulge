@@ -29,7 +29,7 @@ const Dropdown = <T extends string>({
   className,
   onChange,
 }: DropdownProps<T>) => {
-  const { value: isOpen, toggle, setClose } = useToggle();
+  const { isOpen, toggle, setClose } = useToggle();
   const [attachDropdownRef, dropdownRef] = useSafeRef<HTMLDivElement>();
   const [attachTriggerRef, triggerRef] = useSafeRef<HTMLButtonElement>();
   const [attachListRef, listRef] = useSafeRef<HTMLDivElement>();

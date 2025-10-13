@@ -41,3 +41,13 @@ export function formatWithDots(numbers: string) {
   if (year) return `${year}`;
   return numbers;
 }
+
+export function parseRFC3339(v?: string | null): Date | null {
+  if (!v) return null;
+  const t = Date.parse(v);
+  return isNaN(t) ? null : new Date(t);
+}
+
+export function toRFC3339(d: Date | null | undefined): string | undefined {
+  return d ? d.toISOString() : undefined;
+}

@@ -14,7 +14,7 @@ export default function DayViewMode({ currentMonth, currentDay, onSelect }: DayV
 
   return (
     <>
-      <div className={`${DAY_CALENDAR_CLASS} mb-3 font-medium text-gray-500`}>
+      <div className={`${DAY_CALENDAR_CLASS} mb-3 pt-2 font-medium text-gray-500`}>
         {WEEKDAYS.map((day, i) => {
           const headerClass = i === 0 ? 'text-red-400' : i === 6 ? 'text-blue-200' : '';
 
@@ -36,9 +36,9 @@ export default function DayViewMode({ currentMonth, currentDay, onSelect }: DayV
 
           const DAY_CELL_CLASS = isDisabled
             ? 'text-gray-500'
-            : isCurrentMonth && dayOfWeek === 0
+            : !isSelected && isCurrentMonth && dayOfWeek === 0
               ? 'text-red-400'
-              : isCurrentMonth && dayOfWeek === 6
+              : !isSelected && isCurrentMonth && dayOfWeek === 6
                 ? 'text-blue-200'
                 : '';
 
@@ -48,7 +48,7 @@ export default function DayViewMode({ currentMonth, currentDay, onSelect }: DayV
               onClick={() => !isDisabled && onSelect(date)}
               disabled={isDisabled}
               className={cn(
-                'rounded-lg py-1.5 transition',
+                'h-[3rem] w-[3rem] rounded-lg py-1.5 transition',
                 isSelected
                   ? 'bg-blue-200 font-semibold text-white'
                   : !isDisabled

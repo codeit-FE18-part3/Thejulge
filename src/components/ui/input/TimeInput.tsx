@@ -85,7 +85,7 @@ export default function TimeInput() {
   const minutes = selectedTime ? String(selectedTime.getMinutes()).padStart(2, '0') : '00';
 
   return (
-    <div ref={wrapperRef} className='relative w-full'>
+    <div ref={wrapperRef} className='relative max-w-md'>
       <Input
         value={inputValue ? `${period} ${inputValue}` : ''}
         label='시간 선택'
@@ -95,7 +95,7 @@ export default function TimeInput() {
       />
 
       {open && (
-        <div className='absolute'>
+        <div className='z-1 absolute'>
           <TimeSelector
             onSelect={handleTimeSelect}
             period={period}
