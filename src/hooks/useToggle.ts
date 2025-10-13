@@ -1,17 +1,17 @@
 import { useCallback, useState } from 'react';
 
 interface UseToggle {
-  value: boolean;
+  isOpen: boolean;
   toggle: () => void;
   setOpen: () => void;
   setClose: () => void;
 }
 
 const useToggle = (init = false): UseToggle => {
-  const [value, setValue] = useState(init);
-  const toggle = useCallback(() => setValue(prev => !prev), []);
-  const setOpen = useCallback(() => setValue(true), []);
-  const setClose = useCallback(() => setValue(false), []);
-  return { value, toggle, setOpen, setClose };
+  const [isOpen, setIsOpen] = useState(init);
+  const toggle = useCallback(() => setIsOpen(prev => !prev), []);
+  const setOpen = useCallback(() => setIsOpen(true), []);
+  const setClose = useCallback(() => setIsOpen(false), []);
+  return { isOpen, toggle, setOpen, setClose };
 };
 export default useToggle;

@@ -15,20 +15,23 @@ export default function DateInput({
   requiredMark = false,
   error,
 }: DateInputProps) {
-  const { value: open, toggle, setClose } = useToggle(false);
+  const { isOpen, toggle, setClose } = useToggle(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [inputValue, setInputValue] = useState(''); // typing 사용
   const [dateError, setDateError] = useState('');
 
   useClickOutside(wrapperRef, () => {
-    if (open) setClose();
+    if (isOpen) setClose();
   });
 
   useEffect(() => {
     if (value) {
       setSelectedDate(value);
       setInputValue(formatDate(value));
+    } else {
+      setSelectedDate(null);
+      setInputValue('');
     }
   }, [value]);
 
@@ -120,7 +123,7 @@ export default function DateInput({
         autoComplete='off'
       />
 
-      {open && (
+      {isOpen && (
         <div className='z-1 absolute w-full'>
           <Calendar onSelect={handleDateSelect} value={selectedDate ?? new Date()} />
         </div>
