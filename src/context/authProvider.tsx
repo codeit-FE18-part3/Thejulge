@@ -1,15 +1,18 @@
-// 목적: 앱 전역에서 로그인/유저 상태를 관리하고, 인증 관련 함수를 제공한다.
-// 특징: 토큰과 사용자 ID를 내부에서 관리하고, 외부는 파생 상태와 동작 함수만 사용한다.
+// 목적: 앱 전역에서 로그인/유저 상태를 관리하고, 인증 관련 표준 함수를 제공한다.
+// 특징: 토큰과 사용자 ID는 내부에서만 관리하고, 외부는 파생 상태와 동작 함수만 사용한다.
 
-import { apiLogin, apiSignup } from '@/api/auth'; // 로그인/회원가입 API
-import { apiGetUser, apiUpdateUser } from '@/api/users'; // 내 정보 API
+import { apiLogin, apiSignup } from '@/api/auth';
+import { apiGetUser, apiUpdateUser } from '@/api/users';
 import type { LoginRequest, User, UserRequest, UserRole } from '@/types/user';
-import { createContext, ReactNode, useEffect, useMemo, useState } from 'react';
+import { createContext, ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
 type AuthContextValue = {
-  isLogin: boolean; // 토큰 보유 여부
+  // 파생 상태
+  isLogin: boolean;
   role: UserRole; // 'guest' | 'employee' | 'employer'
-  user: User | null; // 로그인 상태일 때의 내 정보
+  // 데이터
+  user: User | null;
+  // 동작
   login: (credentials: LoginRequest) => Promise<void>;
   logout: () => void;
   signup: (data: UserRequest) => Promise<void>;
@@ -19,9 +22,19 @@ type AuthContextValue = {
 
 export const AuthContext = createContext<AuthContextValue | null>(null);
 
-// 로컬 스토리지 키: 읽기 쉬운 이름으로 고정
+// 로컬 스토리지 키 (고정)
 const TOKEN_KEY = 'thejulge_token';
 const USER_ID_KEY = 'thejulge_user_id';
+
+// 브라우저에서만 동작하도록 가드된 유틸
+const setStorage = (key: string, value: string) => {
+  if (typeof window !== 'undefined') localStorage.setItem(key, value);
+};
+const getStorage = (key: string) =>
+  typeof window !== 'undefined' ? localStorage.getItem(key) : null;
+const removeStorage = (key: string) => {
+  if (typeof window !== 'undefined') localStorage.removeItem(key);
+};
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
   // 핵심 상태: 토큰, 사용자 ID, 사용자 정보
@@ -29,76 +42,78 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [userId, setUserId] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
 
-  // 파생 상태: 로그인 여부, 역할
+  // 파생 상태
   const isLogin = !!token;
   const role: UserRole = useMemo(() => (user ? user.type : 'guest'), [user]);
 
-  // 앱 시작 시, 저장소에 남아있는 토큰/사용자 ID 복원
+  // 앱 시작 시 저장소에서 복원
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const storedToken = localStorage.getItem(TOKEN_KEY);
-    const storedUserId = localStorage.getItem(USER_ID_KEY);
+    const storedToken = getStorage(TOKEN_KEY);
+    const storedUserId = getStorage(USER_ID_KEY);
     if (storedToken) setToken(storedToken);
     if (storedUserId) setUserId(storedUserId);
   }, []);
 
-  // 로그인: /token → 토큰과 사용자 ID 저장 → 즉시 내 정보 동기화
-  const login: AuthContextValue['login'] = async credentials => {
+  // 로그인: /token → 토큰/사용자 ID 저장 → /users/{id}로 내 정보 동기화
+  const login = useCallback(async (credentials: LoginRequest) => {
     const res = await apiLogin(credentials);
     const newToken = res.item.token;
     const newUserId = res.item.user.item.id;
 
     setToken(newToken);
     setUserId(newUserId);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(TOKEN_KEY, newToken);
-      localStorage.setItem(USER_ID_KEY, newUserId);
-    }
+    setStorage(TOKEN_KEY, newToken);
+    setStorage(USER_ID_KEY, newUserId);
 
     const me = await apiGetUser(newUserId);
     setUser(me);
-  };
+  }, []);
 
-  // 로그아웃: 상태와 저장소 모두 비우기
-  const logout: AuthContextValue['logout'] = () => {
+  // 로그아웃: 상태와 저장소 초기화
+  const logout = useCallback(() => {
     setToken(null);
     setUser(null);
     setUserId(null);
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem(TOKEN_KEY);
-      localStorage.removeItem(USER_ID_KEY);
-    }
-  };
+    removeStorage(TOKEN_KEY);
+    removeStorage(USER_ID_KEY);
+  }, []);
 
-  // 회원가입: /users 성공만 확인(페이지에서 라우팅 처리)
-  const signup: AuthContextValue['signup'] = async data => {
+  // 회원가입: /users 성공만 확인 (라우팅은 화면에서 처리)
+  const signup = useCallback(async (data: UserRequest) => {
     await apiSignup(data);
-  };
+  }, []);
 
   // 내 정보 재조회
-  const getUser: AuthContextValue['getUser'] = async () => {
+  const getUser = useCallback(async () => {
     if (!userId) throw new Error('로그인이 필요합니다');
     const me = await apiGetUser(userId);
     setUser(me);
-  };
+  }, [userId]);
 
   // 내 정보 수정
-  const updateUser: AuthContextValue['updateUser'] = async patch => {
-    if (!userId) throw new Error('로그인이 필요합니다');
-    const updated = await apiUpdateUser(userId, patch);
-    setUser(updated);
-  };
+  const updateUser = useCallback(
+    async (patch: Partial<User>) => {
+      if (!userId) throw new Error('로그인이 필요합니다');
+      const updated = await apiUpdateUser(userId, patch);
+      setUser(updated);
+    },
+    [userId]
+  );
 
-  const value: AuthContextValue = {
-    isLogin,
-    role,
-    user,
-    login,
-    logout,
-    signup,
-    getUser,
-    updateUser,
-  };
+  // 컨텍스트 값 메모이즈 (리렌더 최소화)
+  const value = useMemo<AuthContextValue>(
+    () => ({
+      isLogin,
+      role,
+      user,
+      login,
+      logout,
+      signup,
+      getUser,
+      updateUser,
+    }),
+    [isLogin, role, user, login, logout, signup, getUser, updateUser]
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
