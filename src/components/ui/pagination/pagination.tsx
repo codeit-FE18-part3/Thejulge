@@ -9,11 +9,12 @@ interface PaginationProps {
   offset: number; // 현재 offset
   limit: number; // 한 페이지당 아이템 수
   onPageChange: (next: number) => void; // 새 offset 전달
+  className?: string;
 }
 
 /* <Pagination total={count} limit={limit}  offset={offset} onPageChange={} */
 
-const Pagination = ({ total, offset, limit, onPageChange }: PaginationProps) => {
+const Pagination = ({ total, offset, limit, onPageChange, className }: PaginationProps) => {
   const [pageGroup, setPageGroup] = useState(0);
 
   const totalPages = total ? Math.ceil(total / limit) : 0;
@@ -53,7 +54,7 @@ const Pagination = ({ total, offset, limit, onPageChange }: PaginationProps) => 
   };
 
   return (
-    <div className={cn(BUTTON_ALIGN, 'gap-[2px]')}>
+    <div className={cn(BUTTON_ALIGN, 'gap-[2px]', className)}>
       {/* 이전 */}
       <button
         className={cn(BUTTON_ALIGN, 'mr-4')}
