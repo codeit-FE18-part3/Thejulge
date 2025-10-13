@@ -21,3 +21,12 @@ export interface Shop extends ShopBase {
 }
 
 export type ShopSummary = Pick<ShopBase, 'name' | 'address1' | 'imageUrl' | 'originalHourlyPay'>;
+
+export interface NoticeShopCard {
+  shopId: string;
+  name: string;
+  category: string;
+  address1: string;
+  imageUrl: string;
+  shopDescription: string;
+}
