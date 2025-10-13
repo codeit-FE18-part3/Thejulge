@@ -1,6 +1,7 @@
 /* -------------------- 공고 -------------------- */
 
-import { ShopSummary } from './shop';
+import { ApiResponse, Link, PaginatedResponse } from './api';
+import { Shop, ShopSummary } from './shop';
 
 // 공고 등록
 export interface NoticeBase {
@@ -24,3 +25,16 @@ export type NoticeCard = Notice &
     category: string;
     shopDescription: string;
   };
+
+export interface NoticeItemResponse {
+  item: Notice & {
+    shop: {
+      item: Shop;
+      href: string;
+    };
+  };
+  links: Link[];
+}
+
+export type NoticeListResponse = PaginatedResponse & ApiResponse<NoticeItemResponse>;
+export type NoticeVariant = 'notice' | 'shop';
