@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils/cn';
 import { useEffect, useState } from 'react';
 
 const PAGE_GROUP_SIZE = 7;
-const BUTTON_ALIGN = 'flex items-center justify-center';
+const BUTTON_ALIGN = 'flex items-center justify-center shrink-0';
 interface PaginationProps {
   total: number; // 전체 개수 (count)
   offset: number; // 현재 offset
