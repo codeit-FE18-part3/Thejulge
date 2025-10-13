@@ -1,4 +1,4 @@
-import { Icon } from '@/components/ui';
+import { Icon } from '@/components/ui/icon';
 import { cn } from '@/lib/utils/cn';
 import { useEffect, useState } from 'react';
 
