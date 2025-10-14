@@ -8,9 +8,21 @@ const filterStickyContent = cva('sticky left-0 flex border-gray-200');
 const filterWrapper = cva(
   cn(
     filterPosition(),
-    'fixed z-10 h-dvh overflow-hidden rounded-xl border border-gray-200 min-[480px]:absolute min-[480px]:h-fit min-[480px]:w-[390px]'
+    'fixed top-0 z-10 h-dvh overflow-hidden rounded-xl border border-gray-200 min-[480px]:absolute min-[480px]:h-fit min-[480px]:w-[390px] min-[480px]:top-[calc(100%+8px)]'
   )
 );
+
+const filterPlacement = cva('', {
+  variants: {
+    align: {
+      left: 'left-0',
+      right: 'right-0',
+    },
+  },
+  defaultVariants: {
+    align: 'right',
+  },
+});
 
 const filterPadding = cva('px-3 tablet:px-5');
 
@@ -55,6 +67,7 @@ export const filterLayout = {
   position: filterPosition,
   stickyContent: filterStickyContent,
   wrapper: filterWrapper,
+  placement: filterPlacement,
   padding: filterPadding,
   header: filterHeader,
   body: filterBody,

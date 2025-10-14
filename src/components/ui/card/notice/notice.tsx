@@ -1,4 +1,5 @@
 import { Container } from '@/components/layout/container';
+import { cn } from '@/lib/utils/cn';
 import { type NoticeCard, type NoticeVariant } from '@/types/notice';
 import { ReactNode } from 'react';
 import RenderNotice from './components/renderNotice';
@@ -9,12 +10,14 @@ interface NoticeProps<T extends Partial<NoticeCard>> {
   notice: T;
   variant?: NoticeVariant;
   children: ReactNode;
+  className?: string;
 }
 
 const Notice = <T extends Partial<NoticeCard>>({
   notice,
   variant = 'notice',
   children,
+  className,
 }: NoticeProps<T>) => {
   const {
     hourlyPay,
@@ -63,7 +66,7 @@ const Notice = <T extends Partial<NoticeCard>>({
   };
 
   return (
-    <Container className={noticeWrapper()}>
+    <Container as='section' className={cn(noticeWrapper(), className)}>
       {variant === 'notice' ? (
         <RenderNotice items={noticeItem} buttonComponent={children} />
       ) : (

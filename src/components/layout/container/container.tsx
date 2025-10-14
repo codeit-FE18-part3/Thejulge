@@ -16,10 +16,9 @@ const Container = ({ as: Component = 'div', isPage = false, className, children 
   return (
     <Component
       className={cn(
-        'relative z-[1]',
         'mx-auto w-full max-w-[1028px] px-3',
         'tablet:px-8',
-        isPage && "py-10 tablet:py-16" ,
+        isPage && 'py-10 tablet:py-16',
         className
       )}
     >

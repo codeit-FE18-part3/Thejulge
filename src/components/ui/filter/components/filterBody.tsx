@@ -1,7 +1,8 @@
 import { filterLayout } from '@/components/ui/filter/filter.styles';
 import { Icon } from '@/components/ui/icon';
-import { Input } from '@/components/ui/input';
+import { DateInput, Input } from '@/components/ui/input';
 import { ADDRESS_CODE } from '@/constants/dropdown';
+import { cn } from '@/lib/utils/cn';
 import { parseRFC3339 } from '@/lib/utils/dateFormatter';
 import { formatNumber } from '@/lib/utils/formatNumber';
 import { FilterQuery } from '@/types/api';
@@ -31,8 +32,9 @@ const FilterBody = ({ formData, onChange }: FilterBodyProps) => {
     onChange(prev => ({ ...prev, address: next }));
   };
 
-  const handleDateChange = (date: Date | null) => {
-    const rfc3339String = date?.toISOString();
+  const handleDateChange = (date: Date | string) => {
+    if (typeof date === 'string') return;
+    const rfc3339String = date.toISOString();
     onChange(prev => ({ ...prev, startsAtGte: rfc3339String }));
   };
 
@@ -50,7 +52,7 @@ const FilterBody = ({ formData, onChange }: FilterBodyProps) => {
             <li key={value} className='w-full mobile:w-[calc(50%-6px)]'>
               <button
                 type='button'
-                className={filterLayout.location()}
+                className={cn(filterLayout.location(), locations.includes(value) && 'text-red-400')}
                 onClick={() => addLocation(value)}
               >
                 {value}
@@ -74,8 +76,7 @@ const FilterBody = ({ formData, onChange }: FilterBodyProps) => {
           </div>
         )}
       </li>
-      {/* @TODO DateInput 기능 완성 시 작업 */}
-      {/* <li>
+      <li>
         <DateInput
           id='filterStartAt'
           label='시작일'
@@ -83,7 +84,7 @@ const FilterBody = ({ formData, onChange }: FilterBodyProps) => {
           value={startAt}
           onChange={handleDateChange}
         />
-      </li> */}
+      </li>
       <li className='flex items-end gap-3'>
         <Input
           id='filterPay'
