@@ -11,7 +11,7 @@ import { useState } from 'react';
 
 type MemberType = 'employee' | 'employer';
 
-// 에러 객체를 안전하게 메시지로 변환
+// 에러 객체를 메시지로 변환
 const getMsg = (err: unknown, fallback: string) => {
   if (typeof err === 'string') return err;
   if (err && typeof err === 'object') {
@@ -27,7 +27,7 @@ const getMsg = (err: unknown, fallback: string) => {
 export default function SignupPage() {
   const { signup } = useAuth();
 
-  // 입력값
+  // Inpun 값
   const [email, setEmail] = useState('');
   const [pw, setPw] = useState('');
   const [pw2, setPw2] = useState('');
@@ -43,7 +43,7 @@ export default function SignupPage() {
   const [dupOpen, setDupOpen] = useState(false); // 409 모달
   const [globalErr, setGlobalErr] = useState<string | null>(null);
 
-  // ── 요구사항: blur(=focus out) 유효성 ──
+  // ── blur(=focus out) 유효성 ──
   const onBlurEmail = (e: React.FocusEvent<HTMLInputElement>) => {
     if (e.currentTarget.validity.typeMismatch) setEmailErr('이메일 형식으로 작성해 주세요.');
     else setEmailErr(null);
@@ -60,7 +60,7 @@ export default function SignupPage() {
     e.preventDefault();
     setGlobalErr(null);
 
-    // 브라우저 기본 검증(HTML required/type=email 등)
+    // 브라우저 기본 검증
     if (!e.currentTarget.checkValidity()) {
       e.currentTarget.reportValidity();
       return;
@@ -89,7 +89,7 @@ export default function SignupPage() {
     }
   };
 
-  // 회원 유형 Pill (선택: 빨간 원+체크 / 미선택: 속 빈 원)
+  // 회원 유형
   function TypePill({
     value,
     label,
@@ -134,7 +134,7 @@ export default function SignupPage() {
               />
             </>
           ) : (
-            // 미선택: 속 빈 원(테두리만)
+            // 미선택
             <span className='box-content block h-3.5 w-3.5 rounded-full border border-[var(--gray-300)] desktop:h-[14px] desktop:w-[14px]' />
           )}
         </span>
@@ -276,7 +276,7 @@ export default function SignupPage() {
             </Button>
           </div>
 
-          {/* 내부 라우팅: Next Link 사용 */}
+          {/* 내부 라우팅 Link 사용 */}
           <p className='text-center leading-[var(--lh-body-s)] text-[var(--fs-body-s)]'>
             이미 가입하셨나요?{' '}
             <Link href='/login' className='text-[var(--blue-200)] underline'>
@@ -286,7 +286,7 @@ export default function SignupPage() {
         </form>
       </section>
 
-      {/* 409 중복 이메일 모달 — 설명 중앙정렬 */}
+      {/* 409 중복 이메일 모달 */}
       <Modal
         open={dupOpen}
         onClose={() => setDupOpen(false)}

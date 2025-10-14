@@ -25,6 +25,7 @@ export const AuthContext = createContext<AuthContextValue | null>(null);
 // 로컬 스토리지 키 (고정)
 const TOKEN_KEY = 'thejulge_token';
 const USER_ID_KEY = 'thejulge_user_id';
+const EXPIRES_KEY = 'thejulge_expires_at'; //  추가: 만료시간 저장용 키
 
 // 브라우저에서만 동작하도록 가드된 유틸
 const setStorage = (key: string, value: string) => {
@@ -50,9 +51,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const storedToken = getStorage(TOKEN_KEY);
     const storedUserId = getStorage(USER_ID_KEY);
+    const expiresAt = Number(getStorage(EXPIRES_KEY)); // 만료시간 불러오기
     if (storedToken) setToken(storedToken);
     if (storedUserId) setUserId(storedUserId);
-    if (storedUserId) getUser(storedUserId);
   }, []);
 
   // 로그인: /token → 토큰/사용자 ID 저장 → /users/{id}로 내 정보 동기화
@@ -61,10 +62,14 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     const newToken = res.item.token;
     const newUserId = res.item.user.item.id;
 
+    //  만료시간 10분
+    const expiresAt = Date.now() + 1000 * 60 * 10;
+
     setToken(newToken);
     setUserId(newUserId);
     setStorage(TOKEN_KEY, newToken);
     setStorage(USER_ID_KEY, newUserId);
+    setStorage(EXPIRES_KEY, expiresAt.toString());
 
     const me = await apiGetUser(newUserId);
     setUser(me);
@@ -77,6 +82,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUserId(null);
     removeStorage(TOKEN_KEY);
     removeStorage(USER_ID_KEY);
+    removeStorage(EXPIRES_KEY);
   }, []);
 
   // 회원가입: /users 성공만 확인 (라우팅은 화면에서 처리)
@@ -103,6 +109,19 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     },
     [userId]
   );
+
+  //  1분마다 만료여부 확인
+  useEffect(() => {
+    if (!token) return;
+    const interval = setInterval(() => {
+      const expiresAt = Number(getStorage(EXPIRES_KEY));
+      if (expiresAt && Date.now() > expiresAt) {
+        logout();
+      }
+    }, 1000 * 60);
+
+    return () => clearInterval(interval);
+  }, [token, logout]);
 
   // 컨텍스트 값 메모이즈 (리렌더 최소화)
   const value = useMemo<AuthContextValue>(
