@@ -1,23 +1,18 @@
 import { Post } from '@/components/ui';
 import { Pagination } from '@/components/ui/pagination';
-import { NoticeQuery, PaginatedResponse } from '@/types/api';
-import { type PostCard } from '@/types/notice';
+import { useNotice } from '@/context/noticeProvider';
 
-interface NoticeListProps {
-  notices: PostCard[];
-  pagination?: PaginatedResponse;
-  isLoading: boolean;
-  error: string | null;
-  fetchNotices?: (params?: Partial<NoticeQuery>) => Promise<void>;
+interface NoticeProps {
+  q: string | undefined;
 }
 
-const NoticeList = ({ notices, isLoading, error, pagination, fetchNotices }: NoticeListProps) => {
-  
+const NoticeList = ({ q }: NoticeProps) => {
+  const { notices, isLoading, error, pagination, fetchNotices } = useNotice();
   if (error) {
     return <div> {error}</div>;
   }
   if (notices.length === 0) {
-    return <div>공고가 존재하지 않습니다</div>;
+    return <div>{q && q + '에 대한 '}공고가 존재하지 않습니다</div>;
   }
 
   return (
@@ -31,15 +26,13 @@ const NoticeList = ({ notices, isLoading, error, pagination, fetchNotices }: Not
           ))}
         </div>
       )}
-      {pagination && (
-        <Pagination
-          total={pagination.count}
-          limit={pagination.limit}
-          offset={pagination.offset}
-          onPageChange={next => fetchNotices?.({ offset: next })}
-          className='mt-8 tablet:mt-10'
-        />
-      )}
+      <Pagination
+        total={pagination.count}
+        limit={pagination.limit}
+        offset={pagination.offset}
+        onPageChange={next => fetchNotices({ offset: next })}
+        className='mt-8 tablet:mt-10'
+      />
     </>
   );
 };
