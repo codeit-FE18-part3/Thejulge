@@ -1,11 +1,22 @@
-import { Icon } from '@/components/ui';
+import { Icon } from '@/components/ui/';
 import { cn } from '@/lib/utils/cn';
 import { useRouter } from 'next/router';
-import { ChangeEvent, FormEvent, useState } from 'react';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 
 const SearchBar = ({ initValue = '' }) => {
   const [keyword, setKeyword] = useState(initValue);
   const router = useRouter();
+
+  // 라우트 변경 시 검색어 동기화 search 페이지면 검색어 동기화, 그 외 페이지 초기화
+  useEffect(() => {
+    const isSearchPage = router.pathname === '/search';
+    if (isSearchPage) {
+      const q = typeof router.query.q === 'string' ? router.query.q : '';
+      setKeyword(q);
+    } else {
+      setKeyword('');
+    }
+  }, [router.pathname, router.query.q]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => setKeyword(e.target.value);
 
