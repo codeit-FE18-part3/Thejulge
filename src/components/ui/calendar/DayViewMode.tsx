@@ -48,7 +48,7 @@ export default function DayViewMode({ currentMonth, currentDay, onSelect }: DayV
               onClick={() => !isDisabled && onSelect(date)}
               disabled={isDisabled}
               className={cn(
-                'h-[3rem] w-[3rem] rounded-lg transition',
+                'aspect-square w-full rounded-lg transition',
                 isSelected
                   ? 'bg-blue-200 font-semibold text-white'
                   : !isDisabled
