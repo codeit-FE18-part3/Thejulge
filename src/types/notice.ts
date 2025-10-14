@@ -17,6 +17,8 @@ export interface Notice extends NoticeBase {
   closed: boolean;
 }
 
+export type CardVariant = 'post' | 'notice';
+
 export type PostCard = Omit<Notice, 'description'> & ShopSummary & { shopId: string };
 
 export type NoticeCard = Notice &

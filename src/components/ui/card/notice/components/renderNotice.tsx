@@ -1,8 +1,8 @@
+import CardImage from '@/components/ui/card/cardImage';
 import { descriptionWrapper, noticeFrame } from '@/components/ui/card/notice/notice.styles';
 import { type NoticeCard } from '@/types/notice';
 import { ReactNode } from 'react';
 import NoticeHeader from './noticeHeader';
-import NoticeImage from './noticeImage';
 import NoticeInfo from './noticeInfo';
 
 interface RenderNoticeProps<T extends Partial<NoticeCard>> {
@@ -26,7 +26,7 @@ const RenderNotice = <T extends Partial<NoticeCard>>({
     <>
       <NoticeHeader name={name} category={category} />
       <section className={noticeFrame()}>
-        <NoticeImage name={name} imageUrl={imageUrl} />
+        <CardImage variant='notice' src={imageUrl} alt={name} />
         <NoticeInfo variant={variant} value={value} buttonComponent={buttonComponent} />
       </section>
       <section className={descriptionWrapper()}>

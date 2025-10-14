@@ -11,10 +11,6 @@ export const noticeFrame = cva(
   )
 );
 
-export const noticeImageWrapper = cva(
-  cn(cardLayout.imageWrapper(), 'w-full h-[180px] tablet:h-[360px] desktop:h-auto')
-);
-
 export const noticeInfoWrapper = cva('shrink-0 desktop:w-[346px]');
 
 export const noticeLabel = cva('pb-2 text-body-m font-bold text-red-400');

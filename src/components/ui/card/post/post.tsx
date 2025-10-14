@@ -1,13 +1,13 @@
 import { cardLayout, CardStatusVariant } from '@/components/ui/card/card.styles';
 import CardBadge from '@/components/ui/card/cardBadge';
+import CardImage from '@/components/ui/card/cardImage';
 import CardInfo from '@/components/ui/card/cardInfo';
 import { getTime } from '@/lib/utils/dateFormatter';
 import { formatNumber } from '@/lib/utils/formatNumber';
 import { getNoticeStatus } from '@/lib/utils/getNoticeStatus';
 import type { PostCard } from '@/types/notice';
-import Image from 'next/image';
 import Link from 'next/link';
-import { postFrame, postImageDimmed, postImageWrapper } from './post.styles';
+import { postFrame, postImageDimmed } from './post.styles';
 
 interface PostProps {
   notice: PostCard;
@@ -36,22 +36,15 @@ const Post = ({ notice }: PostProps) => {
 
   return (
     <Link href={href} className={postFrame()} aria-label={`${name} 공고 상세로 이동`}>
-      <div className={postImageWrapper()}>
-        <Image
-          src={imageUrl}
-          alt={`${name} 가게 이미지`}
-          fill
-          sizes='(max-width: 744px) 120px, 160px'
-          className='object-cover'
-        />
+      <CardImage variant='post' src={imageUrl} alt={name}>
         <CardBadge variant='post' hourlyPay={hourlyPay} originalHourlyPay={originalHourlyPay} />
         {status !== 'open' && <div className={postImageDimmed()}>{STATUS_LABEL[status]}</div>}
-      </div>
+      </CardImage>
       <h3
         className={cardLayout.heading({
           size: 'sm',
           status: statusVariant,
-          className: 'pt-4 pb-2 tablet:pt-6 tablet:pb-4',
+          className: 'pb-2 pt-4 tablet:pb-4 tablet:pt-6',
         })}
       >
         {name}

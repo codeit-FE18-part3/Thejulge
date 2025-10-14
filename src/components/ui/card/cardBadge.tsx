@@ -1,8 +1,8 @@
 import { Icon } from '@/components/ui/icon';
 import { calcPayIncreasePercent } from '@/lib/utils/calcPayIncrease';
 import { cn } from '@/lib/utils/cn';
+import { type CardVariant } from '@/types/notice';
 import { cardLayout } from './card.styles';
-export type CardVariant = 'post' | 'notice';
 interface CardBadgeProps {
   variant: CardVariant;
   hourlyPay?: number;
