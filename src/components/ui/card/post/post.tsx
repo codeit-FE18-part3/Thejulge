@@ -19,6 +19,7 @@ const STATUS_LABEL = {
 
 const Post = ({ notice }: PostProps) => {
   const {
+    id,
     hourlyPay,
     startsAt,
     workhour,
@@ -32,7 +33,7 @@ const Post = ({ notice }: PostProps) => {
   const status = getNoticeStatus(closed, startsAt);
   const { date, startTime, endTime } = getTime(startsAt, workhour);
   const statusVariant: CardStatusVariant = status === 'open' ? 'open' : 'inactive';
-  const href = `/notices/${shopId}`;
+  const href = `/notices/${shopId}/${id}`;
 
   return (
     <Link href={href} className={postFrame()} aria-label={`${name} 공고 상세로 이동`}>

@@ -17,7 +17,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
     (page => (
       <Wrapper>
         <Header />
-        <main className='grow'>{page}</main>
+        <main className='grow relative z-[1]'>{page}</main>
         <Footer />
       </Wrapper>
     ));
@@ -25,7 +25,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
   return (
     <>
       <Head>
-        <title>thejulge</title>
+        <title>일일 알바 매칭 플랫폼 | The-julge</title>
         <link rel='icon' href='/favicon.ico' sizes='any' />
         <link rel='icon' href='/favicon.png' type='image/png' sizes='192x192' />
       </Head>

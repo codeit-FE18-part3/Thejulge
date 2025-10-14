@@ -6,7 +6,7 @@ const useDropdownPosition = (triggerRef: RefObject<HTMLButtonElement>, threshold
   useEffect(() => {
     const trigger = triggerRef.current;
     if (!trigger) return;
-
+    // 트리거 기준으로 아래쪽 여유 공간 < threshold 이면 위로, 아니면 아래로 배치
     const updatePosition = () => {
       const rect = trigger.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
