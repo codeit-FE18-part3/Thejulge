@@ -1,11 +1,15 @@
-import NoticeWrapper from '@/components/ui/card/notice/mockData/noticeWrapper';
-import PostWrapper from '@/components/ui/card/post/mockData/postWrapper';
+import { AllNoticeList, RecommendedNoticeList } from '@/components/features';
+import NoticeProvider from '@/context/noticeProvider';
 
-export default function Home() {
+export default function Main() {
   return (
     <>
-      <NoticeWrapper />
-      <PostWrapper />
+      <NoticeProvider>
+        <RecommendedNoticeList />
+      </NoticeProvider>
+      <NoticeProvider>
+        <AllNoticeList />
+      </NoticeProvider>
     </>
   );
 }
