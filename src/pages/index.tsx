@@ -1,5 +1,5 @@
 import { AllNoticeList, RecommendedNoticeList } from '@/components/features';
-import NoticeProvider from '@/context/noticeProvider';
+import {NoticeProvider} from '@/context/noticeProvider';
 
 export default function Main() {
   return (
