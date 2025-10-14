@@ -44,17 +44,58 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
 
   // 파생 상태
-  const isLogin = !!token;
+  // 변경: isLogin 기준을 "토큰만"에서 "토큰 + 유저 객체 존재"로 강화
+  // → user 로드 전 과도기에 guest 메뉴와 로그아웃이 동시에 뜨는 문제 방지
+  const isLogin = !!token && !!user;
+
   const role: UserRole = useMemo(() => (user ? user.type : 'guest'), [user]);
 
   // 앱 시작 시 저장소에서 복원
   useEffect(() => {
+<<<<<<< HEAD
     const storedToken = getStorage(TOKEN_KEY);
     const storedUserId = getStorage(USER_ID_KEY);
     const expiresAt = Number(getStorage(EXPIRES_KEY)); // 만료시간 불러오기
     if (storedToken) setToken(storedToken);
     if (storedUserId) setUserId(storedUserId);
   }, []);
+=======
+    let cancelled = false; // 변경: 언마운트 안전 가드
+
+    (async () => {
+      const storedToken = getStorage(TOKEN_KEY);
+      const storedUserId = getStorage(USER_ID_KEY);
+      const expiresAt = Number(getStorage(EXPIRES_KEY)); // 만료시간 불러오기
+
+      // 변경: 유효성 먼저 판단(토큰/유저ID/만료)
+      const isValidSession = !!storedToken && !!storedUserId && Date.now() < expiresAt;
+
+      if (!isValidSession) {
+        // 만료 또는 비정상 세션 → 로그아웃으로 정리
+        logout();
+        return;
+      }
+
+      // 유효한 경우에만 토큰/유저ID 세팅 후, 유저 정보 동기화
+      setToken(storedToken!);
+      setUserId(storedUserId!);
+
+      try {
+        // 변경: 복원 시에도 /users 조회를 즉시 수행하여 user를 채움
+        // → user 세팅 전까지는 isLogin=false 이므로 Nav가 guest만 렌더
+        const me = await apiGetUser(storedUserId!);
+        if (!cancelled) setUser(me);
+      } catch {
+        // 실패 시 세션 폐기
+        logout();
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []); // 의도: 최초 1회(로그아웃은 내부 상태만 쓰므로 deps 생략)
+>>>>>>> a564c1a (✨ feat: 프로필 등록 및 상세 페이지 구현, 로그인 상태 관리 개선)
 
   // 로그인: /token → 토큰/사용자 ID 저장 → /users/{id}로 내 정보 동기화
   const login = useCallback(async (credentials: LoginRequest) => {
@@ -71,6 +112,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     setStorage(USER_ID_KEY, newUserId);
     setStorage(EXPIRES_KEY, expiresAt.toString());
 
+    // 변경: 로그인 직후에도 user를 먼저 채운 뒤에야 isLogin=true가 되도록 유지
     const me = await apiGetUser(newUserId);
     setUser(me);
   }, []);
