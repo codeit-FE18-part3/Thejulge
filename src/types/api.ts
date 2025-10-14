@@ -8,15 +8,12 @@ export interface Link {
   href: string;
 }
 
-export interface PaginatedResponse<T> {
+export interface PaginatedResponse {
   offset: number;
   limit: number;
   count: number;
   hasNext: boolean;
-  items: T[];
-  links: Link[];
 }
-
 export interface ApiResponse<T> {
   item: T;
   links: Link[];
@@ -37,15 +34,16 @@ export interface AuthResponse {
 }
 
 export type sort = 'time' | 'pay' | 'hour' | 'shop' | undefined;
-export interface FilterQueryParams {
+export interface FilterQuery {
   address?: string[];
   startsAtGte?: string;
   hourlyPayGte?: number;
 }
 
-export interface QueryParams extends FilterQueryParams {
+export interface NoticeQuery extends FilterQuery {
   offset?: number;
   limit?: number;
   keyword?: string;
   sort?: sort;
 }
+  

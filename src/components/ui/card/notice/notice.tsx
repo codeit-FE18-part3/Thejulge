@@ -1,11 +1,10 @@
-import { Container } from '@/components/layout';
-import { NoticeCard } from '@/types/notice';
+import { Container } from '@/components/layout/container';
+import { type NoticeCard, type NoticeVariant } from '@/types/notice';
 import { ReactNode } from 'react';
 import RenderNotice from './components/renderNotice';
 import RenderShop from './components/renderShop';
 import { noticeWrapper } from './notice.styles';
 
-export type NoticeVariant = 'notice' | 'shop';
 interface NoticeProps<T extends Partial<NoticeCard>> {
   notice: T;
   variant?: NoticeVariant;

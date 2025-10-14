@@ -19,7 +19,7 @@ const cardHeading = cva('font-bold', {
   defaultVariants: { size: 'md', status: 'open' },
 });
 
-const cardInfoLayout = cva('flex flex-nowrap items-start tablet:items-center gap-1.5');
+const cardInfoLayout = cva('flex flex-nowrap items-center tablet:items-center gap-1.5');
 
 const cardInfoText = cva('text-caption tablet:text-body-s', {
   variants: {
@@ -34,7 +34,7 @@ const cardInfoText = cva('text-caption tablet:text-body-s', {
 const cardInfoIcon = cva('', {
   variants: {
     status: {
-      open: 'bg-red-300',
+      open: 'bg-gray-700',
       inactive: 'bg-gray-300',
     },
   },
@@ -43,9 +43,31 @@ const cardInfoIcon = cva('', {
 
 const cardPayLayout = cva('flex items-center gap-x-3');
 
-const cardBadge = cva('flex items-center gap-x-0.5 rounded-full');
+const cardPayText = cva('font-bold text-modal tracking-wide', {
+  variants: {
+    status: {
+      open: 'text-black',
+      inactive: 'text-gray-300',
+    },
+  },
+  defaultVariants: { status: 'open' },
+});
+const cardBadge = cva(
+  'flex items-center gap-x-0.5 rounded-full px-2 py-1 tablet:py-2 tablet:px-3',
+  {
+    variants: {
+      status: {
+        post: 'absolute bottom-3 right-3 z-[1] border border-white',
+        notice: '',
+      },
+    },
+    defaultVariants: { status: 'notice' },
+  }
+);
 
-const cardBadgeText = cva('whitespace-nowrap text-caption tablet:text-body-s');
+const cardBadgeText = cva('whitespace-nowrap text-caption text-white font-bold tablet:text-body-s');
+
+const cardBadgeIcon = cva('self-start bg-white');
 
 export const cardLayout = {
   frame: cardFrame,
@@ -55,7 +77,9 @@ export const cardLayout = {
   info: cardInfoText,
   infoIcon: cardInfoIcon,
   payLayout: cardPayLayout,
+  payText: cardPayText,
   badge: cardBadge,
   badgeText: cardBadgeText,
+  badgeIcon: cardBadgeIcon,
 };
 export type CardStatusVariant = VariantProps<typeof cardHeading>['status'];

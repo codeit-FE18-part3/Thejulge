@@ -1,17 +1,14 @@
 import { cardLayout } from '@/components/ui/card/card.styles';
-import { NoticeVariant } from '@/components/ui/card/notice/notice';
+import CardBadge from '@/components/ui/card/cardBadge';
+import CardInfo from '@/components/ui/card/cardInfo';
 import {
-  badgeText,
   noticeButton,
   noticeInfoWrapper,
   noticeLabel,
-  payBadge,
 } from '@/components/ui/card/notice/notice.styles';
-import { Icon } from '@/components/ui/icon';
-import { calcPayIncreasePercent } from '@/lib/utils/calcPayIncrease';
 import { getTime } from '@/lib/utils/dateFormatter';
 import { formatNumber } from '@/lib/utils/formatNumber';
-import { NoticeCard } from '@/types/notice';
+import { type NoticeCard, type NoticeVariant } from '@/types/notice';
 import { ReactNode } from 'react';
 import NoticeHeader from './noticeHeader';
 
@@ -36,10 +33,9 @@ const NoticeInfo = <T extends Partial<NoticeCard>>({
     address1,
     shopDescription,
   } = value;
-  const payIncreasePercent = calcPayIncreasePercent(hourlyPay ?? 0, originalHourlyPay ?? 0);
+
   const { date, startTime, endTime } = getTime(startsAt ?? '', workhour ?? 0);
-  const payIncreaseLabel =
-    payIncreasePercent && (payIncreasePercent > 100 ? '100% 이상' : `${payIncreasePercent}%`);
+
   return (
     <div className={noticeInfoWrapper()}>
       <ul className='flex flex-col gap-3'>
@@ -48,29 +44,19 @@ const NoticeInfo = <T extends Partial<NoticeCard>>({
             <li>
               <p className={noticeLabel()}>시급</p>
               <div className={cardLayout.payLayout()}>
-                <span className='text-heading-s font-bold tracking-wide'>
+                <span className={cardLayout.payText({ className: 'text-heading-s' })}>
                   {formatNumber(hourlyPay ?? 0)}원
                 </span>
-                {payIncreasePercent !== null && (
-                  <div className={payBadge()}>
-                    <span className={badgeText()}>기존 시급 {payIncreaseLabel}</span>
-                    <Icon
-                      iconName='arrowUp'
-                      iconSize='sm'
-                      bigScreenSize='rg'
-                      decorative
-                      className='self-start bg-white'
-                    />
-                  </div>
-                )}
+                <CardBadge
+                  variant='notice'
+                  hourlyPay={hourlyPay}
+                  originalHourlyPay={originalHourlyPay}
+                />
               </div>
             </li>
-            <li className={cardLayout.infoLayout()}>
-              <Icon iconName='clock' iconSize='sm' ariaLabel='근무시간' className='bg-red-300' />
-              <p className={cardLayout.info()}>
-                {date} {startTime} ~ {endTime} ({workhour}시간)
-              </p>
-            </li>
+            <CardInfo iconName='calendarClock' ariaLabel='근무시간'>
+              {date} {startTime} ~ {endTime} ({workhour}시간)
+            </CardInfo>
           </>
         )}
         {variant === 'shop' && (
@@ -78,10 +64,9 @@ const NoticeInfo = <T extends Partial<NoticeCard>>({
             <NoticeHeader name={name} category={category} className='mt-4' />
           </li>
         )}
-        <li className={cardLayout.infoLayout()}>
-          <Icon iconName='map' iconSize='sm' ariaLabel='근무위치' className='bg-red-300' />
-          <p className={cardLayout.info()}>{address1}</p>
-        </li>
+        <CardInfo iconName='mapPin' ariaLabel='근무위치'>
+          {address1}
+        </CardInfo>
         <li className='text-body-l'>{shopDescription}</li>
       </ul>
       <div className={noticeButton()}>{buttonComponent}</div>

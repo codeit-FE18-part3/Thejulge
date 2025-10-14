@@ -1,17 +1,20 @@
 import arrowUp from '@/assets/icon/ic-arrow-up.svg';
 import calendar from '@/assets/icon/ic-calendar.svg';
+import calendarClock from '@/assets/icon/ic-calendar-clock.svg'
 import camera from '@/assets/icon/ic-camera.svg';
 import checked from '@/assets/icon/ic-checked.svg';
 import chevronLeft from '@/assets/icon/ic-chevron-left.svg';
 import chevronRight from '@/assets/icon/ic-chevron-right.svg';
 import clock from '@/assets/icon/ic-clock.svg';
 import close from '@/assets/icon/ic-close.svg';
+import coins from '@/assets/icon/ic-coins.svg';
 import dropdownDown from '@/assets/icon/ic-dropdown-down.svg';
 import dropdownUp from '@/assets/icon/ic-dropdown-up.svg';
 import envelope from '@/assets/icon/ic-envelope.svg';
 import facebook from '@/assets/icon/ic-facebook.svg';
 import instagram from '@/assets/icon/ic-instagram.svg';
 import map from '@/assets/icon/ic-map.svg';
+import mapPin from '@/assets/icon/ic-map-pin.svg';
 import notificationOff from '@/assets/icon/ic-notification-off.svg';
 import notificationOn from '@/assets/icon/ic-notification-on.svg';
 import phone from '@/assets/icon/ic-phone.svg';
@@ -28,18 +31,21 @@ export const ICONS = {
   resultBadge: resultBadge.src,
   arrowUp: arrowUp.src,
   calendar: calendar.src,
+  calendarClock: calendarClock.src,
   camera: camera.src,
   checked: checked.src,
   chevronLeft: chevronLeft.src,
   chevronRight: chevronRight.src,
   clock: clock.src,
   close: close.src,
+  coins: coins.src,
   dropdownDown: dropdownDown.src,
   dropdownUp: dropdownUp.src,
   envelope: envelope.src,
   facebook: facebook.src,
   instagram: instagram.src,
   map: map.src,
+  mapPin: mapPin.src,
   notificationOff: notificationOff.src,
   notificationOn: notificationOn.src,
   phone: phone.src,

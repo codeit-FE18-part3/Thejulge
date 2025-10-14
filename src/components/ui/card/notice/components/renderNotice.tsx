@@ -1,8 +1,8 @@
-import { noticeFrame } from '@/components/ui/card/notice/notice.styles';
-import { NoticeCard } from '@/types/notice';
+import CardImage from '@/components/ui/card/cardImage';
+import { descriptionWrapper, noticeFrame } from '@/components/ui/card/notice/notice.styles';
+import { type NoticeCard } from '@/types/notice';
 import { ReactNode } from 'react';
 import NoticeHeader from './noticeHeader';
-import NoticeImage from './noticeImage';
 import NoticeInfo from './noticeInfo';
 
 interface RenderNoticeProps<T extends Partial<NoticeCard>> {
@@ -26,10 +26,10 @@ const RenderNotice = <T extends Partial<NoticeCard>>({
     <>
       <NoticeHeader name={name} category={category} />
       <section className={noticeFrame()}>
-        <NoticeImage name={name} imageUrl={imageUrl} />
+        <CardImage variant='notice' src={imageUrl} alt={name} />
         <NoticeInfo variant={variant} value={value} buttonComponent={buttonComponent} />
       </section>
-      <section className='flex flex-col gap-3 rounded-xl bg-gray-100 p-8'>
+      <section className={descriptionWrapper()}>
         <h3 className='text-body-l font-bold'>공고 설명</h3>
         <p className='text-body-l'>{description}</p>
       </section>
