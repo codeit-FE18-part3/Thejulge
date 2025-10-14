@@ -3,7 +3,7 @@ import { paramsSerializer } from '@/lib/utils/paramsSerializer';
 import { toPostCard } from '@/lib/utils/parse';
 import { NoticeQuery, PaginatedResponse } from '@/types/api';
 import { PostCard } from '@/types/notice';
-import { createContext, ReactNode, useCallback, useContext, useState } from 'react';
+import { createContext, ReactNode, useCallback, useContext, useMemo, useState } from 'react';
 
 interface NoticeContextValue {
   notices: PostCard[];
@@ -78,16 +78,19 @@ export const NoticeProvider = ({ children }: { children: ReactNode }) => {
     setFiltersState(INIT_FILTER_DATA);
   }, []);
 
-  const value = {
-    notices,
-    pagination,
-    isLoading,
-    error,
-    filters,
-    fetchNotices,
-    updateFilters,
-    reset,
-  };
+  const value = useMemo(
+    () => ({
+      notices,
+      pagination,
+      isLoading,
+      error,
+      filters,
+      fetchNotices,
+      updateFilters,
+      reset,
+    }),
+    [notices, pagination, isLoading, error, filters, fetchNotices, updateFilters, reset]
+  );
 
   return <NoticeContext.Provider value={value}>{children}</NoticeContext.Provider>;
 };
@@ -97,13 +100,3 @@ export const useNotice = () => {
   if (!context) throw new Error('useContext는 NoticeContext 안에서 사용해야 합니다.');
   return context;
 };
-
-/**
-fetchNotices(); // 기본호출
-fetchNotices({ address: ['서울시 서초구'] }); // 위치 필터
-fetchNotices({ sort: 'pay' }); // 정렬 변경
-fetchNotices({ limit: 3 }); // 맞춤공고
-fetchNotices({ offset: 20 }); // 페이지 3으로 이동
-fetchNotices({ keyword: '마라탕' }); // 검색결과
-fetchNotices({ keyword: '카페', sort: 'pay', address: ['서울시 서초구'] }); //
- */
