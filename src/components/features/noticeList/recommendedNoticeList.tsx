@@ -1,7 +1,7 @@
 import { noticeListLayout } from '@/components/features/noticeList/noticeList.styles';
 import { Container } from '@/components/layout';
+import { useNotice } from '@/context/noticeProvider';
 import useAuth from '@/hooks/useAuth';
-import useNotice from '@/hooks/useNotice';
 import { useEffect } from 'react';
 import NoticeList from './noticeList';
 

@@ -3,10 +3,10 @@ import { Container } from '@/components/layout';
 import { Dropdown, Filter } from '@/components/ui';
 import { getActiveFilterCount } from '@/components/ui/filter/getActiveFilterCount';
 import { SORT_CODE, type SortCode } from '@/constants/dropdown';
-import useNotice from '@/hooks/useNotice';
 import { FilterQuery, type sort } from '@/types/api';
 import { useEffect, useState } from 'react';
 import NoticeList from './noticeList';
+import { useNotice } from '@/context/noticeProvider';
 
 const SORT_TO_API: Record<SortCode, sort> = {
   '마감 임박 순': 'time',
@@ -20,7 +20,7 @@ const AllNoticeList = () => {
     useNotice();
   const [sort, setSort] = useState<SortCode>('마감 임박 순');
   const appliedCount = getActiveFilterCount(filters);
-  
+
   useEffect(() => {
     fetchNotices();
   }, []);
