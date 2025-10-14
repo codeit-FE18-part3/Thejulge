@@ -1,10 +1,11 @@
 import useAuth from '@/hooks/useAuth';
 import axios from '@/lib/axios';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 export default function TestAuthPage() {
   const { isLogin, user, getUser, logout, login } = useAuth();
-
+  const router = useRouter();
   // 하이드레이션 에러 방지: 마운트 이후에만 localStorage 값을 렌더
   const [mounted, setMounted] = useState(false);
   const [lsToken, setLsToken] = useState('');
@@ -125,6 +126,7 @@ export default function TestAuthPage() {
 
   return (
     <main style={{ padding: 24 }}>
+      <button onClick={() => router.push('my-shop')}>페이지 이동 버튼</button>
       <h1>Test Auth (임시 테스트 전용)</h1>
 
       <section style={{ marginTop: 16 }}>

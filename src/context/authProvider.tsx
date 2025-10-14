@@ -16,7 +16,7 @@ type AuthContextValue = {
   login: (credentials: LoginRequest) => Promise<void>;
   logout: () => void;
   signup: (data: UserRequest) => Promise<void>;
-  getUser: () => Promise<void>;
+  getUser: (userId: string) => Promise<void>;
   updateUser: (patch: Partial<User>) => Promise<void>;
 };
 
@@ -52,6 +52,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     const storedUserId = getStorage(USER_ID_KEY);
     if (storedToken) setToken(storedToken);
     if (storedUserId) setUserId(storedUserId);
+    if (storedUserId) getUser(storedUserId);
   }, []);
 
   // 로그인: /token → 토큰/사용자 ID 저장 → /users/{id}로 내 정보 동기화
@@ -84,11 +85,14 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   // 내 정보 재조회
-  const getUser = useCallback(async () => {
-    if (!userId) throw new Error('로그인이 필요합니다');
-    const me = await apiGetUser(userId);
-    setUser(me);
-  }, [userId]);
+  const getUser = useCallback(
+    async (userId: string) => {
+      if (!userId) throw new Error('로그인이 필요합니다');
+      const me = await apiGetUser(userId);
+      setUser(me);
+    },
+    [userId]
+  );
 
   // 내 정보 수정
   const updateUser = useCallback(

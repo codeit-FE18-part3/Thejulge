@@ -1,8 +1,8 @@
 import { Icon } from '@/components/ui';
 import { cn } from '@/lib/utils/cn';
 import { useEffect, useState } from 'react';
+import { useMediaQuery } from 'react-responsive';
 
-const PAGE_GROUP_SIZE = 7;
 const BUTTON_ALIGN = 'flex items-center justify-center shrink-0';
 interface PaginationProps {
   total: number; // 전체 개수 (count)
@@ -15,23 +15,32 @@ interface PaginationProps {
 /* <Pagination total={count} limit={limit}  offset={offset} onPageChange={} */
 
 const Pagination = ({ total, offset, limit, onPageChange, className }: PaginationProps) => {
+  const isDesktop = useMediaQuery({ minWidth: 1028 });
+  const isTablet = useMediaQuery({ minWidth: 744, maxWidth: 1027 });
+  const [pageGroupSize, setPageGroupSize] = useState(7);
   const [pageGroup, setPageGroup] = useState(0);
 
   const totalPages = total ? Math.ceil(total / limit) : 0;
   const currentPage = Math.floor(offset / limit) + 1; // offset → page 변환
 
   useEffect(() => {
-    const newGroup = Math.floor((currentPage - 1) / PAGE_GROUP_SIZE);
+    if (isDesktop) setPageGroupSize(10);
+    else if (isTablet) setPageGroupSize(7);
+    else setPageGroupSize(5);
+  }, [isDesktop, isTablet]);
+
+  useEffect(() => {
+    const newGroup = Math.floor((currentPage - 1) / pageGroupSize);
     setPageGroup(newGroup);
-  }, [currentPage]);
+  }, [currentPage, pageGroupSize]);
 
   if (totalPages < 1) return null;
 
-  const startPage = pageGroup * PAGE_GROUP_SIZE + 1;
-  const endPage = Math.min(startPage + PAGE_GROUP_SIZE - 1, totalPages);
+  const startPage = pageGroup * pageGroupSize + 1;
+  const endPage = Math.min(startPage + pageGroupSize - 1, totalPages);
   const pageNumbers = Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
   const isPrevDisabled = pageGroup === 0;
-  const isNextDisabled = (pageGroup + 1) * PAGE_GROUP_SIZE >= totalPages;
+  const isNextDisabled = (pageGroup + 1) * pageGroupSize >= totalPages;
 
   /* 이전 그룹으로 이동 */
   const handlePrevPage = () => {
@@ -43,7 +52,7 @@ const Pagination = ({ total, offset, limit, onPageChange, className }: Paginatio
   /* 다음 그룹으로 이동 */
   const handleNextPage = () => {
     if (!isNextDisabled) {
-      setPageGroup(prev => ((prev + 1) * PAGE_GROUP_SIZE < totalPages ? prev + 1 : prev));
+      setPageGroup(prev => ((prev + 1) * pageGroupSize < totalPages ? prev + 1 : prev));
     }
   };
 
