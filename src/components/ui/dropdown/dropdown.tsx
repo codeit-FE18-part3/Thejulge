@@ -85,7 +85,7 @@ const Dropdown = <T extends string>({
           role='listbox'
           aria-label={ariaLabel}
           className={cn(
-            'scroll-bar absolute z-[1] max-h-56 w-full rounded-md border border-gray-300 bg-white shadow-inset-top',
+            'scroll-bar absolute z-10 max-h-56 w-full rounded-md border border-gray-300 bg-white shadow-inset-top',
             position === 'top' ? 'bottom-[calc(100%+8px)]' : 'top-[calc(100%+8px)]'
           )}
         >
