@@ -17,8 +17,10 @@ type AuthContextValue = {
   user: User | null;
   // 동작
   login: (credentials: LoginRequest) => Promise<void>;
-  // redirectTo는 선택값: 기본은 '/'(메인). 다른 화면으로 보내고 싶으면 인자로 전달.
-  logout: (redirectTo?: string) => void;
+  // redirectTo: string | false
+  // - string: 해당 경로로 replace 이동
+  // - false : 이동하지 않음
+  logout: (redirectTo?: string | false) => void;
   signup: (data: UserRequest) => Promise<void>;
   getUser: () => Promise<void>;
   updateUser: (patch: Partial<User>) => Promise<void>;
@@ -58,7 +60,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const role: UserRole = useMemo(() => (user ? user.type : 'guest'), [user]);
 
   const logout = useCallback(
-    (redirectTo: string = '/') => {
+    (redirectTo: string | false = '/') => {
       setToken(null);
       setUser(null);
       setUserId(null);
@@ -66,7 +68,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       removeStorage(USER_ID_KEY);
       removeStorage(EXPIRES_KEY); // 만료키 삭제
       //  로그아웃 후 이동 (replace: 뒤로가기 눌러도 다시 로그인 상태로 못 돌아가게)
-      router.replace(redirectTo);
+      if (redirectTo !== false) {
+        router.replace(redirectTo);
+      }
     },
     [router]
   );
@@ -83,7 +87,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       // 토큰/ID 없거나, exp 없거나, 이미 지났으면 즉시 로그아웃
       if (!storedToken || !storedUserId || !exp || Date.now() >= exp) {
-        logout();
+        logout(false);
         setBootstrapped(true); // 복원 종료 신호
         return;
       }
