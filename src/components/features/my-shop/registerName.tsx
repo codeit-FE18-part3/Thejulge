@@ -12,17 +12,15 @@ const RegisterName = ({ formData, handleChange }: Props) => {
     <>
       <div className='flex flex-col gap-6 tablet:flex-row'>
         <div className='flex flex-col gap-2 tablet:w-1/2'>
-          <div>
-            <span>가게 이름</span>
-            <span className='ml-0.5 text-red-500'>*</span>
-          </div>
           <Input
+            label='가게 이름'
+            requiredMark
             value={formData.name}
             onChange={e => handleChange('name', e.target.value)}
             placeholder='입력'
           />
         </div>
-        <div className='flex flex-col gap-2 tablet:w-1/2'>
+        <div className='flex flex-col gap-1 tablet:w-1/2'>
           <div>
             <span>분류</span>
             <span className='ml-0.5 text-red-500'>*</span>

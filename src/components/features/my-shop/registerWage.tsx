@@ -11,12 +11,10 @@ const RegisterWage = ({ formData, handleWageChange }: Props) => {
   return (
     <>
       <div className='flex flex-col gap-6 tablet:flex-row'>
-        <div className='flex flex-col gap-2 tablet:w-1/2'>
-          <div>
-            <span>기본 시급</span>
-            <span className='ml-0.5 text-red-500'>*</span>
-          </div>
+        <div className='flex flex-col gap-1 tablet:w-1/2'>
           <Input
+            label='기본 시급'
+            requiredMark
             placeholder='입력'
             suffix='원'
             value={formData.originalHourlyPay}

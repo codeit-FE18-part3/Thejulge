@@ -11,7 +11,7 @@ const RegisterAddress = ({ formData, handleChange }: Props) => {
   return (
     <>
       <div className='flex flex-col gap-6 tablet:flex-row'>
-        <div className='flex flex-col gap-2 tablet:w-1/2'>
+        <div className='flex flex-col gap-1 tablet:w-1/2'>
           <div>
             <span>주소</span>
             <span className='ml-0.5 text-red-500'>*</span>
@@ -27,11 +27,9 @@ const RegisterAddress = ({ formData, handleChange }: Props) => {
           />
         </div>
         <div className='flex flex-col gap-2 tablet:w-1/2'>
-          <div>
-            <span>상세 주소</span>
-            <span className='ml-0.5 text-red-500'>*</span>
-          </div>
           <Input
+            label='상세 주소'
+            requiredMark
             value={formData.address2}
             onChange={e => handleChange('address2', e.target.value)}
             placeholder='입력'

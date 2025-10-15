@@ -71,8 +71,6 @@ const Register: NextPageWithLayout = () => {
     }
   };
 
-  console.log('삭제예정');
-
   return (
     <>
       <div className='h-auto bg-gray-100'>

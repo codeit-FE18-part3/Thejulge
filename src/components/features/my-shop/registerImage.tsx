@@ -10,8 +10,11 @@ interface Props {
 const RegisterImage = ({ preview, handleImageChange }: Props) => {
   return (
     <>
-      <div className='flex flex-col gap-2'>
-        <span>가게 이미지</span>
+      <div className='flex flex-col gap-1'>
+        <div>
+          <span>가게 이미지</span>
+          <span className='ml-0.5 text-red-500'>*</span>
+        </div>
         <label className='relative flex h-[200px] w-full cursor-pointer flex-col items-center justify-center overflow-hidden rounded-xl border border-gray-300 tablet:h-[276px] tablet:w-[483px]'>
           {preview ? (
             <Image src={preview} alt='미리보기' fill />

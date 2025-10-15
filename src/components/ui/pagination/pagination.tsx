@@ -45,14 +45,24 @@ const Pagination = ({ total, offset, limit, onPageChange, className }: Paginatio
   /* 이전 그룹으로 이동 */
   const handlePrevPage = () => {
     if (!isPrevDisabled) {
+      const prevGroup = pageGroup - 1;
+      const prevStartPage = prevGroup * pageGroupSize + 1;
       setPageGroup(prev => Math.max(prev - 1, 0));
+
+      const newOffset = (prevStartPage - 1) * limit;
+      onPageChange(newOffset);
     }
   };
 
   /* 다음 그룹으로 이동 */
   const handleNextPage = () => {
     if (!isNextDisabled) {
+      const nextGroup = pageGroup + 1;
+      const nextStartPage = nextGroup * pageGroupSize + 1;
       setPageGroup(prev => ((prev + 1) * pageGroupSize < totalPages ? prev + 1 : prev));
+
+      const newOffset = (nextStartPage - 1) * limit;
+      onPageChange(newOffset);
     }
   };
 
