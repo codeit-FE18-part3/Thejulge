@@ -23,8 +23,13 @@ export default function EmployerNoticeIdPage() {
 
   const [notice, setNotice] = useState<NoticeCard>();
 
-  const [tableHeaders, setTableHeaders] = useState<string[]>([]);
-  const [tableData, setTableData] = useState<TableRowProps[]>([]);
+  const [headers, setHeaders] = useState<string[]>([]);
+  const [data, setData] = useState<TableRowProps[]>([]);
+  const [offset, setOffset] = useState(0);
+  const limit = 5;
+
+  const count = data.length;
+  const paginatedData = data.slice(offset, offset + limit);
 
   useEffect(() => {
     if (!noticeId) return;
@@ -49,8 +54,8 @@ export default function EmployerNoticeIdPage() {
   useEffect(() => {
     const loadTable = async () => {
       const result = await fetchTableData('employer' as UserType);
-      setTableHeaders(result.headers);
-      setTableData(result.data as TableRowProps[]);
+      setHeaders(result.headers);
+      setData(result.data as TableRowProps[]);
     };
     loadTable();
   }, []);
@@ -72,11 +77,15 @@ export default function EmployerNoticeIdPage() {
         </Notice>
       </div>
       <div>
-        {tableData.length !== 0 ? (
-          <Table headers={tableHeaders} data={tableData} userType={'employer'} />
-        ) : (
-          '지원자 정보가 없습니다'
-        )}
+        <Table
+          headers={headers}
+          data={paginatedData}
+          userType='employer'
+          total={count}
+          limit={limit}
+          offset={offset}
+          onPageChange={setOffset}
+        />
       </div>
     </>
   );
