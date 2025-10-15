@@ -8,13 +8,13 @@ import { useEffect, useState } from 'react';
 const Myshop = () => {
   const { isLogin, user, role } = useAuth();
   const [shopData, setShopData] = useState({});
-  console.log('user :', user);
+  // console.log('user :', user);
 
   useEffect(() => {
     const get = async () => {
       if (user?.shop) {
         const res = await getShop(user.shop.item.id);
-        console.log('shop:', res);
+       // console.log('shop:', res);
         const { description, ...rest } = res.item;
         const formattedShopData = { ...rest, shopDescription: description };
         setShopData(formattedShopData);
@@ -31,7 +31,7 @@ const Myshop = () => {
             <div className='flex gap-2'>
               <Button
                 as={Link}
-                href='/'
+                href='/my-shop/edit'
                 variant='secondary'
                 className='h-[38px] flex-1 tablet:h-12'
               >

@@ -62,7 +62,7 @@ const Register: NextPageWithLayout = () => {
       return;
     }
     setOepnConfirm(true);
-    console.log('모든 값 작성 완료', formData);
+    // console.log('모든 값 작성 완료', formData);
     if (formData.image) {
       const presignedUrl = await postPresignedUrl(formData.image.name);
       await uploadImage(presignedUrl, formData.image);
@@ -73,7 +73,7 @@ const Register: NextPageWithLayout = () => {
 
   return (
     <>
-      <div className='h-auto bg-gray-100'>
+      <div className='h-auto bg-gray-50'>
         <Container as='section' className='flex flex-col gap-6 pb-20'>
           <div className='mt-6 flex items-center justify-between'>
             <h1 className='text-heading-l font-bold'>가게 정보</h1>
