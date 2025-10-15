@@ -1,176 +1,156 @@
+import Image from 'next/image';
+import Link from 'next/link';
+import { useEffect, useMemo, useState } from 'react';
+
 import Frame from '@/components/layout/frame/frame';
 import Button from '@/components/ui/button/button';
+import Table from '@/components/ui/table/Table';
+import type { TableRowProps } from '@/components/ui/table/TableRowProps';
+import { ADDRESS_CODE, type AddressCode } from '@/constants/dropdown';
+import { ICONS, ICON_SIZES } from '@/constants/icon';
 import useAuth from '@/hooks/useAuth';
-import { cn } from '@/lib/utils/cn';
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import type { UserType } from '@/types/user'; // 'employee' | 'employer'
 
-type MyProfile = {
-  id: string;
+/** 임시 프로필 타입 — API 붙이면 서버 타입으로 교체 */
+type Profile = {
   name: string;
   phone: string;
-  region: string;
+  region: AddressCode | '';
   bio?: string;
-  hourlyWage?: number;
 };
 
-type ApplicationRow = {
-  id: string;
-  title: string;
-  appliedAt: string;
-  status: '대기' | '진행' | '거절' | '채용';
-};
+/** ADDRESS_CODE는 문자열 배열 → 포함되면 그대로 표기 */
+function renderAddress(code?: AddressCode | ''): string {
+  return code && (ADDRESS_CODE as readonly AddressCode[]).includes(code) ? code : '—';
+}
 
 export default function MyProfileDetailPage() {
-  const { bootstrapped, isLogin, user } = useAuth(); // 로그인/부트 완료 확인
-  const [loading, setLoading] = useState(true);
-  const [profile, setProfile] = useState<MyProfile | null>(null);
-  const [apps, setApps] = useState<ApplicationRow[]>([]);
+  const { isLogin, user } = useAuth();
+
+  // 임시 저장 기준 — 추후 API로 교체 가능
+  const [profile, setProfile] = useState<Profile>({ name: '', phone: '', region: '' });
+  const [applications, setApplications] = useState<TableRowProps[]>([]);
+  const [isLoadingApps, setIsLoadingApps] = useState<boolean>(true);
+
+  const profileKey = useMemo(() => `thejulge_profile_${user?.id ?? 'guest'}`, [user?.id]);
+  const appsKey = useMemo(() => `thejulge_apps_${user?.id ?? 'guest'}`, [user?.id]);
 
   useEffect(() => {
-    // 부트스트랩 끝나고 로그인된 상태일 때만 조회
-    if (!bootstrapped) return;
-
-    // 로그인 안된 경우: 그냥 빈 상태로 두고 렌더 (로그인/회원가입은 헤더에서 노출됨)
-    if (!isLogin) {
-      setLoading(false);
-      return;
+    if (!isLogin) return;
+    try {
+      const txt = localStorage.getItem(profileKey);
+      if (txt) setProfile(JSON.parse(txt) as Profile);
+    } catch {
+      /* ignore */
     }
+  }, [isLogin, profileKey]);
 
-    (async () => {
-      setLoading(true);
-      try {
-        // TODO: 실제 API 연결
-        // 1) 내 프로필 조회: 없으면 null 유지
-        //    예: const res = await apiGetMyProfile();
-        //    setProfile(res ?? null);
+  useEffect(() => {
+    if (!isLogin) return;
+    setIsLoadingApps(true);
+    try {
+      const txt = localStorage.getItem(appsKey);
+      const parsed = txt ? (JSON.parse(txt) as TableRowProps[]) : [];
+      setApplications(parsed);
+    } catch {
+      setApplications([]);
+    } finally {
+      setIsLoadingApps(false);
+    }
+  }, [isLogin, appsKey]);
 
-        // 데모: 유저가 등록하지 않았다는 가정 → null 유지
-        // setProfile(null);
-
-        // 만약 등록되어 있다면 이렇게 세팅됩니다.
-        // setProfile({
-        //   id: 'me',
-        //   name: '김승우',
-        //   phone: '010-1234-4321',
-        //   region: '선호 지역: 서울시 도봉구',
-        //   bio: '열심히 일 하겠습니다',
-        // });
-
-        // 2) 신청 내역 조회(프로필이 있을 때만 노출)
-        // const appsRes = await apiGetApplications();
-        // setApps(appsRes ?? []);
-
-        setApps([]); // 데모: 일단 비어있게
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, [bootstrapped, isLogin]);
+  const headers: string[] = ['가게명', '근무일시', '시급', '상태'];
+  const userType: UserType = 'employee';
 
   return (
-    <main className='mx-auto w-full max-w-[960px] px-4 py-6 tablet:py-8'>
-      {/* Frame은 문자열 props만 사용합니다. */}
-      <Frame
-        title='내 프로필'
-        content={
-          profile
-            ? '등록된 프로필'
-            : '내 프로필을 등록하고 원하는 가게에 지원해 보세요.'
-        }
-        buttonText={profile ? '수정하기' : '내 프로필 등록하기'}
-        href='/my-profile/register'
-      />
+    <main className='mx-auto w-full max-w-[1440px] px-4 py-6 tablet:py-8'>
+      {/* ✅ 데스크톱에서 고정폭 컨테이너(957px) 안에 제목 + 카드 모두 배치해서 안정화 */}
+      <div className='mx-auto w-full desktop:max-w-[957px]'>
+        <h1 className='mb-6 text-heading-l font-semibold'>내 프로필</h1>
 
-      {/* 로딩 중이면 아무것도 더 렌더하지 않음(위 Frame만 보이게) */}
-      {loading && null}
+        {/* 프로필 카드 — 배경: --red-100, 보더: --red-300, 라운드 24px */}
+        <section
+          className='w-full rounded-[24px] border border-[var(--red-300)] bg-[var(--red-100)] p-5 tablet:p-7 desktop:p-8'
+          aria-label='내 프로필 요약'
+        >
+          <div className='flex items-start justify-between gap-4'>
+            {/* 왼쪽 정보 */}
+            <div className='flex-1'>
+              <p className='mb-1 text-body-m font-semibold text-[var(--red-500)]'>이름</p>
+              <p className='text-heading-m font-extrabold leading-tight text-[var(--gray-900)]'>
+                {profile.name || '—'}
+              </p>
 
-      {/* ① 프로필이 없을 때: 상세/신청내역 섹션을 “표시하지 않습니다.” (요구사항) */}
-      {!loading && !profile && null}
+              {/* 연락처 */}
+              <div className='mt-4 flex items-center gap-2 text-[var(--gray-600)]'>
+                <Image
+                  src={ICONS.phone}
+                  alt='전화'
+                  width={24}
+                  height={24}
+                  className={ICON_SIZES.md}
+                  priority
+                />
+                <span className='text-body-m'>{profile.phone || '—'}</span>
+              </div>
 
-      {/* ② 프로필이 있을 때만 기본정보/신청내역 노출 */}
-      {!loading && profile && (
-        <>
-          {/* 기본 정보 카드 */}
-          <section className='mt-4 rounded-xl bg-white p-6 shadow'>
-            <div className='mb-3 flex items-center justify-between'>
-              <h2 className='text-heading-s font-medium'>기본 정보</h2>
-              <Link href='/my-profile/register'>
-                <Button size='sm' variant='secondary'>편집하기</Button>
-              </Link>
-            </div>
+              {/* 선호 지역 */}
+              <div className='mt-3 flex items-center gap-2 text-[var(--gray-600)]'>
+                <Image
+                  src={ICONS.map}
+                  alt='지도'
+                  width={24}
+                  height={24}
+                  className={ICON_SIZES.md}
+                  priority
+                />
+                <span className='text-body-m'>선호 지역: {renderAddress(profile.region)}</span>
+              </div>
 
-            <div className='rounded-xl bg-[var(--red-100)] p-6'>
-              <dl className='grid grid-cols-1 gap-y-3 tablet:grid-cols-2'>
-                <div>
-                  <dt className='text-body-s text-[var(--gray-600)]'>이름</dt>
-                  <dd className='text-body-l'>{profile.name}</dd>
-                </div>
-                <div>
-                  <dt className='text-body-s text-[var(--gray-600)]'>연락처</dt>
-                  <dd className='text-body-l'>{profile.phone}</dd>
-                </div>
-                <div className='tablet:col-span-2'>
-                  <dt className='text-body-s text-[var(--gray-600)]'>선호 지역</dt>
-                  <dd className='text-body-l'>{profile.region}</dd>
-                </div>
-              </dl>
-
+              {/* 소개 — 선호지역과 24px 간격 */}
               {profile.bio && (
-                <p className='mt-4 text-body-m'>{profile.bio}</p>
+                <p className='mt-6 whitespace-pre-wrap text-body-m text-[var(--gray-900)]'>
+                  {profile.bio}
+                </p>
               )}
             </div>
-          </section>
 
-          {/* 신청 내역 */}
-          <section className='mt-6 rounded-xl bg-white p-6 shadow'>
-            <h2 className='mb-3 text-heading-s font-medium'>신청 내역</h2>
+            {/* 우상단 편집 버튼 — 169×48 */}
+            <div className='ml-4 shrink-0'>
+              <Button
+                variant='secondary'
+                size='lgFixed' /* h-12 = 48px */
+                className='w-[169px]' /* 정확히 169px */
+                as={Link}
+                href='/my-profile/register'
+              >
+                편집하기
+              </Button>
+            </div>
+          </div>
+        </section>
+      </div>
 
-            {/* 팀 테이블로 교체하실 경우: 아래 block을 공용 table 컴포넌트로 대체 */}
-            {apps.length === 0 ? (
-              <div className='flex flex-col items-center justify-center gap-4 rounded-xl border border-gray-300 p-10 text-center'>
-                <p className='text-body-m text-[var(--gray-600)]'>아직 신청 내역이 없어요.</p>
-                <Link href='/'>
-                  <Button size='md' variant='primary'>공고 보러가기</Button>
-                </Link>
-              </div>
-            ) : (
-              <div className='overflow-hidden rounded-lg border border-gray-300'>
-                <table className='w-full table-fixed'>
-                  <thead className='bg-[var(--gray-100)]'>
-                    <tr className='text-left'>
-                      <th className='w-[50%] px-4 py-3'>공고</th>
-                      <th className='w-[25%] px-4 py-3'>지원일</th>
-                      <th className='w-[25%] px-4 py-3'>상태</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {apps.map(r => (
-                      <tr key={r.id} className='border-t border-gray-200'>
-                        <td className='truncate px-4 py-3'>{r.title}</td>
-                        <td className='px-4 py-3'>{r.appliedAt}</td>
-                        <td className='px-4 py-3'>
-                          <span
-                            className={cn(
-                              'inline-flex items-center rounded-full px-2.5 py-1 text-caption',
-                              r.status === '진행' && 'bg-[var(--blue-100)] text-[var(--blue-200)]',
-                              r.status === '대기' && 'bg-[var(--gray-100)] text-[var(--gray-700)]',
-                              r.status === '거절' && 'bg-[var(--red-100)] text-[var(--red-600)]',
-                              r.status === '채용' && 'bg-[var(--green-100)] text-[var(--green-200)]'
-                            )}
-                          >
-                            {r.status}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </section>
-        </>
-      )}
+      {/* 신청 내역 — 0건이면 Frame, ≥1건이면 타이틀 + Table / 데스크톱 964px 중앙 */}
+      <section className='mt-8'>
+        {isLoadingApps ? (
+          <div className='text-body-m text-[var(--gray-500)]'>불러오는 중…</div>
+        ) : applications.length === 0 ? (
+          <div className='mx-auto w-full desktop:max-w-[964px]'>
+            <Frame
+              title='신청 내역'
+              content='마음에 드는 공고를 찾아 지원해 보세요.'
+              buttonText='공고 보러가기'
+              href='/notices'
+            />
+          </div>
+        ) : (
+          <div className='mx-auto w-full desktop:max-w-[964px]'>
+            <h2 className='mb-4 text-heading-s font-semibold'>신청 내역</h2>
+            <Table headers={headers} data={applications} userType={userType} />
+          </div>
+        )}
+      </section>
     </main>
   );
 }

@@ -1,156 +1,228 @@
-// src/pages/my-profile/register.tsx
+import { useRouter } from 'next/router';
+import { useEffect, useMemo, useState } from 'react';
+
 import Button from '@/components/ui/button/button';
 import Dropdown from '@/components/ui/dropdown/dropdown';
 import Input from '@/components/ui/input/input';
-import { ADDRESS_CODE, type AddressCode } from '@/constants/dropdown';
-import { cn } from '@/lib/utils/cn';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { useState } from 'react';
+import Modal from '@/components/ui/modal/modal';
+import useAuth from '@/hooks/useAuth';
 
-type Form = {
+import { ADDRESS_CODE, type AddressCode } from '@/constants/dropdown';
+
+/** 스토리지 헬퍼 */
+function makeProfileStorageKey(userId?: string | null) {
+  return `thejulge_profile_${userId ?? 'guest'}`;
+}
+function readJsonFromStorage<T>(key: string): T | null {
+  try {
+    const text = localStorage.getItem(key);
+    if (!text) return null;
+    return JSON.parse(text) as T;
+  } catch {
+    return null;
+  }
+}
+function writeJsonToStorage<T>(key: string, value: T) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+/** 폼 타입 */
+type ProfileForm = {
   name: string;
   phone: string;
-  region?: AddressCode;
-  bio?: string;
+  region: AddressCode | '';
+  bio: string;
 };
 
 export default function MyProfileRegisterPage() {
   const router = useRouter();
+  const { isLogin, user } = useAuth();
 
-  const [form, setForm] = useState<Form>({ name: '', phone: '' });
-  const [nameErr, setNameErr] = useState<string | null>(null);
-  const [phoneErr, setPhoneErr] = useState<string | null>(null);
-  const [regionErr, setRegionErr] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const profileStorageKey = useMemo(() => makeProfileStorageKey(user?.id), [user?.id]);
 
-  const onChange = <K extends keyof Form>(k: K, v: Form[K]) =>
-    setForm(prev => ({ ...prev, [k]: v }));
+  const [formState, setFormState] = useState<ProfileForm>({
+    name: '',
+    phone: '',
+    region: '',
+    bio: '',
+  });
 
-  const canSubmit =
-    !!form.name && !!form.phone && !!form.region && !nameErr && !phoneErr && !regionErr && !loading;
+  const [nameErrorMessage, setNameErrorMessage] = useState<string | null>(null);
+  const [phoneErrorMessage, setPhoneErrorMessage] = useState<string | null>(null);
+  const [regionErrorMessage, setRegionErrorMessage] = useState<string | null>(null);
 
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDoneOpen, setIsDoneOpen] = useState(false); // ✅ 등록 완료 모달
+
+  // 로그인 가드
+  useEffect(() => {
+    if (!isLogin) {
+      router.replace('/login');
+    }
+  }, [isLogin, router]);
+
+  // 기존 저장값 로드(수정 모드)
+  useEffect(() => {
+    if (!isLogin) return;
+    const saved = readJsonFromStorage<ProfileForm>(profileStorageKey);
+    if (saved) setFormState(saved);
+  }, [isLogin, profileStorageKey]);
+
+  const updateFormField = <K extends keyof ProfileForm>(fieldName: K, value: ProfileForm[K]) => {
+    setFormState(prev => ({ ...prev, [fieldName]: value }));
+  };
+
+  const isFormSubmittable =
+    !!formState.name &&
+    !!formState.phone &&
+    !!formState.region &&
+    !nameErrorMessage &&
+    !phoneErrorMessage &&
+    !regionErrorMessage &&
+    !isSubmitting;
+
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = e => {
     e.preventDefault();
-    if (!canSubmit) return;
 
-    setLoading(true);
+    if (!formState.name.trim()) setNameErrorMessage('이름을 입력해 주세요.');
+    if (!/^0\d{1,2}-\d{3,4}-\d{4}$/.test(formState.phone.trim()))
+      setPhoneErrorMessage('연락처 형식(010-1234-5678)으로 입력해 주세요.');
+    if (!formState.region) setRegionErrorMessage('선호 지역을 선택해 주세요.');
+
+    if (!isFormSubmittable || !user) return;
+
+    setIsSubmitting(true);
     try {
-      // TODO: 실제 POST/PUT API 연결
-      alert('프로필이 등록(수정)되었습니다.');
-      router.replace('/my-profile');
+      writeJsonToStorage(profileStorageKey, {
+        name: formState.name.trim(),
+        phone: formState.phone.trim(),
+        region: formState.region,
+        bio: formState.bio,
+      });
+      setIsDoneOpen(true); // ✅ 모달 오픈
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
   return (
     <main className='mx-auto w-full max-w-[960px] px-4 py-6 tablet:py-8'>
-      {/* ⬇️ Figma 제목(이전 Frame 헤더와 같은 무게감) */}
-      <h1 className='mb-6 font-bold leading-[var(--lh-heading-l)] text-[var(--black)] text-[var(--fs-heading-l)]'>
-        내 프로필
-      </h1>
+      <h1 className='mb-6 text-heading-l font-semibold'>내 프로필</h1>
 
       <form
-        onSubmit={onSubmit}
+        onSubmit={handleSubmit}
         noValidate
-        className={cn('rounded-xl bg-white p-6 shadow', 'flex flex-col gap-6')}
+        className='rounded-xl bg-white p-6 shadow'
+        aria-label='내 프로필 등록/수정 폼'
       >
-        {/* 3열 그리드 */}
         <div className='grid grid-cols-1 gap-4 tablet:grid-cols-3'>
           {/* 이름 */}
-          <Input
-            id='name'
-            label='이름'
-            placeholder='입력'
-            value={form.name}
-            onChange={e => {
-              onChange('name', e.target.value);
-              if (nameErr) setNameErr(null);
-            }}
-            onBlur={() => setNameErr(form.name.trim() ? null : '이름을 입력해 주세요.')}
-            required
-            error={nameErr ?? undefined}
-          />
+          <div className='flex flex-col'>
+            <Input
+              id='name'
+              label='이름'
+              placeholder='입력'
+              value={formState.name}
+              onChange={e => {
+                updateFormField('name', e.target.value);
+                if (nameErrorMessage) setNameErrorMessage(null);
+              }}
+              onBlur={() =>
+                setNameErrorMessage(formState.name.trim() ? null : '이름을 입력해 주세요.')
+              }
+              required
+              error={nameErrorMessage ?? undefined}
+            />
+          </div>
 
           {/* 연락처 */}
-          <Input
-            id='phone'
-            label='연락처'
-            placeholder='010-1234-5678'
-            value={form.phone}
-            onChange={e => {
-              onChange('phone', e.target.value);
-              if (phoneErr) setPhoneErr(null);
-            }}
-            onBlur={() =>
-              setPhoneErr(
-                /^0\d{1,2}-\d{3,4}-\d{4}$/.test(form.phone.trim())
-                  ? null
-                  : '연락처 형식(010-1234-5678)으로 입력해 주세요.'
-              )
-            }
-            required
-            error={phoneErr ?? undefined}
-          />
-
-          {/* 선호 지역 - 드롭다운 */}
           <div className='flex flex-col'>
-            <label className='mb-2 text-body-m' htmlFor='region'>
+            <Input
+              id='phone'
+              label='연락처'
+              placeholder='010-1234-5678'
+              value={formState.phone}
+              onChange={e => {
+                updateFormField('phone', e.target.value);
+                if (phoneErrorMessage) setPhoneErrorMessage(null);
+              }}
+              onBlur={() =>
+                setPhoneErrorMessage(
+                  /^0\d{1,2}-\d{3,4}-\d{4}$/.test(formState.phone.trim())
+                    ? null
+                    : '연락처 형식(010-1234-5678)으로 입력해 주세요.'
+                )
+              }
+              required
+              error={phoneErrorMessage ?? undefined}
+            />
+          </div>
+
+          {/* 선호 지역 */}
+          <div className='flex flex-col'>
+            <label htmlFor='region' className='mb-2 text-body-m'>
               선호 지역*
             </label>
             <Dropdown<AddressCode>
               name='region'
               ariaLabel='선호 지역 선택'
               values={ADDRESS_CODE}
-              selected={form.region}
-              onChange={val => {
-                onChange('region', val);
-                if (regionErr) setRegionErr(null);
+              selected={formState.region || undefined}
+              onChange={value => {
+                updateFormField('region', value);
+                if (regionErrorMessage) setRegionErrorMessage(null);
               }}
               size='md'
-              className='w-full'
               placeholder='선택'
+              className='w-full'
             />
-            {regionErr && (
-              <p className='mt-2 text-[var(--fs-caption)] text-[var(--red-500)]'>{regionErr}</p>
+            {regionErrorMessage && (
+              <p className='mt-1 text-caption text-[var(--red-500)]'>{regionErrorMessage}</p>
             )}
           </div>
         </div>
 
-        {/* 소개 */}
-        <div className='flex flex-col'>
-          <label htmlFor='bio' className='mb-2 text-body-m'>
+        {/* 소개(선택) */}
+        <div className='mt-4'>
+          <label htmlFor='bio' className='mb-2 block text-body-m'>
             소개
           </label>
           <textarea
             id='bio'
-            className='base-input min-h-[160px] resize-y'
+            className='base-input min-h-[120px] w-full resize-y'
             placeholder='간단한 자기소개를 입력해 주세요.'
-            value={form.bio ?? ''}
-            onChange={e => onChange('bio', e.target.value)}
+            value={formState.bio}
+            onChange={e => updateFormField('bio', e.target.value)}
           />
         </div>
 
-        {/* ⬇️ Figma: 중앙의 큰 단일 버튼 */}
-        <div className='mt-2 flex justify-center'>
+        {/* 등록 버튼 */}
+        <div className='mt-6 flex justify-center'>
           <Button
             type='submit'
             variant='primary'
             size='lgFixed'
-            disabled={!canSubmit}
-            aria-busy={loading}
-            className='w-full tablet:w-[350px]'
+            className='w-full tablet:w-[360px]'
+            disabled={!isFormSubmittable}
+            aria-busy={isSubmitting}
           >
             등록하기
           </Button>
         </div>
-
-        {/* 뒤로가기는 링크로만 필요하면! (시안에 버튼 하나라 숨김) */}
-        <div className='hidden'>
-          <Link href='/my-profile'>목록으로</Link>
-        </div>
       </form>
+
+      {/* 등록 완료 모달 */}
+      <Modal
+        open={isDoneOpen}
+        onClose={() => setIsDoneOpen(false)}
+        title='등록이 완료되었습니다.'
+        variant='success'
+        primaryText='확인'
+        onPrimary={() => {
+          setIsDoneOpen(false);
+          router.replace('/my-profile');
+        }}
+      />
     </main>
   );
 }

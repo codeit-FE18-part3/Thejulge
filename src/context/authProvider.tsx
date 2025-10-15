@@ -46,11 +46,11 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [userId, setUserId] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
 
-  // ✅ 변경: 부트스트랩(초기 세션 복원) 완료 플래그
+  //  변경: 부트스트랩(초기 세션 복원) 완료 플래그
   const [bootstrapped, setBootstrapped] = useState(false);
 
   // 파생 상태
-  // ✅ 변경: isLogin = 토큰 + 유저가 모두 있어야 true (과도기에 guest+로그아웃 동시 노출 방지)
+  //  변경: isLogin = 토큰 + 유저가 모두 있어야 true (과도기에 guest+로그아웃 동시 노출 방지)
   const isLogin = !!token && !!user;
   const role: UserRole = useMemo(() => (user ? user.type : 'guest'), [user]);
 
@@ -65,7 +65,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // 앱 시작 시 저장소에서 복원
   useEffect(() => {
-    let cancelled = false; // ✅ 변경: 언마운트 가드
+    let cancelled = false; //  변경: 언마운트 가드
 
     (async () => {
       const storedToken = getStorage(TOKEN_KEY);
