@@ -4,6 +4,7 @@
 import { apiLogin, apiSignup } from '@/api/auth';
 import { apiGetUser, apiUpdateUser } from '@/api/users';
 import type { LoginRequest, User, UserRequest, UserRole } from '@/types/user';
+import { useRouter } from 'next/router';
 import { createContext, ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
 type AuthContextValue = {
@@ -16,7 +17,8 @@ type AuthContextValue = {
   user: User | null;
   // 동작
   login: (credentials: LoginRequest) => Promise<void>;
-  logout: () => void;
+  // redirectTo는 선택값: 기본은 '/'(메인). 다른 화면으로 보내고 싶으면 인자로 전달.
+  logout: (redirectTo?: string) => void;
   signup: (data: UserRequest) => Promise<void>;
   getUser: () => Promise<void>;
   updateUser: (patch: Partial<User>) => Promise<void>;
@@ -41,6 +43,7 @@ const removeStorage = (key: string) => {
 };
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const router = useRouter();
   // 핵심 상태: 토큰, 사용자 ID, 사용자 정보
   const [token, setToken] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
@@ -54,14 +57,19 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const isLogin = !!token && !!user;
   const role: UserRole = useMemo(() => (user ? user.type : 'guest'), [user]);
 
-  const logout = useCallback(() => {
-    setToken(null);
-    setUser(null);
-    setUserId(null);
-    removeStorage(TOKEN_KEY);
-    removeStorage(USER_ID_KEY);
-    removeStorage(EXPIRES_KEY); // 만료키 삭제
-  }, []);
+  const logout = useCallback(
+    (redirectTo: string = '/') => {
+      setToken(null);
+      setUser(null);
+      setUserId(null);
+      removeStorage(TOKEN_KEY);
+      removeStorage(USER_ID_KEY);
+      removeStorage(EXPIRES_KEY); // 만료키 삭제
+      //  로그아웃 후 이동 (replace: 뒤로가기 눌러도 다시 로그인 상태로 못 돌아가게)
+      router.replace(redirectTo);
+    },
+    [router]
+  );
 
   // 앱 시작 시 저장소에서 복원
   useEffect(() => {
@@ -146,7 +154,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     const interval = setInterval(() => {
       const expText = getStorage(EXPIRES_KEY) ?? ''; // 만료시각 다시 읽기
       const exp = Number(expText) || 0; // 숫자로 변환
-      if (!exp || Date.now() >= exp) logout(); // 만료면 로그아웃
+      if (!exp || Date.now() >= exp) logout('/'); // 만료면 로그아웃하고 메인으로
     }, 60 * 1000);
     return () => clearInterval(interval);
   }, [token, logout]);
