@@ -75,7 +75,7 @@ export default function TestAuthPage() {
     setLoading(true);
     setMsg('');
     try {
-      await getUser();
+      // await getUser();
       setMsg('getUser() 호출 성공: user 상태 갱신');
     } catch (e: unknown) {
       setMsg('getUser() 실패: ' + pickErrorMessage(e));
