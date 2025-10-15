@@ -88,7 +88,7 @@ export default function LoginPage() {
       >
         {/* 로고: 공고 목록으로 이동 */}
         <div className='mb-6 flex justify-center desktop:mb-0' style={{ marginTop: 156 }}>
-          <h1 className='relative h-[36px] w-[120px] tablet:h-[40px] tablet:w-[140px] min-[1024px]:h-[45px] min-[1024px]:w-[248px] desktop:h-[45px] desktop:w-[248px]'>
+          <h1 className='relative h-[36px] w-[120px] tablet:h-[40px] tablet:w-[140px] min-[1024px]:h-[90px] min-[1024px]:w-[256px] desktop:h-[90px] desktop:w-[256px]'>
             <Link href='/' aria-label='공고 리스트로 이동' className='absolute inset-0 block'>
               <Image
                 src={logo}

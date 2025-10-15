@@ -155,7 +155,7 @@ export default function SignupPage() {
       >
         {/* 로고: 부모가 실제 크기를 결정 */}
         <div className='mb-6 flex justify-center desktop:mb-0' style={{ marginTop: 156 }}>
-          <h1 className='relative h-[36px] w-[120px] tablet:h-[40px] tablet:w-[140px] min-[1024px]:h-[45px] min-[1024px]:w-[248px] desktop:h-[45px] desktop:w-[248px]'>
+          <h1 className='desktop:w-[256px]] relative h-[36px] w-[120px] tablet:h-[40px] tablet:w-[140px] min-[1024px]:h-[90px] min-[1024px]:w-[256px] desktop:h-[90px]'>
             <Link href='/' aria-label='홈으로 이동' className='absolute inset-0 block'>
               <Image
                 src={logo}
