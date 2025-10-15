@@ -1,6 +1,8 @@
-import { Button } from '@/components/ui';
-import RenderNotice from '@/components/ui/card/notice/components/renderNotice';
+import { Button, Notice, Table } from '@/components/ui';
+import { TableRowProps } from '@/components/ui/table/TableRowProps';
+import { fetchTableData } from '@/components/ui/table/testApi';
 import { NoticeCard } from '@/types/notice';
+import { UserType } from '@/types/user';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
@@ -11,58 +13,71 @@ export default function EmployerNoticeIdPage() {
   const { query } = router;
   const noticeId = Array.isArray(query.id) ? query.id[0] : query.id;
 
-  // 역할 선택
-  const [role, setRole] = useState<'employer' | 'employee'>('employer');
+  /* const { role } = useAuth();
 
-  useEffect(() => {
+    useEffect(() => {
     if (role !== 'employer') {
       router.replace('/');
     }
-  }, [role, router]);
+  }, [role, router]); */
 
-  const notice: NoticeCard = {
-    id: noticeId ?? '001',
-    hourlyPay: 20000,
-    startsAt: new Date(Date.now() + oneDayMs).toISOString(),
-    workhour: 4,
-    description: '주말 점심 시간대 근무자를 모집합니다.',
-    closed: false,
-    shopId: 'shop-bridge',
-    name: '한강 브런치 카페',
-    category: '카페',
-    address1: '서울시 용산구',
-    shopDescription: '한강 뷰를 자랑하는 브런치 카페',
-    imageUrl: 'https://picsum.photos/id/1080/640/360',
-    originalHourlyPay: 18000,
-  };
+  const [notice, setNotice] = useState<NoticeCard>();
+
+  const [tableHeaders, setTableHeaders] = useState<string[]>([]);
+  const [tableData, setTableData] = useState<TableRowProps[]>([]);
+
+  useEffect(() => {
+    if (!noticeId) return;
+
+    setNotice({
+      id: noticeId,
+      hourlyPay: 20000,
+      startsAt: new Date(Date.now() + oneDayMs).toISOString(),
+      workhour: 4,
+      description: '주말 점심 시간대 근무자를 모집합니다.',
+      closed: false,
+      shopId: 'shop-bridge',
+      name: '한강 브런치 카페',
+      category: '카페',
+      address1: '서울시 용산구',
+      shopDescription: '한강 뷰를 자랑하는 브런치 카페',
+      imageUrl: 'https://picsum.photos/id/1080/640/360',
+      originalHourlyPay: 18000,
+    });
+  }, [noticeId]);
+
+  useEffect(() => {
+    const loadTable = async () => {
+      const result = await fetchTableData('employer' as UserType);
+      setTableHeaders(result.headers);
+      setTableData(result.data as TableRowProps[]);
+    };
+    loadTable();
+  }, []);
+
+  if (!notice) return;
 
   return (
-    <div className='p-4'>
-      {/* Mock 계정 선택 */}
-      <div className='bg-blue-100 p-2'>
-        <Button variant='primary' size='md' onClick={() => setRole('employer')} className='m-2'>
-          사장님 계정
-        </Button>
-        <Button variant='primary' size='md' onClick={() => setRole('employee')}>
-          알바생 계정
-        </Button>
-      </div>
-
-      <RenderNotice
-        items={{
-          name: notice.name,
-          category: notice.category,
-          imageUrl: notice.imageUrl,
-          description: notice.description,
-          variant: 'notice',
-          value: notice,
-        }}
-        buttonComponent={
-          <Button variant='secondary' size='md' onClick={() => alert('클릭!')}>
+    <>
+      <div className='p-4'>
+        <Notice notice={notice!} variant='notice'>
+          <Button
+            variant='secondary'
+            size='md'
+            className='w-full'
+            onClick={() => router.push(`/employer/notices/${notice!.id}/edit`)}
+          >
             공고 편집하기
           </Button>
-        }
-      />
-    </div>
+        </Notice>
+      </div>
+      <div>
+        {tableData.length !== 0 ? (
+          <Table headers={tableHeaders} data={tableData} userType={'employer'} />
+        ) : (
+          '지원자 정보가 없습니다'
+        )}
+      </div>
+    </>
   );
 }
