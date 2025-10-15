@@ -1,4 +1,5 @@
 import { TableRowProps } from '@/components/ui/table/TableRowProps';
+import { cn } from '@/lib/utils/cn';
 import { getTime } from '@/lib/utils/dateFormatter';
 
 interface TableTypeVariant {
@@ -14,7 +15,7 @@ export default function TableRow({ rowData, variant }: TableTypeVariant) {
 
   return (
     <tr className='text-left'>
-      <td className={TD_BASE}>{rowData.name}</td>
+      <td className={cn(TD_BASE, 'sticky z-10')}>{rowData.name}</td>
       {variant === 'employee' ? (
         <>
           <td className={TD_BASE}>{`${date} ${startTime} ~ ${date} ${endTime}} (${duration})`}</td>
