@@ -16,13 +16,12 @@ interface NoticeContextValue {
   reset: () => void;
 }
 
-//현재 필터 상태(filters)의 초기값 == 현재 이 화면은 어떤 조건으로 공고를 보고 있는가를 나타내는 전역상태
+//현재 필터 상태(filters)의 초기값
 const INIT_FILTER_DATA: NoticeQuery = {
   sort: 'time',
-  // startsAtGte: new Date().toISOString(),
 };
 
-export const NoticeContext = createContext<NoticeContextValue | undefined>(undefined);
+const NoticeContext = createContext<NoticeContextValue | undefined>(undefined);
 
 // 맞춤 공고, 전체 공고, 검색된 공고등 공고 조회 관리
 export const NoticeProvider = ({ children }: { children: ReactNode }) => {
@@ -37,12 +36,31 @@ export const NoticeProvider = ({ children }: { children: ReactNode }) => {
     hasNext: false,
   });
 
+  // sort=time일 때 startsAtGte를 항상 현재 시각으로 보정
+  const changeTimeFilter = useCallback((q: Partial<NoticeQuery>): Partial<NoticeQuery> => {
+    if (q.sort !== 'time') return q;
+    const now = new Date();
+    now.setSeconds(now.getSeconds() + 120);
+    const nowIso = now.toISOString();
+    const startsAt = q.startsAtGte ? new Date(q.startsAtGte) : null;
+    if (!startsAt || isNaN(startsAt.getTime()) || startsAt.getTime() < now.getTime()) {
+      return { ...q, startsAtGte: nowIso };
+    }
+    return q;
+  }, []);
+
   // 공고 데이터 요청 함수. 파라미터를 넣으면 검색/정렬 가능
   const fetchNotices: NoticeContextValue['fetchNotices'] = useCallback(
     async params => {
       try {
         setIsLoading(true);
-        const query = { ...filters, ...(params ?? {}) }; // 새 조건 덮어쓰기 (각 페이지별 상이한 조건 덮어쓰기)
+        setError(null);
+        const merged = { ...filters, ...(params ?? {}) };
+        const query = changeTimeFilter(merged); // time 정렬 보정
+        // 뒤로가기 등으로 과거 시각이 남지 않도록 보정된 startsAtGte를 상태에도 반영
+        if (query.startsAtGte !== filters.startsAtGte || query.sort !== filters.sort) {
+          setFiltersState(prev => ({ ...prev, ...query }));
+        }
         const res = await axiosInstance.get('/notices', {
           params: query,
           paramsSerializer: { serialize: paramsSerializer },
@@ -57,8 +75,11 @@ export const NoticeProvider = ({ children }: { children: ReactNode }) => {
           count: res.data.count,
           hasNext: res.data.hasNext,
         });
-      } catch (err) {
-        setError('공고를 불러오는 중 오류가 발생했습니다.');
+      } catch {
+        setError(`공고를 불러오는 중 오류가 발생했습니다.`);
+        setNotices([]);
+        setPagination(prev => ({ ...prev, count: 0, hasNext: false }));
+        setFiltersState(INIT_FILTER_DATA);
       } finally {
         setIsLoading(false);
       }
@@ -68,9 +89,12 @@ export const NoticeProvider = ({ children }: { children: ReactNode }) => {
 
   // 기존 필터를 유지하면서 filters 상태만 부분 업데이트 하여 특정 조건만 수정
   // 사용자가 선택한 필터 조건을 Context 상태에 반영하는 함수
-  const updateFilters: NoticeContextValue['updateFilters'] = useCallback(partial => {
-    setFiltersState(prev => ({ ...prev, ...partial }));
-  }, []);
+  const updateFilters: NoticeContextValue['updateFilters'] = useCallback(
+    partial => {
+      setFiltersState(prev => ({ ...prev, ...changeTimeFilter(partial) }));
+    },
+    [changeTimeFilter]
+  );
 
   // 공고와 필터 초기화
   const reset = useCallback(() => {
