@@ -2,7 +2,7 @@ import axios from '@/lib/axios';
 import RegisterFormData from '@/types/myShop';
 import { default as originAxios } from 'axios';
 
-export async function postShop(body: RegisterFormData) {
+export async function postShop(body: Omit<RegisterFormData, 'image'>) {
   const accessToken = localStorage.getItem('thejulge-token');
   const { data } = await axios.post('/shops', body, {
     headers: { Authorization: `Bearer ${accessToken}` },
@@ -41,9 +41,7 @@ export async function postPresignedUrl(imageUrl: string) {
 
 export async function uploadImage(presignedUrl: string, file: File) {
   try {
-    const result = await originAxios.put(presignedUrl, file, {
-      headers: { 'Content-Type': file.type },
-    });
+    await originAxios.put(presignedUrl, file);
   } catch (error) {
     alert(error);
   }

@@ -6,15 +6,9 @@ import { NextPageWithLayout } from '@/pages/_app';
 import RegisterFormData from '@/types/myShop';
 import { useEffect, useState } from 'react';
 
-interface ImageData {
-  name: string;
-  file: File;
-}
-
 const Edit: NextPageWithLayout = () => {
   const { user } = useAuth();
   const [editData, setEditData] = useState<RegisterFormData | null>(null);
-  const [imageData, setImageData] = useState<ImageData | null>(null);
 
   useEffect(() => {
     const fetchShop = async () => {
@@ -28,12 +22,14 @@ const Edit: NextPageWithLayout = () => {
 
   const handleEdit = async (editData: RegisterFormData) => {
     if (!user?.shop) return;
-    let imageUrl = editData.image ? '' : null;
-    if (editData?.image) {
+    let imageUrl = editData.imageUrl ?? '';
+    if (editData.image) {
+      const presignedUrl = await postPresignedUrl(editData.image.name);
+      await uploadImage(presignedUrl, editData.image);
       try {
-        const presignedUrl = await postPresignedUrl(editData.image.name);
-        await uploadImage(presignedUrl, editData.image);
-        imageUrl = presignedUrl.split('?')[0];
+        const url = new URL(presignedUrl);
+        const shortUrl = url.origin + url.pathname;
+        imageUrl = shortUrl;
       } catch (error) {
         alert(error);
       }

@@ -6,15 +6,15 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 const Myshop = () => {
-  const { isLogin, user, role } = useAuth();
+  const { user } = useAuth();
   const [shopData, setShopData] = useState({});
-  console.log('user :', user);
+  //console.log('user :', user);
 
   useEffect(() => {
     const get = async () => {
       if (user?.shop) {
         const res = await getShop(user.shop.item.id);
-        console.log('shop:', res);
+        //console.log('shop:', res);
         const { description, ...rest } = res.item;
         const formattedShopData = { ...rest, shopDescription: description };
         setShopData(formattedShopData);

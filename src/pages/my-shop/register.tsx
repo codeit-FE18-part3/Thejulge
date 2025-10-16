@@ -10,9 +10,15 @@ const Register: NextPageWithLayout = () => {
     if (!imageUrl && formData.image instanceof File) {
       const presignedUrl = await postPresignedUrl(formData.image.name);
       await uploadImage(presignedUrl, formData.image);
-      imageUrl = imageUrl = presignedUrl.split('?')[0];
+      try {
+        const url = new URL(presignedUrl);
+        const shortUrl = url.origin + url.pathname;
+        imageUrl = shortUrl;
+      } catch (error) {
+        alert(error);
+      }
     }
-    const { image, originalHourlyPay, ...shopData } = formData;
+    const { originalHourlyPay, ...shopData } = formData;
     const numericPay =
       typeof originalHourlyPay === 'string'
         ? Number(originalHourlyPay.replace(/,/g, ''))

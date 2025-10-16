@@ -18,6 +18,10 @@ export interface ApiResponse<T> {
   item: T;
   links: Link[];
 }
+export interface ApiItemsResponse<T> {
+  items: T[];
+  links: Link[];
+}
 
 export interface ApiError {
   message: string;
@@ -46,4 +50,3 @@ export interface NoticeQuery extends FilterQuery {
   keyword?: string;
   sort?: sort;
 }
-  

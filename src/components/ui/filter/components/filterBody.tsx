@@ -34,7 +34,23 @@ const FilterBody = ({ formData, onChange }: FilterBodyProps) => {
 
   const handleDateChange = (date: Date | string) => {
     if (typeof date === 'string') return;
-    const rfc3339String = date.toISOString();
+
+    const now = new Date();
+    const selected = new Date(date);
+
+    // 선택한 날짜가 오늘이라면, 현재 시각 기준으로 설정 + 60초로 서버 시차문제 방지
+    if (
+      selected.getFullYear() === now.getFullYear() &&
+      selected.getMonth() === now.getMonth() &&
+      selected.getDate() === now.getDate()
+    ) {
+      selected.setHours(now.getHours(), now.getMinutes(), now.getSeconds() + 60, 0);
+    } else {
+      // 미래 날짜면 00시로
+      selected.setHours(0, 0, 0, 0);
+    }
+
+    const rfc3339String = selected.toISOString();
     onChange(prev => ({ ...prev, startsAtGte: rfc3339String }));
   };
 

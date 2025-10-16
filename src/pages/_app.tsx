@@ -17,7 +17,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
     (page => (
       <Wrapper>
         <Header />
-        <main className='grow relative z-[1]'>{page}</main>
+        <main className='relative z-[1] flex grow flex-col'>{page}</main>
         <Footer />
       </Wrapper>
     ));

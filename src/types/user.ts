@@ -23,10 +23,13 @@ export interface UserBase {
   email: string;
   type: UserType;
 }
-export interface User extends UserBase {
+export interface UserProfile {
   name?: string;
   phone?: string;
   address?: string;
   bio?: string;
-  shop?: { item: Shop } | null;
 }
+export type User = UserBase &
+  UserProfile & {
+    shop?: { item: Shop } | null;
+  };

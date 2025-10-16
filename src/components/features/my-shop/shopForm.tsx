@@ -17,7 +17,7 @@ interface ShopFromProps {
 
 const ShopForm = ({ mode, initialData, onSubmit }: ShopFromProps) => {
   const [formData, setFormData] = useState<RegisterFormData>(
-    initialData || {
+    initialData ?? {
       name: '',
       category: undefined,
       address1: undefined,
@@ -49,7 +49,7 @@ const ShopForm = ({ mode, initialData, onSubmit }: ShopFromProps) => {
     setFormData(prev => ({ ...prev, originalHourlyPay: formatted }));
   };
 
-  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setFormData(prev => ({ ...prev, image: file }));
@@ -75,6 +75,7 @@ const ShopForm = ({ mode, initialData, onSubmit }: ShopFromProps) => {
     setOepnConfirm(true);
     await onSubmit(formData);
   };
+
   return (
     <>
       <div className='h-auto bg-gray-50'>
