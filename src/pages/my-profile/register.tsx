@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import Button from '@/components/ui/button/button';
 import Dropdown from '@/components/ui/dropdown/dropdown';
@@ -8,23 +8,6 @@ import Modal from '@/components/ui/modal/modal';
 import useAuth from '@/hooks/useAuth';
 
 import { ADDRESS_CODE, type AddressCode } from '@/constants/dropdown';
-
-/** 스토리지 헬퍼 */
-function makeProfileStorageKey(userId?: string | null) {
-  return `thejulge_profile_${userId ?? 'guest'}`;
-}
-function readJsonFromStorage<T>(key: string): T | null {
-  try {
-    const text = localStorage.getItem(key);
-    if (!text) return null;
-    return JSON.parse(text) as T;
-  } catch {
-    return null;
-  }
-}
-function writeJsonToStorage<T>(key: string, value: T) {
-  localStorage.setItem(key, JSON.stringify(value));
-}
 
 /** 폼 타입 */
 type ProfileForm = {
@@ -36,9 +19,7 @@ type ProfileForm = {
 
 export default function MyProfileRegisterPage() {
   const router = useRouter();
-  const { isLogin, user } = useAuth();
-
-  const profileStorageKey = useMemo(() => makeProfileStorageKey(user?.id), [user?.id]);
+  const { isLogin, user, updateUser } = useAuth();
 
   const [formState, setFormState] = useState<ProfileForm>({
     name: '',
@@ -52,25 +33,26 @@ export default function MyProfileRegisterPage() {
   const [regionErrorMessage, setRegionErrorMessage] = useState<string | null>(null);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isDoneOpen, setIsDoneOpen] = useState(false); // ✅ 등록 완료 모달
+  const [isDoneOpen, setIsDoneOpen] = useState(false); // 완료 모달
 
   // 로그인 가드
   useEffect(() => {
-    if (!isLogin) {
-      router.replace('/login');
-    }
+    if (!isLogin) router.replace('/login');
   }, [isLogin, router]);
 
-  // 기존 저장값 로드(수정 모드)
+  // 기존 값 프리필(컨텍스트 user 사용)
   useEffect(() => {
-    if (!isLogin) return;
-    const saved = readJsonFromStorage<ProfileForm>(profileStorageKey);
-    if (saved) setFormState(saved);
-  }, [isLogin, profileStorageKey]);
+    if (!isLogin || !user) return;
+    setFormState({
+      name: user.name ?? '',
+      phone: user.phone ?? '',
+      region: (user.address as AddressCode) ?? '',
+      bio: user.bio ?? '',
+    });
+  }, [isLogin, user]);
 
-  const updateFormField = <K extends keyof ProfileForm>(fieldName: K, value: ProfileForm[K]) => {
-    setFormState(prev => ({ ...prev, [fieldName]: value }));
-  };
+  const updateFormField = <K extends keyof ProfileForm>(k: K, v: ProfileForm[K]) =>
+    setFormState(prev => ({ ...prev, [k]: v }));
 
   const isFormSubmittable =
     !!formState.name &&
@@ -81,7 +63,7 @@ export default function MyProfileRegisterPage() {
     !regionErrorMessage &&
     !isSubmitting;
 
-  const handleSubmit: React.FormEventHandler<HTMLFormElement> = e => {
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = async e => {
     e.preventDefault();
 
     if (!formState.name.trim()) setNameErrorMessage('이름을 입력해 주세요.');
@@ -93,13 +75,14 @@ export default function MyProfileRegisterPage() {
 
     setIsSubmitting(true);
     try {
-      writeJsonToStorage(profileStorageKey, {
+      // ✅ 서버 반영 + 컨텍스트 동기화
+      await updateUser({
         name: formState.name.trim(),
         phone: formState.phone.trim(),
-        region: formState.region,
+        address: formState.region,
         bio: formState.bio,
       });
-      setIsDoneOpen(true); // ✅ 모달 오픈
+      setIsDoneOpen(true);
     } finally {
       setIsSubmitting(false);
     }
