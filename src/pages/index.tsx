@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 
 export default function Main() {
   const { user } = useAuth();
-  const recommendedAddress = user?.address ?? '서울시 강남구';
+  const recommendedAddress = user?.address ?? '';
   const initialFilters = useMemo(
     () => ({ limit: 3, address: [recommendedAddress] }),
     [recommendedAddress]
