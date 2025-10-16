@@ -28,6 +28,9 @@ const NoticeListSection = ({
     } else {
       fetchNotices();
     }
+    
+    // fetchNotices와 updateFilters 함수는 initialFilters값이 변경될때 새로만들어짐
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [q, initialFilters]);
   return (
     <Container as='section' isPage>
