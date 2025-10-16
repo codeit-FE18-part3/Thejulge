@@ -53,11 +53,11 @@ export async function getPresignedUrl(presignedUrl: string) {
   // 1. URL 객체 생성
   const url = new URL(presignedUrl);
 
-  // 2. 쿼리 파라미터를 제거 (URL 객체의 search 속성을 비움)
   url.search = '';
 
   // 3. 쿼리 파라미터가 제거된 새 URL 문자열을 얻습니다.
   const baseUrl = url.toString();
 
   const result = await originAxios.get(baseUrl);
+  return result;
 }

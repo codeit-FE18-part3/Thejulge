@@ -6,13 +6,18 @@ import RegisterFormData from '@/types/myShop';
 
 const Register: NextPageWithLayout = () => {
   const handleRegister = async (formData: RegisterFormData) => {
-    let imageUrl = formData.imageUrl;
-    if (formData.image instanceof File) {
+    let imageUrl = formData.imageUrl ?? '';
+    if (!imageUrl && formData.image instanceof File) {
       const presignedUrl = await postPresignedUrl(formData.image.name);
       await uploadImage(presignedUrl, formData.image);
-      imageUrl = presignedUrl.split('?')[0];
+      imageUrl = imageUrl = presignedUrl.split('?')[0];
     }
-    await postShop({ ...formData, imageUrl });
+    const { image, originalHourlyPay, ...shopData } = formData;
+    const numericPay =
+      typeof originalHourlyPay === 'string'
+        ? Number(originalHourlyPay.replace(/,/g, ''))
+        : originalHourlyPay;
+    await postShop({ ...shopData, originalHourlyPay: numericPay, imageUrl });
   };
   return (
     <>

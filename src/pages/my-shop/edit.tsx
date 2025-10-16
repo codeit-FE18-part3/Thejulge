@@ -1,4 +1,4 @@
-import { getShop, putShop, uploadImageAndGetUrl } from '@/api/employer';
+import { getShop, postPresignedUrl, putShop, uploadImage } from '@/api/employer';
 import ShopForm from '@/components/features/my-shop/shopForm';
 import { Header, Wrapper } from '@/components/layout';
 import useAuth from '@/hooks/useAuth';
@@ -26,19 +26,20 @@ const Edit: NextPageWithLayout = () => {
     fetchShop();
   }, [user]);
 
-  const handleEdit = async (formData: RegisterFormData) => {
+  const handleEdit = async (editData: RegisterFormData) => {
     if (!user?.shop) return;
-
+    let imageUrl = editData.image ? '' : null;
     if (editData?.image) {
       try {
-        await uploadImageAndGetUrl(editData.image);
+        const presignedUrl = await postPresignedUrl(editData.image.name);
+        await uploadImage(presignedUrl, editData.image);
+        imageUrl = presignedUrl.split('?')[0];
       } catch (error) {
         alert(error);
       }
     }
-
     // 🟣 PUT 요청
-    await putShop(user.shop.item.id, formData);
+    await putShop(user.shop.item.id, { ...editData, imageUrl });
   };
   return (
     <>

@@ -32,7 +32,7 @@ export const AuthContext = createContext<AuthContextValue | null>(null);
 const TOKEN_KEY = 'thejulge_token';
 const USER_ID_KEY = 'thejulge_user_id';
 const EXPIRES_KEY = 'thejulge_expires_at'; // 만료시간 저장 키
-const EXP_TIME = 10 * 60 * 1000; // 만료 유지시간 10분
+const EXP_TIME = 1000 * 60 * 1000; // 만료 유지시간 10분
 
 // 브라우저에서만 동작하도록 가드된 유틸
 const setStorage = (key: string, value: string) => {

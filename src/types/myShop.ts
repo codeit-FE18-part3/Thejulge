@@ -6,7 +6,7 @@ interface RegisterFormData {
   originalHourlyPay: number | string;
   description?: string;
   image: File | null;
-  imageUrl: '';
+  imageUrl?: string;
 }
 
 export default RegisterFormData;

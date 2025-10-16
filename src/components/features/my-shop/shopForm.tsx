@@ -33,13 +33,7 @@ const ShopForm = ({ mode, initialData, onSubmit }: ShopFromProps) => {
     if (initialData) setFormData(initialData);
   }, [initialData]);
 
-  const [preview, setPreview] = useState<string | null>(
-    initialData?.imageUrl
-      ? typeof initialData.imageUrl === 'string'
-        ? initialData.imageUrl
-        : null
-      : null
-  );
+  const [preview, setPreview] = useState<string | null>(null);
   const [openWarning, setOpenWarning] = useState(false);
   const [openCancel, setOpenCancel] = useState(false);
   const [openConfirm, setOepnConfirm] = useState(false);
