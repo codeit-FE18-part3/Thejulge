@@ -43,7 +43,7 @@ const ToastProvider = ({ children }: { children: ReactNode }) => {
             message ? (
               <div
                 role='alert'
-                className='fixed bottom-28 left-1/2 -translate-x-1/2 rounded-[5px] bg-red-300 px-4 py-[10px] text-white'
+                className='fixed top-[30%] left-1/2 z-[1] -translate-x-1/2 rounded-[5px] bg-red-300 px-4 py-[10px] text-white'
               >
                 {message}
               </div>

@@ -1,6 +1,6 @@
 /* -------------------- 공고 -------------------- */
 
-import { ApiResponse, Link, PaginatedResponse } from './api';
+import { Link } from './api';
 import { Shop, ShopSummary } from './shop';
 
 // 공고 등록
@@ -38,5 +38,8 @@ export interface NoticeItemResponse {
   links: Link[];
 }
 
-export type NoticeListResponse = PaginatedResponse & ApiResponse<NoticeItemResponse>;
 export type NoticeVariant = 'notice' | 'shop';
+
+export type RecentNotice = PostCard & {
+  viewedAt: string; // 저장된 시각
+};
