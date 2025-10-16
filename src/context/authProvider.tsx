@@ -1,6 +1,4 @@
-// 목적: 앱 전역에서 로그인/유저 상태를 관리하고, 인증 관련 표준 함수를 제공한다.
 // 원칙: state는 user 하나만 관리한다(부트스트랩/로그인여부는 파생).
-
 import { apiLogin, apiSignup } from '@/api/auth';
 import { apiGetUser, apiUpdateUser } from '@/api/users';
 import type { LoginRequest, User, UserRequest, UserRole } from '@/types/user';
@@ -57,16 +55,9 @@ const readAuthFromStorage = () => {
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
-
-  /**
-   * 유일한 state: user
-   * - undefined: 부트스트랩 중
-   * - null: 부트스트랩 완료(비로그인)
-   * - User: 로그인
-   */
   const [user, setUser] = useState<User | null | undefined>(undefined);
 
-  /** 파생값 (메모이제이션 불필요: 계산량이 매우 적음) */
+  /** 파생값 */
   const isLogin = !!user;
   const role: UserRole = user ? user.type : 'guest';
   const bootstrapped = user !== undefined;
@@ -149,7 +140,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => clearInterval(timerId);
   }, [logout]);
 
-  /** Context 값 (불필요한 useMemo 제거) */
+  /** Context 값 */
   const contextValue: AuthContextValue = {
     isLogin,
     role,
