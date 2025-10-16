@@ -2,12 +2,12 @@ import { MonthViewProps } from '@/types/calendar';
 
 export default function MonthViewMode({ onSelect: onSelectMonth }: MonthViewProps) {
   return (
-    <div className='grid grid-cols-4 gap-2 text-center'>
+    <div className='grid max-h-[340px] grid-cols-2 justify-items-center gap-2.5 text-center'>
       {Array.from({ length: 12 }).map((_, i) => (
         <button
           key={i}
           onClick={() => onSelectMonth(i)}
-          className='aspect-square rounded-lg py-2 hover:bg-blue-100'
+          className='h-[3rem] w-[4rem] rounded-lg hover:bg-blue-100'
         >
           {i + 1}월
         </button>

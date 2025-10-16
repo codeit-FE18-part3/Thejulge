@@ -23,7 +23,7 @@ export async function postShop(body: RegisterFormData) {
 
 export async function postPresignedUrl(imageName: string) {
   const { data } = await axios.post('/images', { name: imageName });
-  console.log(data);
+  // console.log(data);
   return data.item.url;
 }
 
