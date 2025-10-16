@@ -31,7 +31,13 @@ const Nav = () => {
 
       {isLogin && (
         <>
-          <button type='button' onClick={logout}>
+          <button
+            type='button'
+            onClick={e => {
+              e.preventDefault();
+              logout('/');
+            }}
+          >
             로그아웃
           </button>
           <button type='button' aria-label='알림 확인하기'>
