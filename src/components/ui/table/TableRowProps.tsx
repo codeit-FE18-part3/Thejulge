@@ -1,4 +1,5 @@
 export type TableRowProps = {
+  id: string;
   name: string;
   startsAt: string;
   workhour: number;

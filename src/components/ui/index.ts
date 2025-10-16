@@ -1,3 +1,4 @@
+export { Badge, StatusBadge } from '@/components/ui/badge';
 export {
   Calendar,
   CalendarHeader,

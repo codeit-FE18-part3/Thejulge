@@ -1,1 +1,1 @@
-export { default as Pagination } from './pagination';
+export { default as Pagination } from '@/components/ui/pagination/pagination';

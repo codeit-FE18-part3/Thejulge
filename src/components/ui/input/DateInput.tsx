@@ -40,9 +40,10 @@ export default function DateInput({
     (date: Date) => {
       setSelectedDate(date);
       setInputValue(formatDate(date));
+      setClose();
       onChange?.(date);
     },
-    [onChange]
+    [onChange, setClose]
   );
 
   // 날짜 선택
@@ -124,7 +125,7 @@ export default function DateInput({
       />
 
       {isOpen && (
-        <div className='z-1 absolute w-full'>
+        <div className='absolute z-10 w-full'>
           <Calendar onSelect={handleDateSelect} value={selectedDate ?? new Date()} />
         </div>
       )}
