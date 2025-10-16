@@ -2,6 +2,7 @@ import { Modal } from '@/components/ui';
 import { useRouter } from 'next/router';
 
 interface Props {
+  mode: string;
   openWarning: boolean;
   setOpenWarning: (value: boolean) => void;
   openCancel: boolean;
@@ -11,6 +12,7 @@ interface Props {
 }
 
 const RegisterModal = ({
+  mode,
   openWarning,
   setOpenWarning,
   openCancel,
@@ -46,7 +48,7 @@ const RegisterModal = ({
         open={openConfirm}
         onClose={() => setOepnConfirm(false)}
         variant='success'
-        title='등록이 완료되었습니다.'
+        title={mode === 'edit' ? '수정이 완료되었습니다.' : '등록이 완료되었습니다.'}
         primaryText='확인'
         onPrimary={() => router.push('/my-shop')}
       />

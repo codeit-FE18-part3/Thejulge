@@ -30,7 +30,12 @@ const ShopForm = ({ mode, initialData, onSubmit }: ShopFromProps) => {
   );
 
   useEffect(() => {
-    if (initialData) setFormData(initialData);
+    if (initialData) {
+      setFormData(initialData);
+      if (initialData.imageUrl) {
+        setPreview(initialData.imageUrl);
+      }
+    }
   }, [initialData]);
 
   const [preview, setPreview] = useState<string | null>(null);
@@ -57,14 +62,17 @@ const ShopForm = ({ mode, initialData, onSubmit }: ShopFromProps) => {
   };
 
   const validateForm = () => {
-    return (
-      !formData.name ||
-      !formData.category ||
-      !formData.address1 ||
-      !formData.address2 ||
-      !formData.originalHourlyPay ||
-      !formData.image
-    );
+    if (mode === 'register')
+      return (
+        !formData.name ||
+        !formData.category ||
+        !formData.address1 ||
+        !formData.address2 ||
+        !formData.originalHourlyPay ||
+        !formData.image ||
+        !formData.imageUrl
+      );
+    return false;
   };
 
   const handleSubmit = async () => {
@@ -94,10 +102,11 @@ const ShopForm = ({ mode, initialData, onSubmit }: ShopFromProps) => {
           <RegisterName formData={formData} handleChange={handleChange} />
           <RegisterAddress formData={formData} handleChange={handleChange} />
           <RegisterWage formData={formData} handleWageChange={handleWageChange} />
-          <RegisterImage preview={preview} handleImageChange={handleImageChange} />
+          <RegisterImage mode={mode} preview={preview} handleImageChange={handleImageChange} />
           <RegisterDescription formData={formData} handleChange={handleChange} />
           <Button onClick={handleSubmit}>{mode === 'register' ? '등록하기' : '완료하기'}</Button>
           <RegisterModal
+            mode={mode}
             openWarning={openWarning}
             setOpenWarning={setOpenWarning}
             openCancel={openCancel}

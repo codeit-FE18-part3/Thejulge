@@ -23,6 +23,11 @@ export async function putShop(shopId: string, body: RegisterFormData) {
   return data;
 }
 
+export async function getNotice(shopId: string) {
+  const { data } = await axios.get(`/shops/${shopId}/notices`);
+  return data;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 export async function postPresignedUrl(imageUrl: string) {

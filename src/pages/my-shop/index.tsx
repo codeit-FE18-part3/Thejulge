@@ -8,13 +8,11 @@ import { useEffect, useState } from 'react';
 const Myshop = () => {
   const { user } = useAuth();
   const [shopData, setShopData] = useState({});
-  //console.log('user :', user);
 
   useEffect(() => {
     const get = async () => {
       if (user?.shop) {
         const res = await getShop(user.shop.item.id);
-        //console.log('shop:', res);
         const { description, ...rest } = res.item;
         const formattedShopData = { ...rest, shopDescription: description };
         setShopData(formattedShopData);
@@ -37,7 +35,11 @@ const Myshop = () => {
               >
                 편집하기
               </Button>
-              <Button as={Link} href='/' className='h-[38px] flex-1 tablet:h-12'>
+              <Button
+                as={Link}
+                href={`/employer/notices/${user.shop.item.id}`}
+                className='h-[38px] flex-1 tablet:h-12'
+              >
                 공고 등록하기
               </Button>
             </div>

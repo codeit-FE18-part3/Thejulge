@@ -35,7 +35,12 @@ const Edit: NextPageWithLayout = () => {
       }
     }
     // 🟣 PUT 요청
-    await putShop(user.shop.item.id, { ...editData, imageUrl });
+    const { originalHourlyPay, ...shopData } = editData;
+    const numericPay =
+      typeof originalHourlyPay === 'string'
+        ? Number(originalHourlyPay.replace(/,/g, ''))
+        : originalHourlyPay;
+    await putShop(user.shop.item.id, { ...shopData, originalHourlyPay: numericPay, imageUrl });
   };
   return (
     <>
