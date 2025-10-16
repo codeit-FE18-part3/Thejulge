@@ -3,32 +3,50 @@ import RegisterFormData from '@/types/myShop';
 import { default as originAxios } from 'axios';
 
 export async function postShop(body: RegisterFormData) {
-  const { address1, address2, category, description, name, originalHourlyPay, image } = body;
-
-  const imageUrl = image
-    ? `https://bootcamp-project-api.s3.ap-northeast-2.amazonaws.com/${image.name}`
-    : '';
-
-  const tmpBody = {
-    address1,
-    address2,
-    category,
-    description,
-    name,
-    originalHourlyPay,
-    imageUrl,
-  };
-  const { data } = await axios.post('/shops', tmpBody);
+  const accessToken = localStorage.getItem('thejulge-token');
+  const { data } = await axios.post('/shops', body, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+  return data;
 }
 
-export async function postPresignedUrl(imageName: string) {
-  const { data } = await axios.post('/images', { name: imageName });
-  console.log(data);
+export async function getShop(shopId: string) {
+  const { data } = await axios.get(`/shops/${shopId}`);
+  return data;
+}
+
+export async function putShop(shopId: string, body: RegisterFormData) {
+  const accessToken = localStorage.getItem('thejulge-token');
+  const { data } = await axios.put(`/shops/${shopId}`, body, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+  return data;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+export async function postPresignedUrl(imageUrl: string) {
+  const accessToken = localStorage.getItem('thejulge-token');
+  const { data } = await axios.post(
+    '/images',
+    { name: imageUrl },
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
   return data.item.url;
 }
 
 export async function uploadImage(presignedUrl: string, file: File) {
-  const result = await originAxios.put(presignedUrl, file);
+  try {
+    const result = await originAxios.put(presignedUrl, file, {
+      headers: { 'Content-Type': file.type },
+    });
+  } catch (error) {
+    alert(error);
+  }
 }
 
 export async function getPresignedUrl(presignedUrl: string) {
@@ -42,9 +60,4 @@ export async function getPresignedUrl(presignedUrl: string) {
   const baseUrl = url.toString();
 
   const result = await originAxios.get(baseUrl);
-}
-
-export async function getShop(shopId: string) {
-  const { data } = await axios.get(`/shops/${shopId}`);
-  return data;
 }
