@@ -3,7 +3,7 @@ import { Pagination } from '@/components/ui/pagination';
 import { useNotice } from '@/context/noticeProvider';
 
 interface NoticeProps {
-  q: string | undefined;
+  q?: string;
 }
 
 const NoticeList = ({ q }: NoticeProps) => {
