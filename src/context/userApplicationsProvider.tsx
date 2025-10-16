@@ -79,9 +79,9 @@ export const UserApplicationsProvider = ({ children }: { children: ReactNode }) 
     async (shopId: string, noticeId: string) => {
       if (!user?.id) {
         setError('로그인이 필요합니다.');
-      } else {
-        await postApplication(shopId, noticeId);
+        return;
       }
+      await postApplication(shopId, noticeId);
       await fetchAllApplications(); // 최신화 반영
     },
     [user, fetchAllApplications]

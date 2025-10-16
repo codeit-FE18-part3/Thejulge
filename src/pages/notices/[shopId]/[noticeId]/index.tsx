@@ -177,6 +177,7 @@ const NoticeDetail = ({ notice }: { notice: NoticeCard }) => {
   // 최근 본 공고
   useEffect(() => {
     handleRecentNotice();
+     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <div>
