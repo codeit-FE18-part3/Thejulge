@@ -173,7 +173,6 @@ const NoticeDetail = ({ notice }: { notice: NoticeCard }) => {
     // isApplied는 내부에서 applications에만 의존하므로 배열에 제외
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [canApply, isLogin, role, user, notice, router, applyNotice, cancelNotice, showToast, error]);
-  console.log(notice);
 
   // 최근 본 공고
   useEffect(() => {
