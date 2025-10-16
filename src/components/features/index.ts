@@ -1,1 +1,1 @@
-export { NoticeListSection } from './noticeList';
+export { NoticeListSection, RecentNoticeList } from './noticeList';
