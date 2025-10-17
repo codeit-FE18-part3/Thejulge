@@ -43,25 +43,3 @@ export type NoticeVariant = 'notice' | 'shop';
 export type RecentNotice = PostCard & {
   viewedAt: string; // 저장된 시각
 };
-
-export interface ShopResponse {
-  item: {
-    id: string;
-    name: string;
-    description: string;
-    [key: string]: unknown;
-  };
-}
-
-export interface NoticeItem {
-  id: string;
-  title: string;
-  content: string;
-  createdAt: string;
-  [key: string]: unknown;
-}
-
-export interface NoticeResponse {
-  items: NoticeItem[];
-  total: number;
-}
