@@ -13,7 +13,8 @@ interface CardImageProps {
 }
 const FALLBACK_SRC = '/fallback.png';
 const CardImage = ({ variant, src, alt, className, children }: CardImageProps) => {
-  const [imgSrc, setImgSrc] = useState(src ?? FALLBACK_SRC);
+  const image = src ?? FALLBACK_SRC;
+  const [imgSrc, setImgSrc] = useState(image);
 
   const handleError = () => {
     setImgSrc(FALLBACK_SRC);
@@ -23,6 +24,7 @@ const CardImage = ({ variant, src, alt, className, children }: CardImageProps) =
     typeof imgSrc === 'string' &&
     (imgSrc.startsWith('https://bootcamp-project-api.s3.ap-northeast-2.amazonaws.com') ||
       imgSrc.startsWith('https://picsum.photos'));
+
   return (
     <div
       className={cn(
@@ -34,7 +36,6 @@ const CardImage = ({ variant, src, alt, className, children }: CardImageProps) =
       )}
     >
       <Image
-        //src={src ?? FALLBACK_SRC}
         src={isValidSrc ? imgSrc : FALLBACK_SRC}
         alt={`${alt} 가게 이미지`}
         fill
