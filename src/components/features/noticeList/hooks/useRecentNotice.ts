@@ -6,8 +6,6 @@ const RECENT_KEY = 'thejulge_recent';
 // 최근 본 공고 저장
 export const useRecentNotice = (notice: NoticeCard) => {
   const handleRecentNotice = useCallback(() => {
-    if (!notice) return;
-
     const current: RecentNotice = {
       id: notice.id,
       shopId: notice.shopId,
@@ -42,7 +40,7 @@ export const useRecentNotice = (notice: NoticeCard) => {
 };
 
 // 최근 본 공고 불러오기
-export function useRecentNoticeList() {
+export const useRecentNoticeList = () => {
   const [recentNotices, setRecentNotices] = useState<RecentNotice[]>([]);
 
   useEffect(() => {
@@ -54,4 +52,4 @@ export function useRecentNoticeList() {
   }, []);
 
   return { recentNotices };
-}
+};
