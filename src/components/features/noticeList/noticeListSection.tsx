@@ -17,7 +17,8 @@ const NoticeListSection = ({ q, initialFilters }: NoticeListSectionProps) => {
     useNotices();
 
   useEffect(() => {
-    fetchNotices(initialFilters);
+    // 새 검색어/필터로 진입 시 페이지를 1페이지로 리셋
+    fetchNotices({ ...(initialFilters ?? {}), offset: 0 });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [q, initialFilters]);
 
@@ -39,13 +40,15 @@ const NoticeListSection = ({ q, initialFilters }: NoticeListSectionProps) => {
         isInitialized={isInitialized}
         reset={reset}
       />
-      <Pagination
-        total={pagination.count}
-        limit={pagination.limit}
-        offset={pagination.offset}
-        onPageChange={next => fetchNotices({ offset: next })}
-        className='mt-8 tablet:mt-10'
-      />
+      {!isLoading && (
+        <Pagination
+          total={pagination.count}
+          limit={pagination.limit}
+          offset={pagination.offset}
+          onPageChange={next => fetchNotices({ offset: next })}
+          className='mt-8 tablet:mt-10'
+        />
+      )}
     </Container>
   );
 };
