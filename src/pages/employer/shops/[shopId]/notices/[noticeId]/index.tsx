@@ -12,7 +12,7 @@ const EmployerNoticePage = () => {
   const shopId = Array.isArray(query.shopId) ? query.shopId[0] : query.shopId;
   const noticeId = Array.isArray(query.noticeId) ? query.noticeId[0] : query.noticeId;
 
-  const { role } = useAuth();
+  const { user } = useAuth();
 
   const [notice, setNotice] = useState<NoticeCard>();
 
@@ -24,10 +24,10 @@ const EmployerNoticePage = () => {
 
   // employer만 접근 가능
   useEffect(() => {
-    if (role !== 'employer') {
+    if (user && !user.shop) {
       router.replace('/');
     }
-  }, [role, router]);
+  }, [user, router]);
 
   // 공고 조회
   useEffect(() => {

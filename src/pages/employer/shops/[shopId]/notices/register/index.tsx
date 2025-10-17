@@ -1,8 +1,8 @@
-import { Button, DateInput, Input, TimeInput } from '@/components/ui';
+import { Button, DateInput, Input, Modal, TimeInput } from '@/components/ui';
 import useAuth from '@/hooks/useAuth';
 import axiosInstance from 'axios';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface NoticePayload {
   hourlyPay: number;
@@ -21,6 +21,15 @@ const EmployerNoticeRegisterPage = () => {
   const [workhour, setWorkhour] = useState<number>();
   const [description, setDescription] = useState('');
 
+  const [modalOpen, setModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (user && !user.shop) {
+      alert('접근 권한이 없습니다.');
+      router.replace('/');
+    }
+  }, [user, router]);
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -36,17 +45,19 @@ const EmployerNoticeRegisterPage = () => {
       description,
     };
 
-    const token = localStorage.getItem('thejulge_token');
-    if (!token) return alert('로그인이 필요합니다');
+    if (!user?.shop) return;
 
     try {
       await axiosInstance.post(`/shops/${user.shop.item.id}/notices`, payload);
-
-      alert('등록 완료');
-      router.push(`/my-shop`);
+      setModalOpen(true);
     } catch (error) {
       alert(error instanceof Error ? error.message : '등록 중 오류 발생');
     }
+  };
+
+  const handleModalClose = () => {
+    setModalOpen(false);
+    router.push(`/my-shop`);
   };
 
   if (!user?.shop) return null;
@@ -129,6 +140,16 @@ const EmployerNoticeRegisterPage = () => {
           등록하기
         </Button>
       </form>
+
+      <Modal
+        open={modalOpen}
+        onClose={handleModalClose}
+        title='등록 완료'
+        description='공고가 성공적으로 등록되었습니다.'
+        variant='success'
+        primaryText='확인'
+        onPrimary={handleModalClose}
+      />
     </div>
   );
 };
