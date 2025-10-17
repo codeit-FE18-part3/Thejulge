@@ -7,7 +7,8 @@ import useAuth from '@/hooks/useAuth';
 import { cn } from '@/lib/utils/cn';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
+import type { NextPageWithLayout } from './_app';
 
 type MemberType = 'employee' | 'employer';
 
@@ -36,7 +37,8 @@ const SignupPage: NextPageWithLayout = () => {
   const [pw2Err, setPw2Err] = useState<string | null>(null);
 
   const [loading, setLoading] = useState(false);
-  const [dupOpen, setDupOpen] = useState(false); // 409 모달
+  const [dupOpen, setDupOpen] = useState(false);
+  const [successOpen, setSuccessOpen] = useState(false);
   const [globalErr, setGlobalErr] = useState<string | null>(null);
 
   const onBlurEmail = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -69,9 +71,8 @@ const SignupPage: NextPageWithLayout = () => {
     setLoading(true);
     try {
       await signup({ email, password: pw, type });
-      alert('가입이 완료되었습니다');
-      window.location.href = '/login';
-    } catch (err: unknown) {
+      setSuccessOpen(true); // ✅ alert → 모달
+    } catch (err) {
       const status = (err as { response?: { status?: number } })?.response?.status;
       if (status === 409) setDupOpen(true);
       else setGlobalErr(getMsg(err, '회원가입 중 오류가 발생했습니다.'));
@@ -300,3 +301,8 @@ const SignupPage: NextPageWithLayout = () => {
     </main>
   );
 };
+
+// Header/Footer 제거용 전용 레이아웃
+SignupPage.getLayout = (page: ReactNode) => page;
+
+export default SignupPage;
