@@ -124,11 +124,11 @@ export default function DateInput({
         autoComplete='off'
       />
 
-      {isOpen && (
-        <div className='absolute z-10 w-full'>
-          <Calendar onSelect={handleDateSelect} value={selectedDate ?? new Date()} />
-        </div>
-      )}
+      <div
+        className={`overflow-hidden transition-all duration-300 ${isOpen ? 'mt-2 max-h-[700px] opacity-100' : 'max-h-0 opacity-0'} `}
+      >
+        <Calendar onSelect={handleDateSelect} value={selectedDate ?? new Date()} />
+      </div>
     </div>
   );
 }

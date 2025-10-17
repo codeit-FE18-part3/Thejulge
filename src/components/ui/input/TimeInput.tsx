@@ -94,17 +94,17 @@ export default function TimeInput() {
         onChange={handleTimeInputChange}
       />
 
-      {isOpen && (
-        <div className='z-1 absolute'>
-          <TimeSelector
-            onSelect={handleTimeSelect}
-            period={period}
-            hours={hours}
-            minutes={minutes}
-            value={selectedTime ? formatTime(selectedTime) : ''}
-          />
-        </div>
-      )}
+      <div
+        className={`overflow-hidden transition-all duration-300 ${isOpen ? 'mt-2 max-h-[300px] opacity-100' : 'max-h-0 opacity-0'} `}
+      >
+        <TimeSelector
+          onSelect={handleTimeSelect}
+          period={period}
+          hours={hours}
+          minutes={minutes}
+          value={selectedTime ? formatTime(selectedTime) : ''}
+        />
+      </div>
     </div>
   );
 }

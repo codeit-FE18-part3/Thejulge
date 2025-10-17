@@ -47,7 +47,7 @@ const Myshop = () => {
               </Button>
               <Button
                 as={Link}
-                href={`/employer/notices/${user.shop.item.id}`}
+                href={`/employer/shops/${user.shop.item.id}/notices/register`}
                 className='h-[38px] flex-1 tablet:h-12'
               >
                 공고 등록하기

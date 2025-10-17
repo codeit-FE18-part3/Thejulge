@@ -6,7 +6,7 @@ import { NoticeCard } from '@/types/notice';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
-const EmployerNoticeIdPage = () => {
+const EmployerNoticePage = () => {
   const router = useRouter();
   const { query } = router;
   const shopId = Array.isArray(query.shopId) ? query.shopId[0] : query.shopId;
@@ -15,6 +15,7 @@ const EmployerNoticeIdPage = () => {
   const { role } = useAuth();
 
   const [notice, setNotice] = useState<NoticeCard>();
+
   const [headers, setHeaders] = useState<string[]>([]);
   const [data, setData] = useState<TableRowProps[]>([]);
 
@@ -95,4 +96,4 @@ const EmployerNoticeIdPage = () => {
   );
 };
 
-export default EmployerNoticeIdPage;
+export default EmployerNoticePage;
