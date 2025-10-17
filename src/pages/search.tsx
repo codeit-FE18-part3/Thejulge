@@ -1,33 +1,12 @@
-import NoticeListSection from '@/components/features/noticeList/noticeListSection';
-import { NoticeProvider } from '@/context/noticeProvider';
-import axiosInstance from '@/lib/axios';
-import type { GetServerSideProps } from 'next';
+import { NoticeListSection } from '@/components/features';
+import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 
-type SearchProps = {
-  q: string;
-};
-
-export const getServerSideProps: GetServerSideProps<SearchProps> = async ({ query }) => {
-  const q = query.q as string;
-  if (!q) {
-    return { props: { q: '' } };
-  }
-
-  try {
-    await axiosInstance.get('/notices', { params: { keyword: q } });
-    return { props: { q } };
-  } catch {
-    return { props: { q } };
-  }
-};
-
-const Search = ({ q }: SearchProps) => {
-  const initialFilters = useMemo(() => ({ keyword: q }), [q]);
-  return (
-    <NoticeProvider>
-      <NoticeListSection q={q} showFilter initialFilters={initialFilters} />
-    </NoticeProvider>
-  );
+const Search = () => {
+  const router = useRouter();
+  const q = typeof router.query.q === 'string' ? router.query.q : '';
+  const initialFilters = useMemo(() => (q ? { keyword: q } : undefined), [q]);
+ 
+  return <NoticeListSection q={q} initialFilters={initialFilters} />;
 };
 export default Search;
