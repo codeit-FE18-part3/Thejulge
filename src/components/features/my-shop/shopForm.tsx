@@ -62,16 +62,16 @@ const ShopForm = ({ mode, initialData, onSubmit }: ShopFromProps) => {
   };
 
   const validateForm = () => {
-    if (mode === 'register')
+    if (mode === 'register') {
       return (
         !formData.name ||
         !formData.category ||
         !formData.address1 ||
         !formData.address2 ||
         !formData.originalHourlyPay ||
-        !formData.image ||
-        !formData.imageUrl
+        (!formData.image && !formData.imageUrl)
       );
+    }
     return false;
   };
 

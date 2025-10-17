@@ -1,4 +1,4 @@
-import { getShop } from '@/api/employer';
+import { getNotice, getShop } from '@/api/employer';
 import { Frame } from '@/components/layout';
 import { Button, Notice } from '@/components/ui';
 import useAuth from '@/hooks/useAuth';
@@ -8,14 +8,24 @@ import { useEffect, useState } from 'react';
 const Myshop = () => {
   const { user } = useAuth();
   const [shopData, setShopData] = useState({});
+  const [shopNotice, setShopNotice] = useState({});
 
   useEffect(() => {
     const get = async () => {
-      if (user?.shop) {
-        const res = await getShop(user.shop.item.id);
-        const { description, ...rest } = res.item;
+      if (!user?.shop) return;
+      try {
+        const [shopRes, noticeRes] = await Promise.all([
+          getShop(user.shop.item.id),
+          getNotice(user.shop.item.id, { offset: 0, limit: 6 }),
+        ]);
+
+        const { description, ...rest } = shopRes.item;
         const formattedShopData = { ...rest, shopDescription: description };
         setShopData(formattedShopData);
+        setShopNotice(noticeRes);
+        //console.log('공고 조회:', noticeRes);
+      } catch (error) {
+        alert(error);
       }
     };
     get();
