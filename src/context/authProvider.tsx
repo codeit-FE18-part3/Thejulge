@@ -1,9 +1,10 @@
-// 원칙: state는 user 하나만 관리한다(부트스트랩/로그인여부는 파생).
+// 원칙: state는 user 하나만 관리(부트스트랩/로그인여부는 파생)
+
 import { apiLogin, apiSignup } from '@/api/auth';
 import { apiGetUser, apiUpdateUser } from '@/api/users';
 import type { LoginRequest, User, UserRequest, UserRole } from '@/types/user';
 import { useRouter } from 'next/router';
-import { createContext, ReactNode, useCallback, useEffect, useState } from 'react';
+import { createContext, type ReactNode, useCallback, useEffect, useState } from 'react';
 
 type AuthContextValue = {
   /** 파생: user가 있으면 true */
@@ -35,7 +36,7 @@ const USER_ID_KEY = 'thejulge_user_id';
 const EXPIRES_KEY = 'thejulge_expires_at';
 const EXPIRES_DURATION_MS = 10 * 60 * 1000; // 10분
 
-/** storage helpers (이름 풀기) */
+/** storage helpers */
 const isBrowser = () => typeof window !== 'undefined';
 
 const setLocalStorageItem = (key: string, value: string) => {
@@ -55,9 +56,11 @@ const readAuthFromStorage = () => {
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
+
+  // 단일 핵심 상태
   const [user, setUser] = useState<User | null | undefined>(undefined);
 
-  /** 파생값 */
+  // 파생값
   const isLogin = !!user;
   const role: UserRole = user ? user.type : 'guest';
   const bootstrapped = user !== undefined;
@@ -78,12 +81,21 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const bootstrap = async () => {
       const { token, userId, expiresAt } = readAuthFromStorage();
-      const isInvalid = !token || !userId || !expiresAt || Date.now() >= expiresAt;
+
+      // token / userId 없거나 "만료된 expiresAt"만 진짜 무효
+      const isInvalid = !token || !userId || (!!expiresAt && Date.now() >= expiresAt);
       if (isInvalid) {
-        logout(false); // 이동은 하지 않음
-        setUser(null); // 부트스트랩 종료(비로그인)
+        logout(false); // 화면 이동은 하지 않음
+        setUser(null); // 부트스트랩 종료(비로그인 상태 확정)
         return;
       }
+
+      // ✅ 자기치유: token + userId는 있는데 expiresAt만 없는 과거 세션 방어
+      if (!expiresAt) {
+        const newExpiresAt = Date.now() + EXPIRES_DURATION_MS;
+        setLocalStorageItem(EXPIRES_KEY, String(newExpiresAt));
+      }
+
       try {
         const me = await apiGetUser(userId);
         setUser(me);
@@ -92,6 +104,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(null);
       }
     };
+
     bootstrap();
   }, [logout]);
 
@@ -118,7 +131,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   /** 내 정보 재조회: 저장소 userId 기준 */
   const getUser = useCallback(async () => {
     const { userId } = readAuthFromStorage();
-    if (!userId) throw new Error('로그인이 필요합니다');
+    if (!userId) throw new Error('로그인이 필요합니다.');
     const me = await apiGetUser(userId);
     setUser(me);
   }, []);
@@ -126,22 +139,27 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   /** 내 정보 수정: 성공 시 Context의 user 동기화 */
   const updateUser = useCallback(async (patch: Partial<User>) => {
     const { userId } = readAuthFromStorage();
-    if (!userId) throw new Error('로그인이 필요합니다');
+    if (!userId) throw new Error('로그인이 필요합니다.');
     const updated = await apiUpdateUser(userId, patch);
     setUser(updated);
   }, []);
 
-  /** 만료 체크: 1분마다 확인 → 만료 시 자동 로그아웃 */
+  /** 만료 체크: 1분마다 확인 → 만료 시 자동 로그아웃
+   *  - 로그인 상태에서만 타이머 동작
+   *  - expiresAt이 없으면 아무 것도 하지 않음(로그아웃 금지)
+   */
   useEffect(() => {
+    if (!isLogin) return;
     const timerId = setInterval(() => {
       const { expiresAt } = readAuthFromStorage();
-      if (!expiresAt || Date.now() >= expiresAt) logout('/');
+      if (!expiresAt) return; // 키가 없다면 건드리지 않음
+      if (Date.now() >= expiresAt) logout('/'); // 진짜 만료시에만 로그아웃
     }, 60 * 1000);
     return () => clearInterval(timerId);
-  }, [logout]);
+  }, [isLogin, logout]);
 
   /** Context 값 */
-  const contextValue: AuthContextValue = {
+  const value: AuthContextValue = {
     isLogin,
     role,
     bootstrapped,
@@ -153,7 +171,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     updateUser,
   };
 
-  return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export default AuthProvider;

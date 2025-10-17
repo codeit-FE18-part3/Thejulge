@@ -17,7 +17,7 @@ export default function TableRow({ rowData, variant }: TableTypeVariant) {
   const { date, startTime, endTime, duration } = getTime(rowData.startsAt, rowData.workhour);
   const [status, setStatus] = useState<StatusType>(rowData.status as StatusType);
 
-  const handleApprove = () => setStatus('approved');
+  const handleApprove = () => setStatus('accepted');
   const handleReject = () => setStatus('rejected');
 
   return (

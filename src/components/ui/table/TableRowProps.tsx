@@ -6,5 +6,5 @@ export type TableRowProps = {
   hourlyPay: string;
   status: string | JSX.Element;
   bio: string;
-  phone: number;
+  phone: string;
 };

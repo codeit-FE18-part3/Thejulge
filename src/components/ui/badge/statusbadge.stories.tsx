@@ -11,10 +11,10 @@ export default meta;
 
 type Story = StoryObj<typeof StatusBadge>;
 
-// Approve 승인 완료 뱃지
-export const Approve: Story = {
+// Accept 승인 완료 뱃지
+export const Accept: Story = {
   args: {
-    status: 'approved',
+    status: 'accepted',
     variant: 'employer',
   },
 };
@@ -35,7 +35,7 @@ export const PendingEmployee: Story = {
   },
 };
 
-// Pending 대기중 employer 버튼
+// Pending 대기중 employer
 export const PendingEmployer: Story = {
   args: {
     status: 'pending',

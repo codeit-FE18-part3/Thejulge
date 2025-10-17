@@ -9,7 +9,7 @@ import { noticeWrapper } from './notice.styles';
 interface NoticeProps<T extends Partial<NoticeCard>> {
   notice: T;
   variant?: NoticeVariant;
-  children: ReactNode;
+  children?: ReactNode;
   className?: string;
 }
 

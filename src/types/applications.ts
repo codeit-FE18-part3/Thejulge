@@ -17,6 +17,7 @@ export interface ApplicationItem {
   createdAt: string; // ISO 문자열
   shop: { item: Shop; href: string };
   notice: { item: Notice; href: string };
+  user?: { id: string; name?: string; email?: string };
 }
 
 export type ApplicationListResponse = PaginatedResponse &
