@@ -22,6 +22,7 @@ const EmployerNoticeRegisterPage = () => {
   const [description, setDescription] = useState('');
 
   const [modalOpen, setModalOpen] = useState(false);
+  const [newNoticeId, setNewNoticeId] = useState<string | null>(null);
 
   useEffect(() => {
     if (user && !user.shop) {
@@ -34,6 +35,7 @@ const EmployerNoticeRegisterPage = () => {
     e.preventDefault();
 
     if (!date || !time || !wage || !workhour || !description) return;
+    if (!user?.shop) return;
 
     const combinedDateTime = new Date(date);
     combinedDateTime.setHours(time.getHours(), time.getMinutes(), 0, 0);
@@ -45,19 +47,21 @@ const EmployerNoticeRegisterPage = () => {
       description,
     };
 
-    if (!user?.shop) return;
-
     try {
-      await axiosInstance.post(`/shops/${user.shop.item.id}/notices`, payload);
+      const response = await axiosInstance.post(`/shops/${user.shop.item.id}/notices`, payload);
+      const noticeId = response.data.id; // 새 공고 ID
+      setNewNoticeId(noticeId);
       setModalOpen(true);
     } catch (error) {
-      alert(error instanceof Error ? error.message : '등록 중 오류 발생');
+      alert(error instanceof Error ? error.message : '공고 등록 중 오류 발생');
     }
   };
 
   const handleModalClose = () => {
     setModalOpen(false);
-    router.push(`/my-shop`);
+    if (user?.shop && newNoticeId) {
+      router.push(`/employer/shops/${user.shop.item.id}/notices/${newNoticeId}`);
+    }
   };
 
   if (!user?.shop) return null;
@@ -114,7 +118,6 @@ const EmployerNoticeRegisterPage = () => {
             onChange={(selectedTime: Date | null) => setTime(selectedTime)}
           />
         </div>
-
         <div className='flex flex-col gap-2'>
           <label htmlFor='description' className='text-sm font-medium'>
             공고 설명

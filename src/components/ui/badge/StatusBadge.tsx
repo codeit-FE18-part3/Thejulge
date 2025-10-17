@@ -5,7 +5,7 @@ export type StatusType = 'pending' | 'accepted' | 'rejected';
 
 interface StatusBadgeProps {
   status: StatusType;
-  variant: 'employer' | 'employee';
+  variant: 'employer' | 'employee' | 'guest';
   onApprove: () => void;
   onReject: () => void;
 }

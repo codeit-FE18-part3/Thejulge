@@ -43,8 +43,26 @@ export const putApplication = async (shopId: string, noticeId: string, applicati
 
 // 특정 가게 특정 공고 정보
 export async function getNoticeById(shopId: string, noticeId: string): Promise<NoticeCard> {
-  const { data } = await axiosInstance.get<NoticeCard>(`/shops/${shopId}/notices/${noticeId}`);
-  return data;
+  const { data } = await axiosInstance.get(`/shops/${shopId}/notices/${noticeId}`);
+
+  // API 응답 -> NoticeCard 형태로 매핑
+  const noticeCard: NoticeCard = {
+    id: data.id,
+    name: data.shop?.name ?? '',
+    shopId: data.shop?.id ?? shopId,
+    address1: data.shop?.address1 ?? '',
+    hourlyPay: data.hourlyPay ?? 0,
+    originalHourlyPay: data.originalHourlyPay ?? data.hourlyPay ?? 0,
+    workhour: data.workhour ?? 0,
+    startsAt: data.startsAt,
+    closed: data.closed ?? false,
+    imageUrl: data.imageUrl ?? '',
+    description: data.description ?? '',
+    category: data.category ?? '기타', // 누락 필수
+    shopDescription: data.shopDescription ?? '', // 누락 필수
+  };
+
+  return noticeCard;
 }
 
 // 특정 가게 특정 공고 지원자 목록

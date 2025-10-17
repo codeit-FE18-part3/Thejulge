@@ -1,13 +1,12 @@
 import { Pagination } from '@/components/ui';
 import { TableRowProps } from '@/components/ui/table/TableRowProps';
 import { cn } from '@/lib/utils/cn';
-import { UserType } from '@/types/user';
 import TableRow from './TableRow';
 
 interface TableProps {
-  data: TableRowProps[];
+  tableData: TableRowProps[];
+  userType: 'employer' | 'employee' | 'guest';
   headers: string[];
-  userType: UserType;
   total: number;
   limit: number;
   offset: number;
@@ -17,7 +16,7 @@ interface TableProps {
 // <Table headers={headers} data={data} userType={type} /> type은 확인이 좀 더 필요합니다
 
 export default function Table({
-  data,
+  tableData,
   headers,
   userType,
   total,
@@ -52,8 +51,8 @@ export default function Table({
               </tr>
             </thead>
             <tbody>
-              {data.map(row => (
-                <TableRow key={row.id} rowData={row} variant={userType} />
+              {tableData.map(row => (
+                <TableRow key={row.id} {...row} rowData={row} variant={userType} />
               ))}
             </tbody>
           </table>

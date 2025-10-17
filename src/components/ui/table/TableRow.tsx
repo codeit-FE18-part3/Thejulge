@@ -7,7 +7,7 @@ import { useState } from 'react';
 
 interface TableTypeVariant {
   rowData: TableRowProps;
-  variant: 'employer' | 'employee';
+  variant: 'employer' | 'employee' | 'guest';
 }
 
 const TD_BASE = 'border-b border-r px-3 py-5 text-base gap-3 md:border-r-0';

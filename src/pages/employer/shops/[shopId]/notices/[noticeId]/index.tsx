@@ -1,89 +1,212 @@
-import { getApplications, getNoticeById } from '@/api/applications';
-import { Button, Notice, Table } from '@/components/ui';
+import { Button, Modal, Notice, Table } from '@/components/ui';
 import { TableRowProps } from '@/components/ui/table/TableRowProps';
 import useAuth from '@/hooks/useAuth';
-import { NoticeCard } from '@/types/notice';
+import axiosInstance from '@/lib/axios';
+import { getNoticeStatus } from '@/lib/utils/getNoticeStatus';
+import { toNoticeCard } from '@/lib/utils/parse';
+import type { NoticeCard } from '@/types/notice';
+import { Shop } from '@/types/shop';
+import { UserRole } from '@/types/user';
+import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
-const EmployerNoticePage = () => {
-  const router = useRouter();
-  const { query } = router;
-  const shopId = Array.isArray(query.shopId) ? query.shopId[0] : query.shopId;
-  const noticeId = Array.isArray(query.noticeId) ? query.noticeId[0] : query.noticeId;
+interface ModalItems {
+  title?: string;
+  primaryText?: string;
+  secondaryText?: string;
+  onPrimary?: () => void;
+  onSecondary?: () => void;
+}
+interface EditItems extends ModalItems {
+  noShop?: ModalItems;
+  shop?: ModalItems;
+}
+interface ApplicationTableApiResponse {
+  item: {
+    id: string;
+    status: string;
+    user?: {
+      href: string;
+      item: {
+        id: string;
+        name: string;
+        bio: string;
+        phone: string;
+      };
+    };
+    notice?: {
+      item?: {
+        startsAt: string;
+        workhour: number;
+        hourlyPay?: number;
+      };
+    };
+  };
+  links: unknown[];
+}
 
-  const { user } = useAuth();
+const EDIT_ITEMS: Record<UserRole, EditItems> = {
+  guest: {
+    title: '로그인이 필요합니다',
+    primaryText: '로그인하기',
+    secondaryText: '닫기',
+  },
+  employer: {
+    shop: {},
+    noShop: {
+      title: '내 가게를 먼저 등록해주세요',
+      primaryText: '가게 등록',
+      secondaryText: '닫기',
+    },
+  },
+  employee: {
+    title: '접근할 수 없습니다',
+    primaryText: '확인',
+  },
+};
 
-  const [notice, setNotice] = useState<NoticeCard>();
+function hasShopFields(user: Shop | null) {
+  if (!user) return false;
+  return Boolean(
+    user.name &&
+      user.category &&
+      user.address1 &&
+      user.address2 &&
+      user.description &&
+      user.imageUrl &&
+      user.originalHourlyPay
+  );
+}
 
-  const [headers, setHeaders] = useState<string[]>([]);
+export const getServerSideProps: GetServerSideProps<{ notice: NoticeCard }> = async ({
+  params,
+}) => {
+  const { shopId, noticeId } = params as { shopId: string; noticeId: string };
+  try {
+    const noticeRes = await axiosInstance.get(`shops/${shopId}/notices/${noticeId}`);
+    return { props: { notice: toNoticeCard(noticeRes.data) } };
+  } catch {
+    return {
+      notFound: true,
+    };
+  }
+};
+
+const EmployerNoticeDetailPage = ({ notice }: { notice: NoticeCard }) => {
+  const headers = ['신청자', '소개', '전화번호', '상태'];
   const [data, setData] = useState<TableRowProps[]>([]);
 
   const [offset, setOffset] = useState(0);
   const limit = 5;
 
-  // employer만 접근 가능
-  useEffect(() => {
-    if (user && !user.shop) {
-      router.replace('/');
+  const { role, isLogin, user } = useAuth();
+  const router = useRouter();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modal, setModal] = useState<ModalItems | null>(null);
+
+  const status = getNoticeStatus(notice.closed, notice.startsAt);
+  const canEdit = useMemo(() => status === 'open', [status]);
+
+  // 공고 편집하기
+  const handleEditClick = useCallback(() => {
+    if (!canEdit) return;
+
+    if (!isLogin) {
+      const items = EDIT_ITEMS.guest;
+      setModal({
+        ...items,
+        onPrimary: () => router.push('/login'),
+        onSecondary: () => setModalOpen(false),
+      });
+      setModalOpen(true);
+      return;
     }
-  }, [user, router]);
 
-  // 공고 조회
+    if (role === 'employee') {
+      const items = EDIT_ITEMS.employee;
+      setModal({
+        ...items,
+        onPrimary: () => setModalOpen(false),
+      });
+      setModalOpen(true);
+      return;
+    }
+
+    const hasShop = hasShopFields(user?.shop?.item ?? null);
+    if (!hasShop) {
+      const items = EDIT_ITEMS.employer.noShop;
+      setModal({
+        ...items,
+        onPrimary: () => router.push('/my-shop'),
+        onSecondary: () => setModalOpen(false),
+      });
+      setModalOpen(true);
+      return;
+    }
+
+    router.push(`/employer/shops/${notice.shopId}/notices/${notice.id}/edit`);
+  }, [canEdit, isLogin, role, user, notice, router]);
+
+  // 신청자 불러오기
+
   useEffect(() => {
-    if (!shopId || !noticeId) return;
-
-    const fetchNotice = async () => {
-      const result = await getNoticeById(shopId, noticeId);
-      setNotice(result);
-    };
-
-    fetchNotice().catch(() => {
-      setNotice(undefined);
-    });
-  }, [shopId, noticeId]);
-
-  // 지원자 목록 조회
-  useEffect(() => {
-    if (!shopId || !noticeId) return;
-
     const fetchApplications = async () => {
-      const applications = await getApplications(shopId, noticeId, offset, limit);
-      setHeaders(['신청자', '소개', '전화번호', '상태']);
-      setData(
-        applications.map(app => ({
-          id: app.id,
-          name: app.user?.name ?? '-',
-          startsAt: '-',
-          workhour: 0,
-          hourlyPay: '-',
-          status: app.status,
-          bio: '-',
-          phone: '-',
-        }))
+      const res = await axiosInstance.get<{ items: ApplicationTableApiResponse[] }>(
+        `/shops/${notice.shopId}/notices/${notice.id}/applications`,
+        { params: { offset, limit } }
       );
+
+      const tableData: TableRowProps[] = res.data.items.map(app => {
+        const userItem = app.item.user?.item;
+        const noticeItem = app.item.notice?.item;
+
+        return {
+          id: app.item.id,
+          name: userItem?.name ?? '-',
+          bio: userItem?.bio ?? '-',
+          phone: userItem?.phone ?? '-',
+          startsAt: noticeItem?.startsAt ?? '-',
+          workhour: noticeItem?.workhour ?? 0,
+          hourlyPay: noticeItem?.hourlyPay
+            ? `${noticeItem.hourlyPay.toLocaleString()}원`
+            : '정보 없음',
+          status: app.item.status,
+        };
+      });
+
+      setData(tableData);
     };
 
     fetchApplications();
-  }, [shopId, noticeId, offset]);
-
-  if (!notice) return null;
+  }, [notice.shopId, notice.id, offset, limit]);
 
   return (
-    <div className='p-4'>
-      <Notice notice={notice} variant='notice'>
+    <div>
+      <Notice notice={notice} className='py-10 tablet:py-16'>
         <Button
-          variant='secondary'
-          size='md'
-          className='w-full'
-          onClick={() => router.push(`/employer/notices/${notice.id}/edit`)}
+          size='xs38'
+          full
+          className='font-bold'
+          variant={'secondary'}
+          onClick={handleEditClick}
         >
           공고 편집하기
         </Button>
+        <Modal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          variant='warning'
+          title={modal?.title ?? '유저 정보를 확인해주세요'}
+          primaryText={modal?.primaryText ?? '확인'}
+          onPrimary={modal?.onPrimary ?? (() => setModalOpen(false))}
+          secondaryText={modal?.secondaryText}
+          onSecondary={modal?.onSecondary}
+        />
       </Notice>
       <Table
         headers={headers}
-        data={data}
+        tableData={data}
         userType='employer'
         total={data.length}
         limit={limit}
@@ -94,4 +217,4 @@ const EmployerNoticePage = () => {
   );
 };
 
-export default EmployerNoticePage;
+export default EmployerNoticeDetailPage;
