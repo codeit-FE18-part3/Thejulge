@@ -1,6 +1,6 @@
 import { Button, DateInput, Input, Modal, TimeInput } from '@/components/ui';
 import useAuth from '@/hooks/useAuth';
-import axiosInstance from 'axios';
+import axiosInstance from '@/lib/axios';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
@@ -145,7 +145,6 @@ const EmployerNoticeRegisterPage = () => {
         open={modalOpen}
         onClose={handleModalClose}
         title='등록 완료'
-        description='공고가 성공적으로 등록되었습니다.'
         variant='success'
         primaryText='확인'
         onPrimary={handleModalClose}
