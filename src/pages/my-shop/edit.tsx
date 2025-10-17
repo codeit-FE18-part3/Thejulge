@@ -1,9 +1,59 @@
-const Edit = () => {
+import { getShop, postPresignedUrl, putShop, uploadImage } from '@/api/employer';
+import ShopForm from '@/components/features/my-shop/shopForm';
+import { Header, Wrapper } from '@/components/layout';
+import useAuth from '@/hooks/useAuth';
+import { NextPageWithLayout } from '@/pages/_app';
+import RegisterFormData from '@/types/myShop';
+import { useEffect, useState } from 'react';
+
+const Edit: NextPageWithLayout = () => {
+  const { user } = useAuth();
+  const [editData, setEditData] = useState<RegisterFormData | null>(null);
+
+  useEffect(() => {
+    const fetchShop = async () => {
+      if (user?.shop) {
+        const res = await getShop(user.shop.item.id);
+        setEditData(res.item);
+      }
+    };
+    fetchShop();
+  }, [user]);
+
+  const handleEdit = async (editData: RegisterFormData) => {
+    if (!user?.shop) return;
+    let imageUrl = editData.imageUrl ?? '';
+    if (editData.image) {
+      const presignedUrl = await postPresignedUrl(editData.image.name);
+      await uploadImage(presignedUrl, editData.image);
+      try {
+        const url = new URL(presignedUrl);
+        const shortUrl = url.origin + url.pathname;
+        imageUrl = shortUrl;
+      } catch (error) {
+        alert(error);
+      }
+    }
+    // 🟣 PUT 요청
+    const { originalHourlyPay, ...shopData } = editData;
+    const numericPay =
+      typeof originalHourlyPay === 'string'
+        ? Number(originalHourlyPay.replace(/,/g, ''))
+        : originalHourlyPay;
+    await putShop(user.shop.item.id, { ...shopData, originalHourlyPay: numericPay, imageUrl });
+  };
   return (
     <>
-      <div>수정 페이지</div>
+      <ShopForm mode='edit' initialData={editData} onSubmit={handleEdit} />
     </>
   );
 };
+
+Edit.getLayout = page => (
+  <Wrapper>
+    <Header />
+    <main>{page}</main>
+  </Wrapper>
+);
 
 export default Edit;

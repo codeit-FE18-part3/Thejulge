@@ -3,11 +3,12 @@ import Image from 'next/image';
 import { ChangeEvent } from 'react';
 
 interface Props {
+  mode: string;
   preview: string | null;
   handleImageChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
-const RegisterImage = ({ preview, handleImageChange }: Props) => {
+const RegisterImage = ({ mode, preview, handleImageChange }: Props) => {
   return (
     <>
       <div className='flex flex-col gap-1'>
@@ -17,7 +18,23 @@ const RegisterImage = ({ preview, handleImageChange }: Props) => {
         </div>
         <label className='relative flex h-[200px] w-full cursor-pointer flex-col items-center justify-center overflow-hidden rounded-xl border border-gray-300 tablet:h-[276px] tablet:w-[483px]'>
           {preview ? (
-            <Image src={preview} alt='미리보기' fill />
+            <>
+              <Image src={preview} alt='미리보기' fill />
+              {mode === 'edit' && (
+                <>
+                  <Image src={preview} alt='미리보기' fill />
+                  <div className='z-1 absolute inset-0 flex h-full w-full flex-col items-center justify-center gap-1 bg-black opacity-70 transition hover:opacity-50'>
+                    <Icon
+                      iconName='camera'
+                      iconSize='lg'
+                      ariaLabel='카메라 아이콘'
+                      className='bg-gray-400'
+                    />
+                    <p className='text-gray-400'>이미지 변경하기</p>
+                  </div>
+                </>
+              )}
+            </>
           ) : (
             <>
               <Icon
