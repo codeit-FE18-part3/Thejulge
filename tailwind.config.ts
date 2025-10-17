@@ -89,6 +89,12 @@ const config: Config = {
       boxShadow: {
         'inset-top': '0 -4px 25px 0 rgba(0,0,0,0.1)',
       },
+      keyframes: {
+        'skeleton-shimmer': {
+          '0%': { backgroundPosition: '-400% 0' },
+          '100%': { backgroundPosition: '400% 0' },
+        },
+      },
     },
   },
   plugins: [],

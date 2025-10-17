@@ -16,3 +16,4 @@ export { Filter } from './filter';
 export { Icon } from './icon';
 export { Modal, Notification } from './modal';
 export { Pagination } from './pagination';
+export { SkeletonUI } from './skeleton';

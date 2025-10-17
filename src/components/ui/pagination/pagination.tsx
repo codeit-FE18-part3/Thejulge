@@ -34,7 +34,7 @@ const Pagination = ({ total, offset, limit, onPageChange, className }: Paginatio
     setPageGroup(newGroup);
   }, [currentPage, pageGroupSize]);
 
-  if (totalPages < 1) return null;
+  if (totalPages <= 1) return null;
 
   const startPage = pageGroup * pageGroupSize + 1;
   const endPage = Math.min(startPage + pageGroupSize - 1, totalPages);

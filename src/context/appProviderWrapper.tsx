@@ -3,7 +3,7 @@ import AuthProvider from './authProvider';
 import { ToastProvider } from './toastContext';
 import { UserApplicationsProvider } from './userApplicationsProvider';
 
-const AppProvider = ({ children }: { children: ReactNode }) => {
+const AppProviderWrapper = ({ children }: { children: ReactNode }) => {
   return (
     <AuthProvider>
       <UserApplicationsProvider>
@@ -12,4 +12,4 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
     </AuthProvider>
   );
 };
-export default AppProvider;
+export default AppProviderWrapper;

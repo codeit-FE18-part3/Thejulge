@@ -12,7 +12,6 @@ const Logo = () => {
           alt='더 줄게 로고'
           className='object-contain'
           fill
-          priority
           sizes='(max-width: 744px) 84px, 112px'
         />
       </Link>
