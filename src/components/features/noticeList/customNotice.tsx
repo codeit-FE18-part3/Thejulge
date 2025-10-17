@@ -19,7 +19,7 @@ const CustomNoticeList = () => {
           className='min-h-[270px] target:min-h-[276px] desktop:min-h-[344px]'
         />
       ) : (
-        <HorizontalScroll as='ul' className='flex gap-x-4 gap-y-8 pr-3 desktop:pr-8'>
+        <HorizontalScroll as='ul' className='flex gap-x-4 gap-y-8 px-3 desktop:px-8'>
           {notices.map(notice => (
             <li key={notice.id} className='min-w-[310px] flex-initial'>
               <Post notice={notice} />
@@ -33,8 +33,8 @@ const CustomNoticeList = () => {
 
 const CustomNotice = () => (
   <div className='bg-red-100'>
-    <Container as='section' isPage className='!pr-0'>
-      <h2 className='mb-4 text-heading-l font-bold tablet:mb-8'>맞춤공고</h2>
+    <Container as='section' isPage className='!px-0'>
+      <h2 className='mb-4 px-3 text-heading-l font-bold tablet:mb-8 tablet:px-8'>맞춤공고</h2>
       <CustomNoticeList />
     </Container>
   </div>
