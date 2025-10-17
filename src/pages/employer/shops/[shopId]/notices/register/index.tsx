@@ -1,5 +1,6 @@
 import { Button, DateInput, Input, TimeInput } from '@/components/ui';
 import useAuth from '@/hooks/useAuth';
+import axiosInstance from 'axios';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
@@ -41,20 +42,7 @@ const EmployerNoticeRegisterPage = () => {
     if (!token) return alert('로그인이 필요합니다');
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/shops/${shopId}/notices`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message ?? '등록 실패');
-      }
+      await axiosInstance.post(`/shops/${shopId}/notices`, payload);
 
       alert('등록 완료');
       router.push(`/my-shop`);
