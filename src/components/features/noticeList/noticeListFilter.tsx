@@ -1,9 +1,8 @@
 import { Dropdown, Filter } from '@/components/ui';
 import { getActiveFilterCount } from '@/components/ui/filter/getActiveFilterCount';
 import { SORT_CODE, type SortCode } from '@/constants/dropdown';
-import { useNotice } from '@/context/noticeProvider';
-import { FilterQuery, type sort } from '@/types/api';
-import { useState } from 'react';
+import { FilterQuery, NoticeQuery, type sort } from '@/types/api';
+import { useMemo } from 'react';
 
 const SORT_TO_API: Record<SortCode, sort> = {
   '마감 임박 순': 'time',
@@ -12,20 +11,28 @@ const SORT_TO_API: Record<SortCode, sort> = {
   '가나다 순': 'shop',
 };
 
-const NoticeListFilter = () => {
-  const { fetchNotices, updateFilters, filters } = useNotice();
-  const [sort, setSort] = useState<SortCode>('마감 임박 순');
+interface NoticeListFilterProps {
+  filters: NoticeQuery;
+  onSortChange: (sort: sort) => void;
+  onFilterSubmit: (filter: FilterQuery) => void;
+}
+
+const NoticeListFilter = ({ filters, onSortChange, onFilterSubmit }: NoticeListFilterProps) => {
+  const selectedLabel = useMemo<SortCode>(() => {
+    const currentSort = filters.sort ?? 'time';
+    const entry = Object.entries(SORT_TO_API).find(([, v]) => v === currentSort);
+    return entry?.[0] as SortCode;
+  }, [filters.sort]);
+
   const appliedCount = getActiveFilterCount(filters);
 
-  const handleSort = (label: SortCode) => {
-    const sort = SORT_TO_API[label];
-    fetchNotices({ sort });
-    setSort(label);
+  const handleSort = (next: SortCode) => {
+    const s = SORT_TO_API[next];
+    onSortChange(s);
   };
 
-  const handleFilter = (q: FilterQuery) => {
-    updateFilters(q);
-    fetchNotices(q);
+  const handleFilter = (filter: FilterQuery) => {
+    onFilterSubmit(filter);
   };
 
   return (
@@ -35,7 +42,7 @@ const NoticeListFilter = () => {
         ariaLabel='공고 정렬 기준'
         size='sm'
         values={SORT_CODE}
-        selected={sort}
+        selected={selectedLabel}
         onChange={handleSort}
       />
       <Filter appliedCount={appliedCount} value={filters} onSubmit={handleFilter} align='right' />

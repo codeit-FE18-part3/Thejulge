@@ -31,7 +31,7 @@ const cardInfoText = cva('text-caption tablet:text-body-s', {
   defaultVariants: { status: 'open' },
 });
 
-const cardInfoIcon = cva('', {
+const cardInfoIcon = cva('shrink-0', {
   variants: {
     status: {
       open: 'bg-gray-700',

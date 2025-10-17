@@ -50,3 +50,9 @@ export interface NoticeQuery extends FilterQuery {
   keyword?: string;
   sort?: sort;
 }
+
+export interface ApiAsync {
+  isLoading: boolean;
+  isInitialized: boolean;
+  error: string | null;
+}

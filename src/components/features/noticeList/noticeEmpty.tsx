@@ -25,7 +25,7 @@ const NoticeEmpty = ({ q, onReset }: NoticeEmptyProps) => {
             홈으로 돌아가기
           </Button>
         ) : (
-          <Button variant='secondary' size='sm' onClick={onReset}>
+          <Button variant='secondary' size='xs38' onClick={onReset}>
             전체 공고 보기
           </Button>
         )}

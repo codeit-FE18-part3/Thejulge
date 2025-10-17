@@ -1,39 +1,33 @@
-import { Post } from '@/components/ui';
-import { Pagination } from '@/components/ui/pagination';
-import { useNotice } from '@/context/noticeProvider';
+import { Post, SkeletonUI } from '@/components/ui';
+import { ApiAsync } from '@/types/api';
+import { PostCard } from '@/types/notice';
+import NoticeEmpty from './noticeEmpty';
 
-interface NoticeProps {
+interface NoticeProps extends ApiAsync {
+  notices: PostCard[];
   q?: string;
+  reset: () => void;
 }
 
-const NoticeList = ({ q }: NoticeProps) => {
-  const { notices, isLoading, error, pagination, fetchNotices } = useNotice();
+const NoticeList = ({ notices, q, isLoading, isInitialized, reset, error }: NoticeProps) => {
   if (error) {
     return <div> {error}</div>;
   }
+  if (!isInitialized || isLoading) {
+    if (q) return;
+    <SkeletonUI count={6} className='min-h-[270px] target:min-h-[276px] desktop:min-h-[344px]' />;
+  }
+
   if (notices.length === 0) {
-    return <div>{q && q + '에 대한 '}공고가 존재하지 않습니다</div>;
+    return <NoticeEmpty q={q} onReset={() => reset()} />;
   }
 
   return (
-    <>
-      {isLoading ? (
-        <div>로딩중 .. 스켈레톤 UI 삽입예정</div>
-      ) : (
-        <div className='grid gap-x-4 gap-y-8 sm:grid-cols-2 desktop:grid-cols-3'>
-          {notices.map(notice => (
-            <Post key={notice.id} notice={notice} />
-          ))}
-        </div>
-      )}
-      <Pagination
-        total={pagination.count}
-        limit={pagination.limit}
-        offset={pagination.offset}
-        onPageChange={next => fetchNotices({ offset: next })}
-        className='mt-8 tablet:mt-10'
-      />
-    </>
+    <div className='grid gap-x-4 gap-y-8 sm:grid-cols-2 desktop:grid-cols-3'>
+      {notices.map(notice => (
+        <Post key={notice.id} notice={notice} />
+      ))}
+    </div>
   );
 };
 export default NoticeList;
