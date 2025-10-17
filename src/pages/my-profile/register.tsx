@@ -33,8 +33,7 @@ export default function MyProfileRegisterPage() {
   const [regionErrorMessage, setRegionErrorMessage] = useState<string | null>(null);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isDoneOpen, setIsDoneOpen] = useState(false); // 완료 모달
-  const [isCancelOpen, setIsCancelOpen] = useState(false); // 취소 확인 모달
+  const [isDoneOpen, setIsDoneOpen] = useState(false); // ✅ 등록 완료 모달
 
   // 로그인 가드
   useEffect(() => {

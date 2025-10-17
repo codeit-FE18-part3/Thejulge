@@ -6,8 +6,7 @@ import useAuth from '@/hooks/useAuth';
 import { cn } from '@/lib/utils/cn';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState, type ReactNode } from 'react';
-import type { NextPageWithLayout } from './_app';
+import { useState } from 'react';
 
 const getMsg = (err: unknown, fallback: string) => {
   if (typeof err === 'string') return err;
@@ -194,8 +193,3 @@ const LoginPage: NextPageWithLayout = () => {
     </main>
   );
 };
-
-// Header/Footer 제거용 전용 레이아웃
-LoginPage.getLayout = (page: ReactNode) => page;
-
-export default LoginPage;

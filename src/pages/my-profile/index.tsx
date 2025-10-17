@@ -48,11 +48,17 @@ export default function MyProfileDetailPage() {
 
   const isProfileEmpty = !name && !phone && !address && !(bio && bio.trim());
 
+  // 프로필 비었는지 판단 (user 기준)
+  const name = user?.name ?? '';
+  const phone = user?.phone ?? '';
+  // 서버 필드명이 address라고 가정
+  const address = (user?.address as string) ?? '';
+  const bio = user?.bio ?? '';
+
+  const isProfileEmpty = !name && !phone && !address && !(bio && bio.trim());
+
   const headers: string[] = ['가게명', '근무일시', '시급', '상태'];
   const userType: UserType = 'employee';
-
-  // 현재 페이지 조각
-  const paged = useMemo(() => applications.slice(offset, offset + limit), [applications, offset]);
 
   return (
     <main className='mx-auto w-full max-w-[1440px] px-4 py-6 tablet:py-8'>
