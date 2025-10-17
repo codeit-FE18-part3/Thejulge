@@ -5,6 +5,12 @@ import useAuth from '@/hooks/useAuth';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
+interface ShopItem {
+  id: string;
+  title?: string;
+  description?: string;
+}
+
 const Myshop = () => {
   const { user } = useAuth();
   const [shopData, setShopData] = useState({});
@@ -47,7 +53,7 @@ const Myshop = () => {
               </Button>
               <Button
                 as={Link}
-                href={`/employer/notices/${user.shop.item.id}`}
+                href={`/employer/shops/${user.shop.item.id}/notices/register`}
                 className='h-[38px] flex-1 tablet:h-12'
               >
                 공고 등록하기
@@ -58,7 +64,7 @@ const Myshop = () => {
             title='등록한 공고'
             content='공고를 등록해 보세요.'
             buttonText='공고 등록하기'
-            href='/'
+            href='/employer/shops/${user.shop.item.id}/notices/register'
           />
         </>
       ) : (
