@@ -1,7 +1,14 @@
-import { DateInput, Input, TimeInput } from '@/components/ui';
+import { Button, DateInput, Input, TimeInput } from '@/components/ui';
 import useAuth from '@/hooks/useAuth';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+
+interface NoticePayload {
+  hourlyPay: number;
+  startsAt: string;
+  workhour: number;
+  description: string;
+}
 
 const EmployerNoticeRegisterPage = () => {
   const router = useRouter();
@@ -10,28 +17,49 @@ const EmployerNoticeRegisterPage = () => {
   const { user } = useAuth();
 
   const [wage, setWage] = useState('');
+  const [date, setDate] = useState<Date | null>(null);
+  const [time, setTime] = useState<Date | null>(null);
+  const [workhour, setWorkhour] = useState<number>();
+  const [description, setDescription] = useState('');
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const payload = {
-      shopId,
-      wage: Number(wage),
+    if (!date || !time || !wage || !workhour || !description) return;
+
+    const combinedDateTime = new Date(date);
+    combinedDateTime.setHours(time.getHours(), time.getMinutes(), 0, 0);
+
+    const payload: NoticePayload = {
+      hourlyPay: Number(wage),
+      startsAt: combinedDateTime.toISOString(),
+      workhour,
+      description,
     };
 
+    const token = localStorage.getItem('thejulge_token');
+    if (!token) return alert('로그인이 필요합니다');
+
     try {
-      const res = await fetch('/api/jobs', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/shops/${shopId}/notices`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(payload),
       });
 
-      if (!res.ok) throw new Error('등록 실패');
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message ?? '등록 실패');
+      }
 
       alert('등록 완료');
-      router.push(`/employer/shops/${shopId}`);
-    } catch {
-      alert('등록 중 오류 발생');
+      router.push(`/my-shop`);
+    } catch (error) {
+      alert(error instanceof Error ? error.message : '등록 중 오류 발생');
     }
   };
 
@@ -44,7 +72,7 @@ const EmployerNoticeRegisterPage = () => {
       <form onSubmit={handleSubmit} className='flex max-w-md flex-col gap-4'>
         <Input
           id='wage'
-          label='시급*'
+          label='시급'
           requiredMark
           placeholder='입력'
           inputMode='numeric'
@@ -55,8 +83,38 @@ const EmployerNoticeRegisterPage = () => {
           }
         />
 
-        <DateInput />
-        <TimeInput />
+        <DateInput
+          label='시작 일시'
+          requiredMark
+          value={date ?? undefined}
+          onChange={selectedDate => {
+            if (selectedDate instanceof Date) {
+              setDate(selectedDate);
+            } else {
+              setDate(new Date(selectedDate));
+            }
+          }}
+        />
+
+        <TimeInput
+          label='시작 시간'
+          requiredMark
+          value={time ?? undefined}
+          onChange={(selectedTime: Date | null) => setTime(selectedTime)}
+        />
+
+        <Input
+          id='workhour'
+          label='근무 시간(시간)'
+          requiredMark
+          placeholder='4'
+          inputMode='numeric'
+          suffix='시간'
+          value={workhour?.toString() ?? ''}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setWorkhour(Number(e.currentTarget.value))
+          }
+        />
 
         <div className='flex flex-col gap-2'>
           <label htmlFor='description' className='text-sm font-medium'>
@@ -68,15 +126,20 @@ const EmployerNoticeRegisterPage = () => {
             className='rounded-md border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-400'
             rows={4}
             placeholder='공고에 대한 설명을 입력하세요.'
+            value={description}
+            onChange={e => setDescription(e.target.value)}
           />
         </div>
 
-        <button
+        <Button
           type='submit'
-          className='rounded-md bg-blue-500 py-2 text-white transition hover:bg-blue-600'
+          variant='primary'
+          size='md'
+          className='w-full'
+          disabled={!wage || !date || !time || !workhour || !description}
         >
           등록하기
-        </button>
+        </Button>
       </form>
     </div>
   );

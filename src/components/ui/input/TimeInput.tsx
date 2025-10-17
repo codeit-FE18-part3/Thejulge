@@ -3,10 +3,22 @@ import useClickOutside from '@/hooks/useClickOutside';
 import useToggle from '@/hooks/useToggle';
 import { formatTime } from '@/lib/utils/dateFormatter';
 import { Period } from '@/types/calendar';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Input from './input';
 
-export default function TimeInput() {
+interface TimeInputProps {
+  label?: string;
+  requiredMark?: boolean;
+  value?: Date | null;
+  onChange?: (value: Date | null) => void;
+}
+
+export default function TimeInput({
+  label = '시간 선택',
+  requiredMark = false,
+  value,
+  onChange,
+}: TimeInputProps) {
   const { isOpen, toggle, setClose } = useToggle(false);
   const [period, setPeriod] = useState<Period>('오전');
   const [selectedTime, setSelectedTime] = useState<Date | null>(null);
@@ -19,11 +31,25 @@ export default function TimeInput() {
   });
 
   // 시간 업데이트 중앙 관리
-  const updateTime = useCallback((date: Date, selectedPeriod: Period) => {
-    setPeriod(selectedPeriod);
-    setSelectedTime(date);
-    setInputValue(formatTime(date));
-  }, []);
+  const updateTime = useCallback(
+    (date: Date, selectedPeriod: Period) => {
+      setPeriod(selectedPeriod);
+      setSelectedTime(date);
+      setInputValue(formatTime(date));
+      onChange?.(date);
+    },
+    [onChange]
+  );
+
+  useEffect(() => {
+    if (value) {
+      setSelectedTime(value);
+      setInputValue(formatTime(value));
+    } else {
+      setSelectedTime(null);
+      setInputValue('');
+    }
+  }, [value]);
 
   // 시간 선택
   const handleTimeSelect = useCallback(
@@ -88,7 +114,8 @@ export default function TimeInput() {
     <div ref={wrapperRef} className='relative max-w-md'>
       <Input
         value={inputValue ? `${period} ${inputValue}` : ''}
-        label='시간 선택'
+        label={label}
+        requiredMark={requiredMark}
         placeholder='오전 12:30'
         onClick={toggle}
         onChange={handleTimeInputChange}

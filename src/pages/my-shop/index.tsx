@@ -58,7 +58,7 @@ const Myshop = () => {
             title='등록한 공고'
             content='공고를 등록해 보세요.'
             buttonText='공고 등록하기'
-            href='/'
+            href='/employer/shops/${user.shop.item.id}/notices/register'
           />
         </>
       ) : (
