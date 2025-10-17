@@ -13,7 +13,7 @@ interface NoticeListSectionProps {
 }
 
 const NoticeListSection = ({ q, initialFilters }: NoticeListSectionProps) => {
-  const { notices, isLoading, isInitialized, error, pagination, fetchNotices,reset, filters } =
+  const { notices, isLoading, isInitialized, error, pagination, fetchNotices, reset, filters } =
     useNotices();
 
   useEffect(() => {

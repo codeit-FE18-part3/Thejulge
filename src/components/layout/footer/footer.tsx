@@ -5,7 +5,7 @@ import Link from 'next/link';
 const Footer = () => {
   return (
     <footer>
-      <Container className='max-w-full bg-gray-100'>
+      <Container className='max-w-full bg-gray-200'>
         <div className='mx-auto flex flex-wrap justify-between gap-10 px-5 py-8 desktop:w-[964px]'>
           <div className='order-3 flex-grow text-caption font-normal text-gray-500 tablet:order-1 tablet:flex-grow-0 tablet:text-body-m'>
             ©codeit - 2023
