@@ -1,5 +1,5 @@
 import { Footer, Header, Wrapper } from '@/components/layout';
-import AppProvider from '@/context/appProvider';
+import AppProviderWrapper from '@/context/appProviderWrapper';
 import '@/styles/fonts.css';
 import '@/styles/globals.css';
 import type { NextPage } from 'next';
@@ -29,7 +29,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
         <link rel='icon' href='/favicon.ico' sizes='any' />
         <link rel='icon' href='/favicon.png' type='image/png' sizes='192x192' />
       </Head>
-      <AppProvider>{getLayout(<Component {...pageProps} />)}</AppProvider>
+      <AppProviderWrapper>{getLayout(<Component {...pageProps} />)}</AppProviderWrapper>
     </>
   );
 }
