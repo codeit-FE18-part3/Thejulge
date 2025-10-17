@@ -1,11 +1,11 @@
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
-
+import { Icon } from '@/components/ui';
 import Button from '@/components/ui/button/button';
 import Dropdown from '@/components/ui/dropdown/dropdown';
 import Input from '@/components/ui/input/input';
 import Modal from '@/components/ui/modal/modal';
 import useAuth from '@/hooks/useAuth';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 
 import { ADDRESS_CODE, type AddressCode } from '@/constants/dropdown';
 
@@ -34,6 +34,7 @@ export default function MyProfileRegisterPage() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDoneOpen, setIsDoneOpen] = useState(false); // 완료 모달
+  const [isCancelOpen, setIsCancelOpen] = useState(false); //  취소 확인 모달
 
   // 로그인 가드
   useEffect(() => {
@@ -75,7 +76,7 @@ export default function MyProfileRegisterPage() {
 
     setIsSubmitting(true);
     try {
-      // ✅ 서버 반영 + 컨텍스트 동기화
+      //  서버 반영 + 컨텍스트 동기화
       await updateUser({
         name: formState.name.trim(),
         phone: formState.phone.trim(),
@@ -89,7 +90,16 @@ export default function MyProfileRegisterPage() {
   };
 
   return (
-    <main className='mx-auto w-full max-w-[960px] px-4 py-6 tablet:py-8'>
+    <main className='relative mx-auto w-full max-w-[960px] px-4 py-6 tablet:py-8'>
+      {/* 우상단 닫기(X) 버튼 */}
+      <button
+        type='button'
+        aria-label='프로필 등록 취소'
+        className='absolute right-4 top-6 rounded p-2 hover:bg-[var(--gray-100)]'
+        onClick={() => setIsCancelOpen(true)}
+      >
+        <Icon iconName='close' iconSize='md' ariaLabel='닫기' />
+      </button>
       <h1 className='mb-6 text-heading-l font-semibold'>내 프로필</h1>
 
       <form
@@ -205,6 +215,19 @@ export default function MyProfileRegisterPage() {
           setIsDoneOpen(false);
           router.replace('/my-profile');
         }}
+      />
+
+      {/* 취소 확인 모달 */}
+      <Modal
+        open={isCancelOpen}
+        onClose={() => setIsCancelOpen(false)}
+        title='등록을 취소하시겠습니까?'
+        description={<p className='text-center'>작성 중인 내용은 저장되지 않습니다.</p>}
+        variant='warning'
+        secondaryText='아니오'
+        onSecondary={() => setIsCancelOpen(false)}
+        primaryText='예'
+        onPrimary={() => router.replace('/my-profile')}
       />
     </main>
   );

@@ -6,7 +6,8 @@ import useAuth from '@/hooks/useAuth';
 import { cn } from '@/lib/utils/cn';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
+import type { NextPageWithLayout } from './_app';
 
 const getMsg = (err: unknown, fallback: string) => {
   if (typeof err === 'string') return err;
@@ -20,7 +21,7 @@ const getMsg = (err: unknown, fallback: string) => {
   return fallback;
 };
 
-export default function LoginPage() {
+const LoginPage: NextPageWithLayout = () => {
   const { login } = useAuth();
 
   // 입력
@@ -199,4 +200,8 @@ export default function LoginPage() {
       />
     </main>
   );
-}
+};
+
+LoginPage.getLayout = (page: ReactNode) => page;
+
+export default LoginPage;

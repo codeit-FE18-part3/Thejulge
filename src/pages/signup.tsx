@@ -7,7 +7,9 @@ import useAuth from '@/hooks/useAuth';
 import { cn } from '@/lib/utils/cn';
 import Image from 'next/image';
 import Link from 'next/link';
+import type { ReactNode } from 'react';
 import { useState } from 'react';
+import type { NextPageWithLayout } from './_app';
 
 type MemberType = 'employee' | 'employer';
 
@@ -24,7 +26,7 @@ const getMsg = (err: unknown, fallback: string) => {
   return fallback;
 };
 
-export default function SignupPage() {
+const SignupPage: NextPageWithLayout = () => {
   const { signup } = useAuth();
 
   // Inpun 값
@@ -41,6 +43,7 @@ export default function SignupPage() {
   // 전역 상태
   const [loading, setLoading] = useState(false);
   const [dupOpen, setDupOpen] = useState(false); // 409 모달
+  const [successOpen, setSuccessOpen] = useState(false); // 가입 성공 모달
   const [globalErr, setGlobalErr] = useState<string | null>(null);
 
   // ── blur(=focus out) 유효성 ──
@@ -78,8 +81,7 @@ export default function SignupPage() {
     setLoading(true);
     try {
       await signup({ email, password: pw, type });
-      alert('가입이 완료되었습니다');
-      window.location.href = '/login';
+      setSuccessOpen(true);
     } catch (err: unknown) {
       const status = (err as { response?: { status?: number } })?.response?.status;
       if (status === 409) setDupOpen(true);
@@ -296,6 +298,24 @@ export default function SignupPage() {
         primaryText='확인'
         onPrimary={() => setDupOpen(false)}
       />
+
+      {/* 가입 성공 모달 */}
+      <Modal
+        open={successOpen}
+        onClose={() => setSuccessOpen(false)}
+        title='가입이 완료되었습니다'
+        description={<p className='text-center'>이메일과 비밀번호로 로그인해 주세요.</p>}
+        variant='success'
+        primaryText='로그인하기'
+        onPrimary={() => {
+          setSuccessOpen(false);
+          window.location.href = '/login';
+        }}
+      />
     </main>
   );
-}
+};
+
+SignupPage.getLayout = (page: ReactNode) => page;
+
+export default SignupPage;
