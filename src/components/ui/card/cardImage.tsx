@@ -34,8 +34,8 @@ const CardImage = ({ variant, src, alt, className, children }: CardImageProps) =
       )}
     >
       <Image
-        //src={src ?? FALLBACK_SRC}
-        src={isValidSrc ? imgSrc : FALLBACK_SRC}
+        src={src ?? FALLBACK_SRC}
+        //src={isValidSrc ? imgSrc : FALLBACK_SRC}
         alt={`${alt} 가게 이미지`}
         fill
         sizes={

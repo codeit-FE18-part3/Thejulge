@@ -23,8 +23,8 @@ export async function putShop(shopId: string, body: RegisterFormData) {
   return data;
 }
 
-export async function getNotice(shopId: string) {
-  const { data } = await axios.get(`/shops/${shopId}/notices`);
+export async function getNotice(shopId: string, params?: { offset?: number; limit?: number }) {
+  const { data } = await axios.get(`/shops/${shopId}/notices`, { params });
   return data;
 }
 
