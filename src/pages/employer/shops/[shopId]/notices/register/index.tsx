@@ -13,8 +13,6 @@ interface NoticePayload {
 
 const EmployerNoticeRegisterPage = () => {
   const router = useRouter();
-  const { query } = router;
-  const shopId = Array.isArray(query.shopId) ? query.shopId[0] : query.shopId;
   const { user } = useAuth();
 
   const [wage, setWage] = useState('');
@@ -42,7 +40,7 @@ const EmployerNoticeRegisterPage = () => {
     if (!token) return alert('로그인이 필요합니다');
 
     try {
-      await axiosInstance.post(`/shops/${shopId}/notices`, payload);
+      await axiosInstance.post(`/shops/${user.shop.item.id}/notices`, payload);
 
       alert('등록 완료');
       router.push(`/my-shop`);

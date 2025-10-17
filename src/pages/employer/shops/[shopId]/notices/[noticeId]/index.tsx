@@ -49,7 +49,7 @@ const EmployerNoticePage = () => {
 
     const fetchApplications = async () => {
       const applications = await getApplications(shopId, noticeId, offset, limit);
-      setHeaders(['ID', '이름', '이메일', '상태']);
+      setHeaders(['신청자', '소개', '전화번호', '상태']);
       setData(
         applications.map(app => ({
           id: app.id,
@@ -59,7 +59,7 @@ const EmployerNoticePage = () => {
           hourlyPay: '-',
           status: app.status,
           bio: '-',
-          phone: 0,
+          phone: '-',
         }))
       );
     };
@@ -68,8 +68,6 @@ const EmployerNoticePage = () => {
   }, [shopId, noticeId, offset]);
 
   if (!notice) return null;
-
-  const paginatedData = data;
 
   return (
     <div className='p-4'>
@@ -85,7 +83,7 @@ const EmployerNoticePage = () => {
       </Notice>
       <Table
         headers={headers}
-        data={paginatedData}
+        data={data}
         userType='employer'
         total={data.length}
         limit={limit}
