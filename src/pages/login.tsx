@@ -6,7 +6,8 @@ import useAuth from '@/hooks/useAuth';
 import { cn } from '@/lib/utils/cn';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
+import type { NextPageWithLayout } from './_app';
 
 const getMsg = (err: unknown, fallback: string) => {
   if (typeof err === 'string') return err;
@@ -20,23 +21,19 @@ const getMsg = (err: unknown, fallback: string) => {
   return fallback;
 };
 
-export default function LoginPage() {
+const LoginPage: NextPageWithLayout = () => {
   const { login } = useAuth();
 
-  // 입력
   const [email, setEmail] = useState('');
   const [pw, setPw] = useState('');
 
-  // blur 에러
   const [emailErr, setEmailErr] = useState<string | null>(null);
   const [pwErr, setPwErr] = useState<string | null>(null);
 
-  // 기타 상태
   const [loading, setLoading] = useState(false);
   const [failOpen, setFailOpen] = useState(false);
   const [globalErr, setGlobalErr] = useState<string | null>(null);
 
-  // 요구사항: blur 시 이메일 형식/비번 길이 체크
   const onBlurEmail = (e: React.FocusEvent<HTMLInputElement>) => {
     if (e.currentTarget.validity.typeMismatch) setEmailErr('이메일 형식으로 작성해 주세요.');
     else setEmailErr(null);
@@ -64,11 +61,9 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await login({ email, password: pw });
-      // 로그인 성공 → 공고 리스트로 이동
       window.location.href = '/';
-    } catch (err: unknown) {
+    } catch (err) {
       const status = (err as { response?: { status?: number } })?.response?.status;
-      // 401/400 등은 모달로 안내
       if (status && [400, 401].includes(status)) setFailOpen(true);
       else setGlobalErr(getMsg(err, '로그인 중 오류가 발생했습니다.'));
     } finally {
@@ -86,7 +81,7 @@ export default function LoginPage() {
           'desktop:flex desktop:min-h-[1024px] desktop:flex-col desktop:items-center'
         )}
       >
-        {/* 로고: 공고 목록으로 이동 */}
+        {/* 로고 */}
         <div className='mb-6 flex justify-center desktop:mb-0' style={{ marginTop: 156 }}>
           <h1 className='relative h-[36px] w-[120px] tablet:h-[40px] tablet:w-[140px] min-[1024px]:h-[90px] min-[1024px]:w-[256px] desktop:h-[90px] desktop:w-[256px]'>
             <Link href='/' aria-label='공고 리스트로 이동' className='absolute inset-0 block'>
@@ -161,7 +156,6 @@ export default function LoginPage() {
             </p>
           )}
 
-          {/* 로그인 버튼: desktop 350×48, radius 6, py14 px136 */}
           <div className='flex justify-center'>
             <Button
               type='submit'
@@ -199,4 +193,9 @@ export default function LoginPage() {
       />
     </main>
   );
-}
+};
+
+// Header/Footer 제거용 전용 레이아웃
+LoginPage.getLayout = (page: ReactNode) => page;
+
+export default LoginPage;

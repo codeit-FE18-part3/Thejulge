@@ -1,186 +1,159 @@
-// 목적: 앱 전역에서 로그인/유저 상태를 관리하고, 인증 관련 표준 함수를 제공한다.
-// 특징: 토큰과 사용자 ID는 내부에서만 관리하고, 외부는 파생 상태와 동작 함수만 사용한다.
-
+// 원칙: state는 user 하나만 관리한다(부트스트랩/로그인여부는 파생).
 import { apiLogin, apiSignup } from '@/api/auth';
 import { apiGetUser, apiUpdateUser } from '@/api/users';
 import type { LoginRequest, User, UserRequest, UserRole } from '@/types/user';
 import { useRouter } from 'next/router';
-import { createContext, ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import { createContext, ReactNode, useCallback, useEffect, useState } from 'react';
 
 type AuthContextValue = {
-  // 파생 상태
+  /** 파생: user가 있으면 true */
   isLogin: boolean;
-  role: UserRole; // 'guest' | 'employee' | 'employer'
-  // 부트스트랩(초기 복원) 완료 여부 노출 (선택적으로 UI 제어에 사용 가능)
+  /** 파생: user?.type 또는 'guest' */
+  role: UserRole;
+  /** 파생: user !== undefined (부트스트랩 완료 여부) */
   bootstrapped: boolean;
-  // 데이터
+  /** 로그인 유저. 미로그인은 null */
   user: User | null;
-  // 동작
+
+  /** 로그인: 토큰/아이디/만료시각 저장 → 내 정보 조회 → user 채움 */
   login: (credentials: LoginRequest) => Promise<void>;
-  // redirectTo: string | false
-  // - string: 해당 경로로 replace 이동
-  // - false : 이동하지 않음
+  /** 로그아웃: 저장소 초기화 + user=null + (옵션) 리다이렉트 */
   logout: (redirectTo?: string | false) => void;
+  /** 회원가입 */
   signup: (data: UserRequest) => Promise<void>;
+  /** 내 정보 재조회: 저장소 userId 기준 */
   getUser: () => Promise<void>;
+  /** 내 정보 수정: 성공 시 Context의 user 동기화 */
   updateUser: (patch: Partial<User>) => Promise<void>;
 };
 
 export const AuthContext = createContext<AuthContextValue | null>(null);
 
-// 로컬 스토리지 키 (고정)
+/** LocalStorage keys */
 const TOKEN_KEY = 'thejulge_token';
 const USER_ID_KEY = 'thejulge_user_id';
-const EXPIRES_KEY = 'thejulge_expires_at'; // 만료시간 저장 키
-const EXP_TIME = 1000 * 60 * 1000; // 만료 유지시간 10분
+const EXPIRES_KEY = 'thejulge_expires_at';
+const EXPIRES_DURATION_MS = 10 * 60 * 1000; // 10분
 
-// 브라우저에서만 동작하도록 가드된 유틸
-const setStorage = (key: string, value: string) => {
-  if (typeof window !== 'undefined') localStorage.setItem(key, value);
+/** storage helpers (이름 풀기) */
+const isBrowser = () => typeof window !== 'undefined';
+
+const setLocalStorageItem = (key: string, value: string) => {
+  if (isBrowser()) localStorage.setItem(key, value);
 };
-const getStorage = (key: string) =>
-  typeof window !== 'undefined' ? localStorage.getItem(key) : null;
-const removeStorage = (key: string) => {
-  if (typeof window !== 'undefined') localStorage.removeItem(key);
+const getLocalStorageItem = (key: string) => (isBrowser() ? localStorage.getItem(key) : null);
+const removeLocalStorageItem = (key: string) => {
+  if (isBrowser()) localStorage.removeItem(key);
+};
+
+const readAuthFromStorage = () => {
+  const token = getLocalStorageItem(TOKEN_KEY);
+  const userId = getLocalStorageItem(USER_ID_KEY);
+  const expiresAt = Number(getLocalStorageItem(EXPIRES_KEY) ?? '') || 0;
+  return { token, userId, expiresAt };
 };
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
-  // 핵심 상태: 토큰, 사용자 ID, 사용자 정보
-  const [token, setToken] = useState<string | null>(null);
-  const [userId, setUserId] = useState<string | null>(null);
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null | undefined>(undefined);
 
-  //  변경: 부트스트랩(초기 세션 복원) 완료 플래그
-  const [bootstrapped, setBootstrapped] = useState(false);
+  /** 파생값 */
+  const isLogin = !!user;
+  const role: UserRole = user ? user.type : 'guest';
+  const bootstrapped = user !== undefined;
 
-  // 파생 상태
-  //  변경: isLogin = 토큰 + 유저가 모두 있어야 true (과도기에 guest+로그아웃 동시 노출 방지)
-  const isLogin = !!token && !!user;
-  const role: UserRole = useMemo(() => (user ? user.type : 'guest'), [user]);
-
+  /** 로그아웃: 저장소 초기화 + user=null + (옵션) 리다이렉트 */
   const logout = useCallback(
     (redirectTo: string | false = '/') => {
-      setToken(null);
       setUser(null);
-      setUserId(null);
-      removeStorage(TOKEN_KEY);
-      removeStorage(USER_ID_KEY);
-      removeStorage(EXPIRES_KEY); // 만료키 삭제
-      //  로그아웃 후 이동 (replace: 뒤로가기 눌러도 다시 로그인 상태로 못 돌아가게)
-      if (redirectTo !== false) {
-        router.replace(redirectTo);
-      }
+      removeLocalStorageItem(TOKEN_KEY);
+      removeLocalStorageItem(USER_ID_KEY);
+      removeLocalStorageItem(EXPIRES_KEY);
+      if (redirectTo !== false) router.replace(redirectTo);
     },
     [router]
   );
 
-  // 앱 시작 시 저장소에서 복원
+  /** 부트스트랩: 저장소 값 유효 → /users/{id} 조회 → user 주입 (아니면 user=null) */
   useEffect(() => {
-    let cancelled = false; //  변경: 언마운트 가드
-
-    (async () => {
-      const storedToken = getStorage(TOKEN_KEY);
-      const storedUserId = getStorage(USER_ID_KEY);
-      const expText = getStorage(EXPIRES_KEY) ?? ''; // exp: 만료시각(ms) 문자열
-      const exp = Number(expText) || 0; // 문자열 → 숫자 (없으면 0)
-
-      // 토큰/ID 없거나, exp 없거나, 이미 지났으면 즉시 로그아웃
-      if (!storedToken || !storedUserId || !exp || Date.now() >= exp) {
-        logout(false);
-        setBootstrapped(true); // 복원 종료 신호
+    const bootstrap = async () => {
+      const { token, userId, expiresAt } = readAuthFromStorage();
+      const isInvalid = !token || !userId || !expiresAt || Date.now() >= expiresAt;
+      if (isInvalid) {
+        logout(false); // 이동은 하지 않음
+        setUser(null); // 부트스트랩 종료(비로그인)
         return;
       }
-
-      //  유효할 때만 복원 + user까지 동기화(여기 전까지는 isLogin=false)
-      setToken(storedToken);
-      setUserId(storedUserId);
-
       try {
-        const me = await apiGetUser(storedUserId);
-        if (!cancelled) setUser(me);
+        const me = await apiGetUser(userId);
+        setUser(me);
       } catch {
-        logout();
-      } finally {
-        if (!cancelled) setBootstrapped(true); //  복원 종료 신호
+        logout(false);
+        setUser(null);
       }
-    })();
-
-    return () => {
-      cancelled = true;
     };
+    bootstrap();
   }, [logout]);
 
-  // 로그인: /token → 토큰/사용자 ID 저장 → /users/{id}로 내 정보 동기화
+  /** 로그인: 토큰/아이디/만료시각 저장 → 내 정보 조회 → user 채움 */
   const login = useCallback(async (credentials: LoginRequest) => {
     const res = await apiLogin(credentials);
-    const newToken = res.item.token;
-    const newUserId = res.item.user.item.id;
+    const token = res.item.token;
+    const userId = res.item.user.item.id;
+    const expiresAt = Date.now() + EXPIRES_DURATION_MS;
 
-    const exp = Date.now() + EXP_TIME; // 지금부터 10분 후 만료시각 계산
-    setStorage(EXPIRES_KEY, String(exp)); // 만료시각 저장
+    setLocalStorageItem(TOKEN_KEY, token);
+    setLocalStorageItem(USER_ID_KEY, userId);
+    setLocalStorageItem(EXPIRES_KEY, String(expiresAt));
 
-    setToken(newToken);
-    setUserId(newUserId);
-    setStorage(TOKEN_KEY, newToken);
-    setStorage(USER_ID_KEY, newUserId);
-
-    //  로그인 직후에도 user를 먼저 채운 뒤에야 isLogin=true가 되도록
-    const me = await apiGetUser(newUserId);
+    const me = await apiGetUser(userId);
     setUser(me);
   }, []);
 
-  // 회원가입: /users 성공만 확인 (라우팅은 화면에서 처리)
+  /** 회원가입 */
   const signup = useCallback(async (data: UserRequest) => {
     await apiSignup(data);
   }, []);
 
-  // 내 정보 재조회
+  /** 내 정보 재조회: 저장소 userId 기준 */
   const getUser = useCallback(async () => {
+    const { userId } = readAuthFromStorage();
     if (!userId) throw new Error('로그인이 필요합니다');
     const me = await apiGetUser(userId);
     setUser(me);
-  }, [userId]);
+  }, []);
 
-  // 내 정보 수정
-  const updateUser = useCallback(
-    async (patch: Partial<User>) => {
-      if (!userId) throw new Error('로그인이 필요합니다');
-      const updated = await apiUpdateUser(userId, patch);
-      setUser(updated);
-    },
-    [userId]
-  );
+  /** 내 정보 수정: 성공 시 Context의 user 동기화 */
+  const updateUser = useCallback(async (patch: Partial<User>) => {
+    const { userId } = readAuthFromStorage();
+    if (!userId) throw new Error('로그인이 필요합니다');
+    const updated = await apiUpdateUser(userId, patch);
+    setUser(updated);
+  }, []);
 
-  //  1분마다 만료여부 확인
+  /** 만료 체크: 1분마다 확인 → 만료 시 자동 로그아웃 */
   useEffect(() => {
-    if (!token) return;
-    const interval = setInterval(() => {
-      const expText = getStorage(EXPIRES_KEY) ?? ''; // 만료시각 다시 읽기
-      const exp = Number(expText) || 0; // 숫자로 변환
-      if (!exp || Date.now() >= exp) logout('/'); // 만료면 로그아웃하고 메인으로
+    const timerId = setInterval(() => {
+      const { expiresAt } = readAuthFromStorage();
+      if (!expiresAt || Date.now() >= expiresAt) logout('/');
     }, 60 * 1000);
-    return () => clearInterval(interval);
-  }, [token, logout]);
+    return () => clearInterval(timerId);
+  }, [logout]);
 
-  // 컨텍스트 값 메모이즈 (리렌더 최소화)
-  const value = useMemo<AuthContextValue>(
-    () => ({
-      isLogin,
-      role,
-      // 부트스트랩 완료 여부도 컨텍스트로 제공
-      bootstrapped,
-      user,
-      login,
-      logout,
-      signup,
-      getUser,
-      updateUser,
-    }),
-    [isLogin, role, bootstrapped, user, login, logout, signup, getUser, updateUser]
-  );
+  /** Context 값 */
+  const contextValue: AuthContextValue = {
+    isLogin,
+    role,
+    bootstrapped,
+    user: user ?? null,
+    login,
+    logout,
+    signup,
+    getUser,
+    updateUser,
+  };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 };
 
 export default AuthProvider;
