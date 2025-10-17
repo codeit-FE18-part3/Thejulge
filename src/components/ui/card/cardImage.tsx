@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils/cn';
 import { type CardVariant } from '@/types/notice';
 import Image from 'next/image';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { cardLayout } from './card.styles';
 
 interface CardImageProps {
@@ -13,8 +13,12 @@ interface CardImageProps {
 }
 const FALLBACK_SRC = '/fallback.png';
 const CardImage = ({ variant, src, alt, className, children }: CardImageProps) => {
-  const image = src ?? FALLBACK_SRC;
-  const [imgSrc, setImgSrc] = useState(image);
+  const [imgSrc, setImgSrc] = useState(src ?? FALLBACK_SRC);
+
+  // src가 비동기로 들어오거나 변경될 때 state를 동기화
+  useEffect(() => {
+    setImgSrc(src ?? FALLBACK_SRC);
+  }, [src]);
 
   const handleError = () => {
     setImgSrc(FALLBACK_SRC);
