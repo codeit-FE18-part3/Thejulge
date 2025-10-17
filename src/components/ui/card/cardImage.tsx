@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils/cn';
 import { type CardVariant } from '@/types/notice';
 import Image from 'next/image';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { cardLayout } from './card.styles';
 
 interface CardImageProps {
@@ -15,6 +15,11 @@ const FALLBACK_SRC = '/fallback.png';
 const CardImage = ({ variant, src, alt, className, children }: CardImageProps) => {
   const [imgSrc, setImgSrc] = useState(src ?? FALLBACK_SRC);
 
+  // src가 비동기로 들어오거나 변경될 때 state를 동기화
+  useEffect(() => {
+    setImgSrc(src ?? FALLBACK_SRC);
+  }, [src]);
+
   const handleError = () => {
     setImgSrc(FALLBACK_SRC);
   };
@@ -23,6 +28,7 @@ const CardImage = ({ variant, src, alt, className, children }: CardImageProps) =
     typeof imgSrc === 'string' &&
     (imgSrc.startsWith('https://bootcamp-project-api.s3.ap-northeast-2.amazonaws.com') ||
       imgSrc.startsWith('https://picsum.photos'));
+
   return (
     <div
       className={cn(
@@ -34,7 +40,6 @@ const CardImage = ({ variant, src, alt, className, children }: CardImageProps) =
       )}
     >
       <Image
-        //src={src ?? FALLBACK_SRC}
         src={isValidSrc ? imgSrc : FALLBACK_SRC}
         alt={`${alt} 가게 이미지`}
         fill
