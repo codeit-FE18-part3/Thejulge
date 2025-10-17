@@ -110,7 +110,7 @@ export default function DateInput({
   };
 
   return (
-    <div ref={wrapperRef} className='relative max-w-md'>
+    <div ref={wrapperRef} className='relative'>
       <Input
         id={id}
         label={label}

@@ -111,7 +111,7 @@ export default function TimeInput({
   const minutes = selectedTime ? String(selectedTime.getMinutes()).padStart(2, '0') : '00';
 
   return (
-    <div ref={wrapperRef} className='relative max-w-md'>
+    <div ref={wrapperRef} className='relative'>
       <Input
         value={inputValue ? `${period} ${inputValue}` : ''}
         label={label}

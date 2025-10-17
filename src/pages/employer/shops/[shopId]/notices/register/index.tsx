@@ -67,54 +67,56 @@ const EmployerNoticeRegisterPage = () => {
 
   return (
     <div className='p-4'>
-      <h1 className='mb-4 text-lg font-semibold'>공고 등록하기</h1>
+      <p className='font-weight-700 mb-4 text-3xl font-bold'>공고 등록</p>
 
-      <form onSubmit={handleSubmit} className='flex max-w-md flex-col gap-4'>
-        <Input
-          id='wage'
-          label='시급'
-          requiredMark
-          placeholder='입력'
-          inputMode='numeric'
-          suffix='원'
-          value={wage}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setWage(e.currentTarget.value.replace(/\D+/g, ''))
-          }
-        />
-
-        <DateInput
-          label='시작 일시'
-          requiredMark
-          value={date ?? undefined}
-          onChange={selectedDate => {
-            if (selectedDate instanceof Date) {
-              setDate(selectedDate);
-            } else {
-              setDate(new Date(selectedDate));
+      <form onSubmit={handleSubmit} className='flex w-full flex-col gap-4'>
+        <div className='grid grid-cols-2 gap-6'>
+          <Input
+            id='wage'
+            label='시급'
+            requiredMark
+            placeholder='12,500'
+            inputMode='numeric'
+            suffix='원'
+            value={wage}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setWage(e.currentTarget.value.replace(/\D+/g, ''))
             }
-          }}
-        />
+          />
 
-        <TimeInput
-          label='시작 시간'
-          requiredMark
-          value={time ?? undefined}
-          onChange={(selectedTime: Date | null) => setTime(selectedTime)}
-        />
+          <Input
+            id='workhour'
+            label='업무 시간'
+            requiredMark
+            placeholder='4'
+            inputMode='numeric'
+            suffix='시간'
+            value={workhour?.toString() ?? ''}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setWorkhour(Number(e.currentTarget.value))
+            }
+          />
 
-        <Input
-          id='workhour'
-          label='근무 시간(시간)'
-          requiredMark
-          placeholder='4'
-          inputMode='numeric'
-          suffix='시간'
-          value={workhour?.toString() ?? ''}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setWorkhour(Number(e.currentTarget.value))
-          }
-        />
+          <DateInput
+            label='시작 날짜'
+            requiredMark
+            value={date ?? undefined}
+            onChange={selectedDate => {
+              if (selectedDate instanceof Date) {
+                setDate(selectedDate);
+              } else {
+                setDate(new Date(selectedDate));
+              }
+            }}
+          />
+
+          <TimeInput
+            label='시작 시간'
+            requiredMark
+            value={time ?? undefined}
+            onChange={(selectedTime: Date | null) => setTime(selectedTime)}
+          />
+        </div>
 
         <div className='flex flex-col gap-2'>
           <label htmlFor='description' className='text-sm font-medium'>
@@ -134,8 +136,8 @@ const EmployerNoticeRegisterPage = () => {
         <Button
           type='submit'
           variant='primary'
-          size='md'
-          className='w-full'
+          size='lg'
+          className='mt-5 w-full'
           disabled={!wage || !date || !time || !workhour || !description}
         >
           등록하기

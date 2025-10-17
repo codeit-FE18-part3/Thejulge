@@ -5,6 +5,12 @@ import useAuth from '@/hooks/useAuth';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
+interface ShopItem {
+  id: string;
+  title?: string;
+  description?: string;
+}
+
 const Myshop = () => {
   const { user } = useAuth();
   const [shopData, setShopData] = useState({});
