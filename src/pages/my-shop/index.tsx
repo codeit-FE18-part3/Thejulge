@@ -23,7 +23,7 @@ const Myshop = () => {
         const formattedShopData = { ...rest, shopDescription: description };
         setShopData(formattedShopData);
         setShopNotice(noticeRes);
-        console.log('공고 조회:', noticeRes);
+        //console.log('공고 조회:', noticeRes);
       } catch (error) {
         alert(error);
       }
