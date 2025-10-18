@@ -1,7 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
-
 import Frame from '@/components/layout/frame/frame';
 import Button from '@/components/ui/button/button';
 import Table from '@/components/ui/table/Table';
