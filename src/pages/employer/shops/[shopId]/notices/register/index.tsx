@@ -3,14 +3,12 @@ import useAuth from '@/hooks/useAuth';
 import axiosInstance from '@/lib/axios';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-
-interface NoticePayload {
+interface NoticeLoad {
   hourlyPay: number;
   startsAt: string;
   workhour: number;
   description: string;
 }
-
 const EmployerNoticeRegisterPage = () => {
   const router = useRouter();
   const { user } = useAuth();
@@ -21,26 +19,23 @@ const EmployerNoticeRegisterPage = () => {
   const [workhour, setWorkhour] = useState<number>();
   const [description, setDescription] = useState('');
 
-  const [modalOpen, setModalOpen] = useState(false);
-  const [newNoticeId, setNewNoticeId] = useState<string | null>(null);
+  const [accessModal, setAccessModal] = useState(false);
+  const [successModal, setSuccessModal] = useState(false);
+  const [modalHandler, setModalHandler] = useState<() => void>(() => () => {});
 
   useEffect(() => {
     if (user && !user.shop) {
-      alert('접근 권한이 없습니다.');
-      router.replace('/');
+      setAccessModal(true);
     }
-  }, [user, router]);
+  }, [user]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     if (!date || !time || !wage || !workhour || !description) return;
     if (!user?.shop) return;
-
     const combinedDateTime = new Date(date);
     combinedDateTime.setHours(time.getHours(), time.getMinutes(), 0, 0);
-
-    const payload: NoticePayload = {
+    const payload: NoticeLoad = {
       hourlyPay: Number(wage),
       startsAt: combinedDateTime.toISOString(),
       workhour,
@@ -49,27 +44,28 @@ const EmployerNoticeRegisterPage = () => {
 
     try {
       const response = await axiosInstance.post(`/shops/${user.shop.item.id}/notices`, payload);
-      const noticeId = response.data.id; // 새 공고 ID
-      setNewNoticeId(noticeId);
-      setModalOpen(true);
+      const noticeId = response.data.item.id;
+
+      if (!noticeId) {
+        alert('등록된 공고 ID를 가져올 수 없습니다.');
+        return;
+      }
+
+      const handleModalConfirm = async () => {
+        setSuccessModal(false);
+        await router.push(`/employer/shops/${user.shop!.item.id}/notices/${noticeId}`);
+      };
+
+      setModalHandler(() => handleModalConfirm);
+      setSuccessModal(true);
     } catch (error) {
       alert(error instanceof Error ? error.message : '공고 등록 중 오류 발생');
     }
   };
 
-  const handleModalClose = () => {
-    setModalOpen(false);
-    if (user?.shop && newNoticeId) {
-      router.push(`/employer/shops/${user.shop.item.id}/notices/${newNoticeId}`);
-    }
-  };
-
-  if (!user?.shop) return null;
-
   return (
     <div className='p-4'>
       <p className='font-weight-700 mb-4 text-3xl font-bold'>공고 등록</p>
-
       <form onSubmit={handleSubmit} className='flex w-full flex-col gap-4'>
         <div className='grid grid-cols-2 gap-6'>
           <Input
@@ -84,7 +80,6 @@ const EmployerNoticeRegisterPage = () => {
               setWage(e.currentTarget.value.replace(/\D+/g, ''))
             }
           />
-
           <Input
             id='workhour'
             label='업무 시간'
@@ -97,7 +92,6 @@ const EmployerNoticeRegisterPage = () => {
               setWorkhour(Number(e.currentTarget.value))
             }
           />
-
           <DateInput
             label='시작 날짜'
             requiredMark
@@ -110,7 +104,6 @@ const EmployerNoticeRegisterPage = () => {
               }
             }}
           />
-
           <TimeInput
             label='시작 시간'
             requiredMark
@@ -132,7 +125,6 @@ const EmployerNoticeRegisterPage = () => {
             onChange={e => setDescription(e.target.value)}
           />
         </div>
-
         <Button
           type='submit'
           variant='primary'
@@ -144,16 +136,26 @@ const EmployerNoticeRegisterPage = () => {
         </Button>
       </form>
 
+      {accessModal && (
+        <Modal
+          open={accessModal}
+          title='접근 권한이 없습니다'
+          variant='warning'
+          primaryText='확인'
+          onPrimary={() => router.replace('/')} // 확인 누르면 메인으로
+          onClose={() => setAccessModal(false)}
+        />
+      )}
+
       <Modal
-        open={modalOpen}
-        onClose={handleModalClose}
+        open={successModal}
+        onClose={() => setSuccessModal(false)}
         title='등록 완료'
         variant='success'
         primaryText='확인'
-        onPrimary={handleModalClose}
+        onPrimary={modalHandler}
       />
     </div>
   );
 };
-
 export default EmployerNoticeRegisterPage;
