@@ -1,6 +1,6 @@
 import { Dropdown, Input } from '@/components/ui';
 import { CATEGORY_CODE } from '@/constants/dropdown';
-import RegisterFormData from '@/types/myShop';
+import { RegisterFormData } from '@/types/myShop';
 
 interface Props {
   formData: RegisterFormData;
