@@ -1,5 +1,5 @@
 import axios from '@/lib/axios';
-import RegisterFormData from '@/types/myShop';
+import { RegisterFormData } from '@/types/myShop';
 import { default as originAxios } from 'axios';
 
 export async function postShop(body: Omit<RegisterFormData, 'image'>) {
