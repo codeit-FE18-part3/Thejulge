@@ -1,16 +1,24 @@
 import { Button } from '@/components/ui/button';
+import { UserRole } from '@/types/user';
 import Badge from './Badge';
 
 export type StatusType = 'pending' | 'accepted' | 'rejected';
 
 interface StatusBadgeProps {
   status: StatusType;
-  variant: 'employer' | 'employee';
+  userRole: UserRole;
   onApprove: () => void;
   onReject: () => void;
+  applicationId: string;
+  onStatusChange: (id: string, status: StatusType) => void;
 }
 
-export default function StatusBadge({ status, variant, onApprove, onReject }: StatusBadgeProps) {
+export default function StatusBadge({
+  status,
+  userRole: variant,
+  onApprove,
+  onReject,
+}: StatusBadgeProps) {
   if (status === 'pending' && variant === 'employer') {
     return (
       <div className='flex w-1/2 flex-col gap-2 md:flex-row'>

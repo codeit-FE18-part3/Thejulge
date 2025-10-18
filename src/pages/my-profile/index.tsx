@@ -156,9 +156,9 @@ export default function MyProfileDetailPage() {
             <div className='mx-auto w-full desktop:max-w-[964px]'>
               <Table
                 headers={headers}
-                data={pagedRows}
-                userType={userType}
-                total={rows.length}
+                tableData={pagedRows}
+                userRole={userType}
+                total={applications.length}
                 limit={limit}
                 offset={offset}
                 onPageChange={setOffset}
