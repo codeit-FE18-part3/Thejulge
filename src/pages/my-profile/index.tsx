@@ -152,7 +152,7 @@ export default function MyProfileDetailPage() {
               <Table
                 headers={headers}
                 data={paged}
-                userType={userType}
+                userRole={userType}
                 total={applications.length}
                 limit={limit}
                 offset={offset}

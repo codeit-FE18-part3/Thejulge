@@ -2,6 +2,7 @@ import { cardLayout, CardStatusVariant } from '@/components/ui/card/card.styles'
 import CardBadge from '@/components/ui/card/cardBadge';
 import CardImage from '@/components/ui/card/cardImage';
 import CardInfo from '@/components/ui/card/cardInfo';
+import useAuth from '@/hooks/useAuth';
 import { getTime } from '@/lib/utils/dateFormatter';
 import { formatNumber } from '@/lib/utils/formatNumber';
 import { getNoticeStatus } from '@/lib/utils/getNoticeStatus';
@@ -18,6 +19,7 @@ const STATUS_LABEL = {
 } as const;
 
 const Post = ({ notice }: PostProps) => {
+  const { user } = useAuth();
   const {
     id,
     hourlyPay,
@@ -33,7 +35,8 @@ const Post = ({ notice }: PostProps) => {
   const status = getNoticeStatus(closed, startsAt);
   const { date, startTime, endTime } = getTime(startsAt, workhour);
   const statusVariant: CardStatusVariant = status === 'open' ? 'open' : 'inactive';
-  const href = `/notices/${shopId}/${id}`;
+  const href =
+    user && user.shop ? `/employer/shops/${shopId}/notices/${id}` : `/notices/${shopId}/${id}`;
 
   return (
     <Link href={href} className={postFrame()} aria-label={`${name} 공고 상세로 이동`}>

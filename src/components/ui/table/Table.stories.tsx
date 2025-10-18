@@ -1,6 +1,6 @@
 import Table from '@/components/ui/table/Table';
 import { TableRowProps } from '@/components/ui/table/TableRowProps';
-import { UserType } from '@/types/user';
+import { UserRole, UserType } from '@/types/user';
 import { Meta, StoryObj } from '@storybook/nextjs';
 import { useEffect, useState } from 'react';
 import { fetchTableData } from './testApi';
@@ -16,7 +16,7 @@ export default meta;
 
 type Story = StoryObj<typeof Table>;
 
-function TableWithTestApi({ userType }: { userType: UserType }) {
+function TableWithTestApi({ userRole }: { userRole: UserRole }) {
   const [headers, setHeaders] = useState<string[]>([]);
   const [data, setData] = useState<TableRowProps[]>([]);
   const [offset, setOffset] = useState(0);
@@ -24,12 +24,12 @@ function TableWithTestApi({ userType }: { userType: UserType }) {
 
   useEffect(() => {
     const getData = async () => {
-      const res = await fetchTableData(userType);
+      const res = await fetchTableData(userRole);
       setHeaders(res.headers);
       setData(res.data as TableRowProps[]);
     };
     getData();
-  }, [userType]);
+  }, [userRole]);
 
   const count = data.length;
   const paginatedData = data.slice(offset, offset + limit);
@@ -37,8 +37,8 @@ function TableWithTestApi({ userType }: { userType: UserType }) {
   return (
     <Table
       headers={headers}
-      data={paginatedData}
-      userType={userType}
+      tableData={paginatedData}
+      userRole={userRole}
       total={count}
       limit={limit}
       offset={offset}
@@ -49,14 +49,14 @@ function TableWithTestApi({ userType }: { userType: UserType }) {
 
 export const EmployerTable: Story = {
   args: {
-    userType: 'employer',
+    userRole: 'employer',
   },
-  render: args => <TableWithTestApi userType={args.userType as UserType} />,
+  render: args => <TableWithTestApi userRole={args.userRole as UserType} />,
 };
 
 export const EmployeeTable: Story = {
   args: {
-    userType: 'employee',
+    userRole: 'employee',
   },
-  render: args => <TableWithTestApi userType={args.userType as UserType} />,
+  render: args => <TableWithTestApi userRole={args.userRole as UserType} />,
 };
