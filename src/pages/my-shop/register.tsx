@@ -2,7 +2,7 @@ import { postPresignedUrl, postShop, uploadImage } from '@/api/employer';
 import ShopForm from '@/components/features/my-shop/shopForm';
 import { Header, Wrapper } from '@/components/layout';
 import { NextPageWithLayout } from '@/pages/_app';
-import RegisterFormData from '@/types/myShop';
+import { RegisterFormData } from '@/types/myShop';
 
 const Register: NextPageWithLayout = () => {
   const handleRegister = async (formData: RegisterFormData) => {
