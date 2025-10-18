@@ -22,7 +22,7 @@ const EmployerNoticeRegisterPage = () => {
   const [description, setDescription] = useState('');
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [newNoticeId, setNewNoticeId] = useState<string | null>(null);
+  const [modalHandler, setModalHandler] = useState<() => void>(() => () => {});
 
   useEffect(() => {
     if (user && !user.shop) {
@@ -49,18 +49,22 @@ const EmployerNoticeRegisterPage = () => {
 
     try {
       const response = await axiosInstance.post(`/shops/${user.shop.item.id}/notices`, payload);
-      const noticeId = response.data.id; // 새 공고 ID
-      setNewNoticeId(noticeId);
+      const noticeId = response.data.item.id;
+
+      if (!noticeId) {
+        alert('등록된 공고 ID를 가져올 수 없습니다.');
+        return;
+      }
+
+      const handleModalConfirm = async () => {
+        setModalOpen(false);
+        await router.push(`/employer/shops/${user.shop!.item.id}/notices/${noticeId}`);
+      };
+
+      setModalHandler(() => handleModalConfirm);
       setModalOpen(true);
     } catch (error) {
       alert(error instanceof Error ? error.message : '공고 등록 중 오류 발생');
-    }
-  };
-
-  const handleModalClose = () => {
-    setModalOpen(false);
-    if (user?.shop && newNoticeId) {
-      router.push(`/employer/shops/${user.shop.item.id}/notices/${newNoticeId}`);
     }
   };
 
@@ -71,7 +75,7 @@ const EmployerNoticeRegisterPage = () => {
       <p className='font-weight-700 mb-4 text-3xl font-bold'>공고 등록</p>
 
       <form onSubmit={handleSubmit} className='flex w-full flex-col gap-4'>
-        <div className='grid grid-cols-1 gap-4 tablet:grid-cols-2 tablet:gap-6'>
+        <div className='grid grid-cols-2 gap-6'>
           <Input
             id='wage'
             label='시급'
@@ -146,11 +150,11 @@ const EmployerNoticeRegisterPage = () => {
 
       <Modal
         open={modalOpen}
-        onClose={handleModalClose}
+        onClose={() => setModalOpen(false)}
         title='등록 완료'
         variant='success'
         primaryText='확인'
-        onPrimary={handleModalClose}
+        onPrimary={modalHandler}
       />
     </div>
   );
