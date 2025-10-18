@@ -71,7 +71,7 @@ const EmployerNoticeRegisterPage = () => {
       <p className='font-weight-700 mb-4 text-3xl font-bold'>공고 등록</p>
 
       <form onSubmit={handleSubmit} className='flex w-full flex-col gap-4'>
-        <div className='grid grid-cols-2 gap-6'>
+        <div className='grid grid-cols-1 gap-4 tablet:grid-cols-2 tablet:gap-6'>
           <Input
             id='wage'
             label='시급'
