@@ -1,43 +1,24 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import Frame from '@/components/layout/frame/frame';
 import Button from '@/components/ui/button/button';
 import Table from '@/components/ui/table/Table';
 import type { TableRowProps } from '@/components/ui/table/TableRowProps';
 import { ICONS, ICON_SIZES } from '@/constants/icon';
+import { useUserApplications } from '@/context/userApplicationsProvider';
 import useAuth from '@/hooks/useAuth';
-import type { UserType } from '@/types/user'; // 'employee' | 'employer'
+import type { ApiResponse } from '@/types/api';
+import type { ApplicationItem, ApplicationStatus } from '@/types/applications';
+import type { UserType } from '@/types/user';
 
 export default function MyProfileDetailPage() {
   const { isLogin, user } = useAuth();
-
-  // 임시: 신청 내역은 아직 서버 API가 없다면 로컬 모의 데이터 사용
-  const [applications, setApplications] = useState<TableRowProps[]>([]);
-  const [isLoadingApps, setIsLoadingApps] = useState<boolean>(true);
-
-  // 페이지네이션 상태(팀 Table 시그니처 맞춤)
+  const { applications, isLoading: isLoadingApps, error } = useUserApplications();
+  // 테이블 페이지네이션(팀 Table 시그니처 맞춤: offset/limit)
   const [offset, setOffset] = useState(0);
   const limit = 10;
-
-  // (모의) 저장 키 - 나중에 서버 API로 교체 가능
-  const appsKey = useMemo(() => `thejulge_apps_${user?.id ?? 'guest'}`, [user?.id]);
-
-  // 신청 내역 로드(모의)
-  useEffect(() => {
-    if (!isLogin) return;
-    setIsLoadingApps(true);
-    try {
-      const txt = localStorage.getItem(appsKey);
-      const parsed = txt ? (JSON.parse(txt) as TableRowProps[]) : [];
-      setApplications(parsed);
-    } catch {
-      setApplications([]);
-    } finally {
-      setIsLoadingApps(false);
-    }
-  }, [isLogin, appsKey]);
 
   // 프로필 비었는지 판단 (user 기준)
   const name = user?.name ?? '';
@@ -51,8 +32,9 @@ export default function MyProfileDetailPage() {
   const headers: string[] = ['가게명', '근무일시', '시급', '상태'];
   const userType: UserType = 'employee';
 
-  // 현재 페이지 조각
-  const paged = useMemo(() => applications.slice(offset, offset + limit), [applications, offset]);
+  // 신청내역 → TableRowProps로 매핑
+  const rows: TableRowProps[] = useMemo(() => applications.map(mapAppToRow), [applications]);
+  const paged = useMemo(() => rows.slice(offset, offset + limit), [rows, offset]);
 
   return (
     <main className='mx-auto w-full max-w-[1440px] px-4 py-6 tablet:py-8'>
@@ -136,7 +118,9 @@ export default function MyProfileDetailPage() {
         <section className='mt-8'>
           {isLoadingApps ? (
             <div className='text-body-m text-[var(--gray-500)]'>불러오는 중…</div>
-          ) : applications.length === 0 ? (
+          ) : error ? (
+            <div className='text-body-m text-[var(--red-500)]'>{error}</div>
+          ) : rows.length === 0 ? (
             <div className='mx-auto w-full desktop:max-w-[964px]'>
               <Frame
                 title='신청 내역'
@@ -153,10 +137,10 @@ export default function MyProfileDetailPage() {
                 headers={headers}
                 data={paged}
                 userType={userType}
-                total={applications.length}
+                total={rows.length}
                 limit={limit}
                 offset={offset}
-                onPageChange={setOffset} // 팀 Table이 pageIndex를 요구하면 (p)=>setOffset(p*limit) 로 바꾸세요.
+                onPageChange={setOffset}
               />
             </div>
           )}
@@ -164,4 +148,28 @@ export default function MyProfileDetailPage() {
       )}
     </main>
   );
+}
+
+// ---------- helpers ----------
+function mapAppToRow(app: ApiResponse<ApplicationItem>): TableRowProps {
+  const a = app.item;
+  const shopName = a.shop.item.name;
+  const hourlyPay = a.notice.item.hourlyPay;
+  const startsAt = a.notice.item.startsAt;
+  const workhour = a.notice.item.workhour;
+  return {
+    id: a.id,
+    name: shopName,
+    hourlyPay: `${hourlyPay.toLocaleString()}원`,
+    startsAt,
+    workhour,
+    status: toRowStatus(a.status),
+  };
+}
+
+function toRowStatus(status: ApplicationStatus) {
+  // TableRow/StatusBadge에서 사용하는 키('approved'|'rejected'|'pending')로 변환
+  if (status === 'accepted') return 'approved';
+  if (status === 'rejected') return 'rejected';
+  return 'pending';
 }
