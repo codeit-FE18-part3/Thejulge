@@ -1,5 +1,5 @@
 import { Input } from '@/components/ui';
-import RegisterFormData from '@/types/myShop';
+import { RegisterFormData } from '@/types/myShop';
 import { ChangeEvent } from 'react';
 
 interface Props {

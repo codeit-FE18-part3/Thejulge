@@ -3,7 +3,7 @@ import ShopForm from '@/components/features/my-shop/shopForm';
 import { Header, Wrapper } from '@/components/layout';
 import useAuth from '@/hooks/useAuth';
 import { NextPageWithLayout } from '@/pages/_app';
-import RegisterFormData from '@/types/myShop';
+import { RegisterFormData } from '@/types/myShop';
 import { useEffect, useState } from 'react';
 
 const Edit: NextPageWithLayout = () => {
