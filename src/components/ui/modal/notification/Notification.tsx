@@ -20,8 +20,11 @@ interface NotificationProps {
   onClose?: () => void;
 }
 
-export default function Notification({ alerts, onRead }: NotificationProps) {
-  const [isOpen, setIsOpen] = useState(false);
+export default function Notification({ alerts, onRead, isOpen, onClose }: NotificationProps) {
+  // 제어 모드인지 판별
+  const controlled = typeof isOpen === 'boolean';
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = controlled ? (isOpen as boolean) : internalOpen;
   const notificationCount = alerts.filter(alert => !alert.read).length;
   const SORTED_ALERTS = [...alerts].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
@@ -29,20 +32,23 @@ export default function Notification({ alerts, onRead }: NotificationProps) {
 
   return (
     <>
-      <div className='relative flex justify-end'>
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className={`${isOpen ? 'hidden' : 'block'} relative md:block`}
-        >
-          <Icon iconName='notificationOn' iconSize='sm' ariaLabel='알림' />
-        </button>
-      </div>
-      {isOpen && (
+     {/* 제어 모드가 아니면 내부 트리거 버튼을 노출 */}
+      {!controlled && (
+        <div className='relative flex justify-end'>
+          <button
+            onClick={() => setInternalOpen(v => !v)}
+            className={`${open ? 'hidden' : 'block'} relative md:block`}
+          >
+            <Icon iconName='notificationOn' iconSize='sm' ariaLabel='알림' />
+          </button>
+        </div>
+      )}
+      {open && (
         <div className='flex min-h-screen flex-col gap-4 bg-red-100 px-5 py-10'>
           <div className='flex justify-between'>
             <div className='text-[20px] font-bold'>알림 {notificationCount}개</div>
             <div>
-              <button onClick={() => setIsOpen(false)}>
+              <button onClick={() => (controlled ? onClose?.() : setInternalOpen(false))}>
                 <Icon iconName='close' iconSize='lg' ariaLabel='닫기' />
               </button>
             </div>

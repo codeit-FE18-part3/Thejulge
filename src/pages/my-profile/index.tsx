@@ -7,52 +7,59 @@ import Button from '@/components/ui/button/button';
 import Table from '@/components/ui/table/Table';
 import type { TableRowProps } from '@/components/ui/table/TableRowProps';
 import { ICONS, ICON_SIZES } from '@/constants/icon';
+import { useUserApplications } from '@/context/userApplicationsProvider';
 import useAuth from '@/hooks/useAuth';
-import type { UserType } from '@/types/user'; // 'employee' | 'employer'
+import type { ApiResponse } from '@/types/api';
+import type { ApplicationItem } from '@/types/applications';
+import type { User, UserType } from '@/types/user';
 
 export default function MyProfileDetailPage() {
   const { isLogin, user } = useAuth();
+  const { applications, isLoading } = useUserApplications();
 
-  // 임시: 신청 내역은 아직 서버 API가 없다면 로컬 모의 데이터 사용
-  const [applications, setApplications] = useState<TableRowProps[]>([]);
-  const [isLoadingApps, setIsLoadingApps] = useState<boolean>(true);
-
-  // 페이지네이션 상태(팀 Table 시그니처 맞춤)
+  // 테이블 페이지네이션
   const [offset, setOffset] = useState(0);
-  const limit = 10;
+  const limit = 5;
 
-  // (모의) 저장 키 - 나중에 서버 API로 교체 가능
-  const appsKey = useMemo(() => `thejulge_apps_${user?.id ?? 'guest'}`, [user?.id]);
-
-  // 신청 내역 로드(모의)
-  useEffect(() => {
-    if (!isLogin) return;
-    setIsLoadingApps(true);
-    try {
-      const txt = localStorage.getItem(appsKey);
-      const parsed = txt ? (JSON.parse(txt) as TableRowProps[]) : [];
-      setApplications(parsed);
-    } catch {
-      setApplications([]);
-    } finally {
-      setIsLoadingApps(false);
-    }
-  }, [isLogin, appsKey]);
-
-  // 프로필 비었는지 판단 (user 기준)
-  const name = user?.name ?? '';
-  const phone = user?.phone ?? '';
-  // 서버 필드명이 address라고 가정
-  const address = (user?.address as string) ?? '';
-  const bio = user?.bio ?? '';
-
-  const isProfileEmpty = !name && !phone && !address && !(bio && bio.trim());
+  // 프로필 비었는지 판단 (User | null 안전)
+  function isProfileEmpty(u: User | null): boolean {
+    const name = u?.name?.trim() ?? '';
+    const phone = u?.phone?.trim() ?? '';
+    const address = (u?.address as string | undefined)?.trim() ?? '';
+    const bio = u?.bio?.trim() ?? '';
+    return !name && !phone && !address && !bio;
+  }
+  const profileIsEmpty = useMemo(() => isProfileEmpty(user), [user]);
 
   const headers: string[] = ['가게명', '근무일시', '시급', '상태'];
   const userType: UserType = 'employee';
 
-  // 현재 페이지 조각
-  const paged = useMemo(() => applications.slice(offset, offset + limit), [applications, offset]);
+  // 서버 응답 → TableRowProps 매핑
+  const rows: TableRowProps[] = useMemo(() => {
+    return applications.map((app: ApiResponse<ApplicationItem>) => {
+      const a = app.item;
+      const status =
+        a.status === 'accepted' ? 'approved' : a.status === 'rejected' ? 'rejected' : 'pending';
+      return {
+        id: a.id,
+        name: a.shop.item.name,
+        hourlyPay: `${a.notice.item.hourlyPay.toLocaleString()}원`,
+        startsAt: a.notice.item.startsAt,
+        workhour: a.notice.item.workhour,
+        status,
+        // employee 표에서는 미사용 — 타입만 충족
+        bio: '',
+        phone: '',
+      };
+    });
+  }, [applications]);
+
+  const pagedRows = useMemo(() => rows.slice(offset, offset + limit), [rows, offset]);
+
+  // rows 변화 시 첫 페이지로 리셋 (페이지네이션 UX 보강)
+  useEffect(() => {
+    setOffset(0);
+  }, [rows.length]);
 
   return (
     <main className='mx-auto w-full max-w-[1440px] px-4 py-6 tablet:py-8'>
@@ -60,9 +67,9 @@ export default function MyProfileDetailPage() {
         <h1 className='mb-6 text-heading-l font-semibold'>내 프로필</h1>
 
         {/* 프로필이 없으면 등록 프레임 */}
-        {isProfileEmpty ? (
+        {profileIsEmpty ? (
           <Frame
-            title='내 프로필'
+            title=''
             content='내 프로필을 등록하고 원하는 가게에 지원해 보세요.'
             buttonText='내 프로필 등록하기'
             href='/my-profile/register'
@@ -77,7 +84,7 @@ export default function MyProfileDetailPage() {
               <div className='flex-1'>
                 <p className='mb-1 text-body-m font-semibold text-[var(--red-500)]'>이름</p>
                 <p className='text-heading-m font-extrabold leading-tight text-[var(--gray-900)]'>
-                  {name || '—'}
+                  {user?.name || '—'}
                 </p>
 
                 {/* 연락처 */}
@@ -90,7 +97,7 @@ export default function MyProfileDetailPage() {
                     className={ICON_SIZES.md}
                     priority
                   />
-                  <span className='text-body-m'>{phone || '—'}</span>
+                  <span className='text-body-m'>{user?.phone || '—'}</span>
                 </div>
 
                 {/* 선호 지역 */}
@@ -103,13 +110,13 @@ export default function MyProfileDetailPage() {
                     className={ICON_SIZES.md}
                     priority
                   />
-                  <span className='text-body-m'>선호 지역: {address || '—'}</span>
+                  <span className='text-body-m'>선호 지역: {(user?.address as string) || '—'}</span>
                 </div>
 
                 {/* 소개 */}
-                {bio && (
+                {user?.bio && (
                   <p className='mt-6 whitespace-pre-wrap text-body-m text-[var(--gray-900)]'>
-                    {bio}
+                    {user.bio}
                   </p>
                 )}
               </div>
@@ -131,12 +138,12 @@ export default function MyProfileDetailPage() {
         )}
       </div>
 
-      {/* 신청 내역 — 프로필 있을 때만 노출 */}
-      {!isProfileEmpty && (
+      {/* 신청 내역 — 프로필 있고 로그인 상태일 때만 */}
+      {!profileIsEmpty && isLogin && (
         <section className='mt-8'>
-          {isLoadingApps ? (
+          {isLoading ? (
             <div className='text-body-m text-[var(--gray-500)]'>불러오는 중…</div>
-          ) : applications.length === 0 ? (
+          ) : rows.length === 0 ? (
             <div className='mx-auto w-full desktop:max-w-[964px]'>
               <Frame
                 title='신청 내역'
@@ -147,16 +154,14 @@ export default function MyProfileDetailPage() {
             </div>
           ) : (
             <div className='mx-auto w-full desktop:max-w-[964px]'>
-              <h2 className='mb-4 text-heading-s font-semibold'>신청 내역</h2>
-              {/* 팀 Table이 요구하는 pagination props 전달 */}
               <Table
                 headers={headers}
-                data={paged}
+                tableData={pagedRows}
                 userRole={userType}
                 total={applications.length}
                 limit={limit}
                 offset={offset}
-                onPageChange={setOffset} // 팀 Table이 pageIndex를 요구하면 (p)=>setOffset(p*limit) 로 바꾸세요.
+                onPageChange={setOffset}
               />
             </div>
           )}
