@@ -106,7 +106,8 @@ const EmployerNoticeDetailPage = ({ notice }: { notice: NoticeCard }) => {
   const [modal, setModal] = useState<ModalItems | null>(null);
 
   const status = getNoticeStatus(notice.closed, notice.startsAt);
-  const canEdit = useMemo(() => status === 'open', [status]);
+  const isOwner = user?.shop?.item.id === notice.shopId;
+  const canEdit = useMemo(() => status === 'open' && isOwner, [status, isOwner]);
 
   // 공고 편집하기
   const handleEditClick = useCallback(() => {
@@ -190,6 +191,7 @@ const EmployerNoticeDetailPage = ({ notice }: { notice: NoticeCard }) => {
           className='font-bold'
           variant={'secondary'}
           onClick={handleEditClick}
+          disabled={!canEdit}
         >
           공고 편집하기
         </Button>
