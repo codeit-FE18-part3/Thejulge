@@ -1,4 +1,4 @@
-import RegisterFormData from '@/types/myShop';
+import { RegisterFormData } from '@/types/myShop';
 
 interface Props {
   formData: RegisterFormData;

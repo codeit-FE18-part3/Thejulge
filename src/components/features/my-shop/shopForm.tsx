@@ -6,7 +6,7 @@ import RegisterName from '@/components/features/my-shop/registerName';
 import RegisterWage from '@/components/features/my-shop/registerWage';
 import { Container } from '@/components/layout';
 import { Button, Icon } from '@/components/ui';
-import RegisterFormData from '@/types/myShop';
+import { RegisterFormData } from '@/types/myShop';
 import { ChangeEvent, useEffect, useState } from 'react';
 
 interface ShopFromProps {
