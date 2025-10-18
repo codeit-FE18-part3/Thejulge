@@ -1,25 +1,23 @@
 import { Pagination } from '@/components/ui';
 import { TableRowProps } from '@/components/ui/table/TableRowProps';
 import { cn } from '@/lib/utils/cn';
-import { UserType } from '@/types/user';
+import { UserRole } from '@/types/user';
 import TableRow from './TableRow';
 
 interface TableProps {
-  data: TableRowProps[];
+  tableData: TableRowProps[];
+  userRole: UserRole;
   headers: string[];
-  userType: UserType;
   total: number;
   limit: number;
   offset: number;
   onPageChange: (newOffset: number) => void;
 }
 
-// <Table headers={headers} data={data} userType={type} /> type은 확인이 좀 더 필요합니다
-
 export default function Table({
-  data,
+  tableData,
   headers,
-  userType,
+  userRole,
   total,
   limit,
   offset,
@@ -28,7 +26,7 @@ export default function Table({
   return (
     <div className='py-[60px]'>
       <div className='px-8 text-xl font-bold md:px-10 lg:mx-auto lg:max-w-[1000px] lg:px-0'>
-        {userType === 'employer' ? '신청자 목록' : '신청 목록'}
+        {userRole === 'employer' ? '신청자 목록' : '신청 목록'}
       </div>
       <div className='m-7 overflow-hidden rounded-lg border bg-white lg:mx-auto lg:max-w-[1000px]'>
         <div className='scroll-bar overflow-x-auto'>
@@ -52,8 +50,8 @@ export default function Table({
               </tr>
             </thead>
             <tbody>
-              {data.map(row => (
-                <TableRow key={row.id} rowData={row} variant={userType} />
+              {tableData.map(row => (
+                <TableRow key={row.id} {...row} rowData={row} userRole={userRole} />
               ))}
             </tbody>
           </table>
