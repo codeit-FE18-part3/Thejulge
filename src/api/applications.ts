@@ -80,3 +80,12 @@ export async function getApplications(
 
   return applications;
 }
+
+// 신청 상태 업데이트
+export const updateApplicationStatus = async (
+  applicationId: string,
+  status: 'accepted' | 'rejected'
+) => {
+  const res = await axiosInstance.put(`/applications/${applicationId}/status`, { status });
+  return res.data;
+};

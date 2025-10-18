@@ -1,9 +1,9 @@
-import type { UserType } from '@/types/user';
+import type { UserRole } from '@/types/user';
 
-export const fetchTableData = async (userType: UserType) => {
+export const fetchTableData = async (userRole: UserRole) => {
   return new Promise<{ headers: string[]; data: unknown[] }>(resolve => {
     setTimeout(() => {
-      if (userType === 'employer') {
+      if (userRole === 'employer') {
         resolve({
           headers: ['신청자', '소개', '전화번호', '상태'],
           data: [

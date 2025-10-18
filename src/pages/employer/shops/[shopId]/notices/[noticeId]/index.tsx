@@ -207,7 +207,7 @@ const EmployerNoticeDetailPage = ({ notice }: { notice: NoticeCard }) => {
       <Table
         headers={headers}
         tableData={data}
-        userType='employer'
+        userRole='employer'
         total={data.length}
         limit={limit}
         offset={offset}
