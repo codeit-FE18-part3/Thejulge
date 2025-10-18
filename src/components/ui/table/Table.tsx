@@ -28,7 +28,9 @@ export default function Table({
   return (
     <div className='py-[60px]'>
       <div className='px-8 text-xl font-bold md:px-10 lg:mx-auto lg:max-w-[1000px] lg:px-0'>
-        {userType === 'employer' ? '신청자 목록' : '신청 목록'}
+        <h2 className='text-heading-l font-semibold'>
+          {userType === 'employer' ? '신청자 목록' : '신청 내역'}
+        </h2>
       </div>
       <div className='m-7 overflow-hidden rounded-lg border bg-white lg:mx-auto lg:max-w-[1000px]'>
         <div className='scroll-bar overflow-x-auto'>

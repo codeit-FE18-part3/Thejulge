@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import Frame from '@/components/layout/frame/frame';
 import Button from '@/components/ui/button/button';
@@ -19,7 +19,7 @@ export default function MyProfileDetailPage() {
 
   // 테이블 페이지네이션
   const [offset, setOffset] = useState(0);
-  const limit = 10;
+  const limit = 5;
 
   // 프로필 비었는지 판단 (User | null 안전)
   function isProfileEmpty(u: User | null): boolean {
@@ -56,6 +56,11 @@ export default function MyProfileDetailPage() {
 
   const pagedRows = useMemo(() => rows.slice(offset, offset + limit), [rows, offset]);
 
+  // rows 변화 시 첫 페이지로 리셋 (페이지네이션 UX 보강)
+  useEffect(() => {
+    setOffset(0);
+  }, [rows.length]);
+
   return (
     <main className='mx-auto w-full max-w-[1440px] px-4 py-6 tablet:py-8'>
       <div className='mx-auto w-full desktop:max-w-[957px]'>
@@ -64,7 +69,7 @@ export default function MyProfileDetailPage() {
         {/* 프로필이 없으면 등록 프레임 */}
         {profileIsEmpty ? (
           <Frame
-            title='내 프로필'
+            title=''
             content='내 프로필을 등록하고 원하는 가게에 지원해 보세요.'
             buttonText='내 프로필 등록하기'
             href='/my-profile/register'
@@ -149,7 +154,6 @@ export default function MyProfileDetailPage() {
             </div>
           ) : (
             <div className='mx-auto w-full desktop:max-w-[964px]'>
-              <h2 className='mb-4 text-heading-s font-semibold'>신청 내역</h2>
               <Table
                 headers={headers}
                 data={pagedRows}
