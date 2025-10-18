@@ -10,31 +10,51 @@ import { ICONS, ICON_SIZES } from '@/constants/icon';
 import { useUserApplications } from '@/context/userApplicationsProvider';
 import useAuth from '@/hooks/useAuth';
 import type { ApiResponse } from '@/types/api';
-import type { ApplicationItem, ApplicationStatus } from '@/types/applications';
-import type { UserType } from '@/types/user';
+import type { ApplicationItem } from '@/types/applications';
+import type { User, UserType } from '@/types/user';
 
 export default function MyProfileDetailPage() {
   const { isLogin, user } = useAuth();
-  const { applications, isLoading: isLoadingApps, error } = useUserApplications();
-  // 테이블 페이지네이션(팀 Table 시그니처 맞춤: offset/limit)
+  const { applications, isLoading } = useUserApplications();
+
+  // 테이블 페이지네이션
   const [offset, setOffset] = useState(0);
   const limit = 10;
 
-  // 프로필 비었는지 판단 (user 기준)
-  const name = user?.name ?? '';
-  const phone = user?.phone ?? '';
-  // 서버 필드명이 address라고 가정
-  const address = (user?.address as string) ?? '';
-  const bio = user?.bio ?? '';
-
-  const isProfileEmpty = !name && !phone && !address && !(bio && bio.trim());
+  // 프로필 비었는지 판단 (User | null 안전)
+  function isProfileEmpty(u: User | null): boolean {
+    const name = u?.name?.trim() ?? '';
+    const phone = u?.phone?.trim() ?? '';
+    const address = (u?.address as string | undefined)?.trim() ?? '';
+    const bio = u?.bio?.trim() ?? '';
+    return !name && !phone && !address && !bio;
+  }
+  const profileIsEmpty = useMemo(() => isProfileEmpty(user), [user]);
 
   const headers: string[] = ['가게명', '근무일시', '시급', '상태'];
   const userType: UserType = 'employee';
 
-  // 신청내역 → TableRowProps로 매핑
-  const rows: TableRowProps[] = useMemo(() => applications.map(mapAppToRow), [applications]);
-  const paged = useMemo(() => rows.slice(offset, offset + limit), [rows, offset]);
+  // 서버 응답 → TableRowProps 매핑
+  const rows: TableRowProps[] = useMemo(() => {
+    return applications.map((app: ApiResponse<ApplicationItem>) => {
+      const a = app.item;
+      const status =
+        a.status === 'accepted' ? 'approved' : a.status === 'rejected' ? 'rejected' : 'pending';
+      return {
+        id: a.id,
+        name: a.shop.item.name,
+        hourlyPay: `${a.notice.item.hourlyPay.toLocaleString()}원`,
+        startsAt: a.notice.item.startsAt,
+        workhour: a.notice.item.workhour,
+        status,
+        // employee 표에서는 미사용 — 타입만 충족
+        bio: '',
+        phone: '',
+      };
+    });
+  }, [applications]);
+
+  const pagedRows = useMemo(() => rows.slice(offset, offset + limit), [rows, offset]);
 
   return (
     <main className='mx-auto w-full max-w-[1440px] px-4 py-6 tablet:py-8'>
@@ -42,7 +62,7 @@ export default function MyProfileDetailPage() {
         <h1 className='mb-6 text-heading-l font-semibold'>내 프로필</h1>
 
         {/* 프로필이 없으면 등록 프레임 */}
-        {isProfileEmpty ? (
+        {profileIsEmpty ? (
           <Frame
             title='내 프로필'
             content='내 프로필을 등록하고 원하는 가게에 지원해 보세요.'
@@ -59,7 +79,7 @@ export default function MyProfileDetailPage() {
               <div className='flex-1'>
                 <p className='mb-1 text-body-m font-semibold text-[var(--red-500)]'>이름</p>
                 <p className='text-heading-m font-extrabold leading-tight text-[var(--gray-900)]'>
-                  {name || '—'}
+                  {user?.name || '—'}
                 </p>
 
                 {/* 연락처 */}
@@ -72,7 +92,7 @@ export default function MyProfileDetailPage() {
                     className={ICON_SIZES.md}
                     priority
                   />
-                  <span className='text-body-m'>{phone || '—'}</span>
+                  <span className='text-body-m'>{user?.phone || '—'}</span>
                 </div>
 
                 {/* 선호 지역 */}
@@ -85,13 +105,13 @@ export default function MyProfileDetailPage() {
                     className={ICON_SIZES.md}
                     priority
                   />
-                  <span className='text-body-m'>선호 지역: {address || '—'}</span>
+                  <span className='text-body-m'>선호 지역: {(user?.address as string) || '—'}</span>
                 </div>
 
                 {/* 소개 */}
-                {bio && (
+                {user?.bio && (
                   <p className='mt-6 whitespace-pre-wrap text-body-m text-[var(--gray-900)]'>
-                    {bio}
+                    {user.bio}
                   </p>
                 )}
               </div>
@@ -113,13 +133,11 @@ export default function MyProfileDetailPage() {
         )}
       </div>
 
-      {/* 신청 내역 — 프로필 있을 때만 노출 */}
-      {!isProfileEmpty && (
+      {/* 신청 내역 — 프로필 있고 로그인 상태일 때만 */}
+      {!profileIsEmpty && isLogin && (
         <section className='mt-8'>
-          {isLoadingApps ? (
+          {isLoading ? (
             <div className='text-body-m text-[var(--gray-500)]'>불러오는 중…</div>
-          ) : error ? (
-            <div className='text-body-m text-[var(--red-500)]'>{error}</div>
           ) : rows.length === 0 ? (
             <div className='mx-auto w-full desktop:max-w-[964px]'>
               <Frame
@@ -132,10 +150,9 @@ export default function MyProfileDetailPage() {
           ) : (
             <div className='mx-auto w-full desktop:max-w-[964px]'>
               <h2 className='mb-4 text-heading-s font-semibold'>신청 내역</h2>
-              {/* 팀 Table이 요구하는 pagination props 전달 */}
               <Table
                 headers={headers}
-                data={paged}
+                data={pagedRows}
                 userType={userType}
                 total={rows.length}
                 limit={limit}
@@ -148,28 +165,4 @@ export default function MyProfileDetailPage() {
       )}
     </main>
   );
-}
-
-// ---------- helpers ----------
-function mapAppToRow(app: ApiResponse<ApplicationItem>): TableRowProps {
-  const a = app.item;
-  const shopName = a.shop.item.name;
-  const hourlyPay = a.notice.item.hourlyPay;
-  const startsAt = a.notice.item.startsAt;
-  const workhour = a.notice.item.workhour;
-  return {
-    id: a.id,
-    name: shopName,
-    hourlyPay: `${hourlyPay.toLocaleString()}원`,
-    startsAt,
-    workhour,
-    status: toRowStatus(a.status),
-  };
-}
-
-function toRowStatus(status: ApplicationStatus) {
-  // TableRow/StatusBadge에서 사용하는 키('approved'|'rejected'|'pending')로 변환
-  if (status === 'accepted') return 'approved';
-  if (status === 'rejected') return 'rejected';
-  return 'pending';
 }
