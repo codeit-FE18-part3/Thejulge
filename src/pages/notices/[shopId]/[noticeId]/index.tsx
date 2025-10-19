@@ -1,7 +1,7 @@
 import { RecentNoticeList } from '@/components/features';
 import { useRecentNotice } from '@/components/features/noticeList/hooks/useRecentNotice';
 import { Button, Modal, Notice } from '@/components/ui';
-import { useToast } from '@/context/toastContext/toastContext';
+import { useToast } from '@/context/toastContext';
 import { useUserApplications } from '@/context/userApplicationsProvider';
 import useAuth from '@/hooks/useAuth';
 import axiosInstance from '@/lib/axios';
