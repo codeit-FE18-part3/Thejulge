@@ -41,12 +41,34 @@ const SignupPage: NextPageWithLayout = () => {
   const [successOpen, setSuccessOpen] = useState(false);
   const [globalErr, setGlobalErr] = useState<string | null>(null);
 
-  const onBlurEmail = (e: React.FocusEvent<HTMLInputElement>) => {
-    if (e.currentTarget.validity.typeMismatch) setEmailErr('이메일 형식으로 작성해 주세요.');
+  // ---- validators ----
+  const validateEmail = (el: HTMLInputElement) => {
+    if (el.validity.typeMismatch) setEmailErr('이메일 형식으로 작성해 주세요.');
     else setEmailErr(null);
   };
-  const onBlurPw = () => setPwErr(pw.length < 8 ? '8자 이상 입력해주세요.' : null);
-  const onBlurPw2 = () => setPw2Err(pw !== pw2 ? '비밀번호가 일치하지 않습니다.' : null);
+  const validatePw = (value: string) => {
+    setPwErr(value.length < 8 ? '8자 이상 입력해주세요.' : null);
+  };
+  const validatePwMatch = (v1: string, v2: string) => {
+    // 둘 중 하나라도 값이 있으면 비교하고, 둘 다 비면 에러 없음
+    if (!v1 && !v2) return setPw2Err(null);
+    setPw2Err(v1 === v2 ? null : '비밀번호가 일치하지 않습니다.');
+  };
+
+  const onBlurEmail = (e: React.FocusEvent<HTMLInputElement>) => validateEmail(e.currentTarget);
+  const onBlurPw = () => validatePw(pw);
+  const onBlurPw2 = () => validatePwMatch(pw, pw2);
+
+  // 즉시 검증: 입력 중에도 에러/버튼 상태가 반영되도록
+  const onChangePw = (next: string) => {
+    setPw(next);
+    validatePw(next);
+    if (pw2) validatePwMatch(next, pw2);
+  };
+  const onChangePw2 = (next: string) => {
+    setPw2(next);
+    validatePwMatch(pw, next);
+  };
 
   const canSubmit =
     !!email && pw.length >= 8 && !!pw2 && pw === pw2 && !emailErr && !pwErr && !pw2Err && !loading;
@@ -55,23 +77,20 @@ const SignupPage: NextPageWithLayout = () => {
     e.preventDefault();
     setGlobalErr(null);
 
-    if (!e.currentTarget.checkValidity()) {
-      e.currentTarget.reportValidity();
-      return;
-    }
-    if (!canSubmit) {
-      onBlurEmail({
-        currentTarget: e.currentTarget.email,
-      } as unknown as React.FocusEvent<HTMLInputElement>);
-      onBlurPw();
-      onBlurPw2();
-      return;
-    }
+    // HTML5 validity (이메일)
+    const emailInput = (e.currentTarget.elements.namedItem('email') as HTMLInputElement) || null;
+    if (emailInput) validateEmail(emailInput);
+
+    // 수동 검증 (패스워드 + 매칭)
+    validatePw(pw);
+    validatePwMatch(pw, pw2);
+
+    if (!canSubmit) return;
 
     setLoading(true);
     try {
       await signup({ email, password: pw, type });
-      setSuccessOpen(true); // ✅ alert → 모달
+      setSuccessOpen(true);
     } catch (err) {
       const status = (err as { response?: { status?: number } })?.response?.status;
       if (status === 409) setDupOpen(true);
@@ -199,10 +218,7 @@ const SignupPage: NextPageWithLayout = () => {
               type='password'
               placeholder='입력'
               value={pw}
-              onChange={e => {
-                setPw(e.target.value);
-                if (pwErr) setPwErr(null);
-              }}
+              onChange={e => onChangePw(e.target.value)}
               onBlur={onBlurPw}
               minLength={8}
               required
@@ -221,10 +237,7 @@ const SignupPage: NextPageWithLayout = () => {
               type='password'
               placeholder='입력'
               value={pw2}
-              onChange={e => {
-                setPw2(e.target.value);
-                if (pw2Err) setPw2Err(null);
-              }}
+              onChange={e => onChangePw2(e.target.value)}
               onBlur={onBlurPw2}
               required
               error={pw2Err ?? undefined}
@@ -288,7 +301,11 @@ const SignupPage: NextPageWithLayout = () => {
       {/* 가입 성공 모달 */}
       <Modal
         open={successOpen}
-        onClose={() => setSuccessOpen(false)}
+        // ✅ dimmed 클릭(= onClose)도 로그인 페이지로 이동
+        onClose={() => {
+          setSuccessOpen(false);
+          window.location.href = '/';
+        }}
         title='가입이 완료되었습니다'
         description={<p className='text-center'>이메일과 비밀번호로 로그인해 주세요.</p>}
         variant='success'
