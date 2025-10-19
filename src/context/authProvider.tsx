@@ -34,7 +34,7 @@ export const AuthContext = createContext<AuthContextValue | null>(null);
 const TOKEN_KEY = 'thejulge_token';
 const USER_ID_KEY = 'thejulge_user_id';
 const EXPIRES_KEY = 'thejulge_expires_at';
-const EXPIRES_DURATION_MS = 10 * 60 * 1000; // 10분
+const EXPIRES_DURATION_MS = 1000 * 60 * 1000; // 10분
 
 /** storage helpers */
 const isBrowser = () => typeof window !== 'undefined';

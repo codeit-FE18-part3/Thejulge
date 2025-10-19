@@ -14,6 +14,7 @@ import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 interface ModalItems {
+  variant?: 'success' | 'warning';
   title?: string;
   primaryText?: string;
   secondaryText?: string;
@@ -29,28 +30,33 @@ interface ApplyItems extends ModalItems {
 // 권한별 모달 템플릿
 const APPLY_ITEMS: Record<UserRole, ApplyItems> = {
   guest: {
+    variant: 'warning',
     title: '로그인이 필요합니다',
     primaryText: '로그인하기',
     secondaryText: '닫기',
   },
   employee: {
     profile: {
+      variant: 'success',
       title: '아르바이트 신청을 하시겠습니까?',
       primaryText: '신청하기',
       secondaryText: '아니오',
     },
     noProfile: {
+      variant: 'warning',
       title: '내 프로필을 먼저 등록해주세요',
       primaryText: '프로필 등록',
       secondaryText: '닫기',
     },
     cancel: {
+      variant: 'success',
       title: '아르바이트 신청을 취소하시겠습니까?',
       primaryText: '취소하기',
       secondaryText: '아니오',
     },
   },
   employer: {
+    variant: 'warning',
     title: '사장님은 신청할 수 없습니다',
     primaryText: '확인',
   },
@@ -59,7 +65,7 @@ const APPLY_ITEMS: Record<UserRole, ApplyItems> = {
 // 프로필 정보 존재 여부 확인
 function hasProfileFields(user: UserProfile | null) {
   if (!user) return false;
-  return Boolean(user.name && user.phone && user.address && user.bio);
+  return Boolean(user.name && user.phone && user.address);
 }
 
 // 공고 상세 초기 렌더링 SSR
@@ -194,7 +200,7 @@ const NoticeDetail = ({ notice }: { notice: NoticeCard }) => {
         <Modal
           open={modalOpen}
           onClose={() => setModalOpen(false)}
-          variant='warning'
+          variant={modal?.variant ?? 'warning'}
           title={modal?.title ?? '유저 정보를 확인해주세요'}
           primaryText={modal?.primaryText ?? '확인'}
           onPrimary={modal?.onPrimary ?? (() => setModalOpen(false))}
