@@ -14,7 +14,7 @@ type ProfileForm = {
   name: string;
   phone: string;
   region: AddressCode | '';
-  bio: string;
+  bio: string; // bio는 선택
 };
 
 export default function MyProfileRegisterPage() {
@@ -76,12 +76,12 @@ export default function MyProfileRegisterPage() {
 
     setIsSubmitting(true);
     try {
-      //  서버 반영 + 컨텍스트 동기화
+      // 서버 반영 + 컨텍스트 동기화
       await updateUser({
         name: formState.name.trim(),
         phone: formState.phone.trim(),
         address: formState.region,
-        bio: formState.bio,
+        bio: formState.bio, // bio는 선택(빈 문자열 가능)
       });
       setIsDoneOpen(true);
     } finally {
@@ -100,6 +100,7 @@ export default function MyProfileRegisterPage() {
       >
         <Icon iconName='close' iconSize='md' ariaLabel='닫기' />
       </button>
+
       <h1 className='mb-6 text-heading-l font-semibold'>내 프로필</h1>
 
       <form
@@ -113,7 +114,7 @@ export default function MyProfileRegisterPage() {
           <div className='flex flex-col'>
             <Input
               id='name'
-              label='이름'
+              label='이름*' // ⭐ 변경: 필수표시
               placeholder='입력'
               value={formState.name}
               onChange={e => {
@@ -123,16 +124,21 @@ export default function MyProfileRegisterPage() {
               onBlur={() =>
                 setNameErrorMessage(formState.name.trim() ? null : '이름을 입력해 주세요.')
               }
-              required
+              required // HTML5 required
               error={nameErrorMessage ?? undefined}
             />
+            {nameErrorMessage && (
+              <p className='mt-1 text-caption text-[var(--red-500)]' role='alert'>
+                {nameErrorMessage}
+              </p>
+            )}
           </div>
 
           {/* 연락처 */}
           <div className='flex flex-col'>
             <Input
               id='phone'
-              label='연락처'
+              label='연락처*' // ⭐ 변경: 필수표시
               placeholder='010-1234-5678'
               value={formState.phone}
               onChange={e => {
@@ -149,6 +155,11 @@ export default function MyProfileRegisterPage() {
               required
               error={phoneErrorMessage ?? undefined}
             />
+            {phoneErrorMessage && (
+              <p className='mt-1 text-caption text-[var(--red-500)]' role='alert'>
+                {phoneErrorMessage}
+              </p>
+            )}
           </div>
 
           {/* 선호 지역 */}
@@ -170,7 +181,9 @@ export default function MyProfileRegisterPage() {
               className='w-full'
             />
             {regionErrorMessage && (
-              <p className='mt-1 text-caption text-[var(--red-500)]'>{regionErrorMessage}</p>
+              <p className='mt-1 text-caption text-[var(--red-500)]' role='alert'>
+                {regionErrorMessage}
+              </p>
             )}
           </div>
         </div>
@@ -178,7 +191,7 @@ export default function MyProfileRegisterPage() {
         {/* 소개(선택) */}
         <div className='mt-4'>
           <label htmlFor='bio' className='mb-2 block text-body-m'>
-            소개
+            소개 (선택) {/* ⭐ 변경: 선택 표기 */}
           </label>
           <textarea
             id='bio'
