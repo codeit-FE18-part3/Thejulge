@@ -19,7 +19,6 @@ const STATUS_LABEL = {
 } as const;
 
 const Post = ({ notice, href = '' }: PostProps) => {
-  if (!href) return null;
   const { hourlyPay, startsAt, workhour, closed, originalHourlyPay, imageUrl, name, address1 } =
     notice;
   const status = getNoticeStatus(closed, startsAt);
