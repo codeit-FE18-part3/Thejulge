@@ -200,7 +200,7 @@ const NoticeDetail = ({ notice }: { notice: NoticeCard }) => {
         <Modal
           open={modalOpen}
           onClose={() => setModalOpen(false)}
-          variant={modal!.variant}
+          variant={modal?.variant ?? 'warning'}
           title={modal?.title ?? '유저 정보를 확인해주세요'}
           primaryText={modal?.primaryText ?? '확인'}
           onPrimary={modal?.onPrimary ?? (() => setModalOpen(false))}
