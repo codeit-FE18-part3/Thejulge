@@ -46,9 +46,7 @@ const Myshop = () => {
         const shopRes = await getShop(shopId);
         const { description, ...rest } = shopRes.item;
         setShopData({ ...rest, shopDescription: description });
-        setShopNotice([]);
-        setNextOffset(0);
-        loadMoreNotice();
+        await loadMoreNotice(true);
       } catch (error) {
         alert(error);
       }
@@ -56,29 +54,38 @@ const Myshop = () => {
     get();
   }, [user]);
 
-  const loadMoreNotice = useCallback(async () => {
-    if (!user?.shop || nextOffset === null || loading) return;
-    setLoading(true);
-    try {
-      const noticeRes: NoticeResponse = await getNotice(user.shop.item.id, {
-        offset: nextOffset,
-        limit: 6,
-      });
-      setShopNotice(prevShopNotice => {
-        const newItems = noticeRes.items.map(i => i.item);
-        const merged = [...prevShopNotice, ...newItems];
-        const unique = merged.filter(
-          (item, index, self) => index === self.findIndex(i => i.id === item.id)
+  const loadMoreNotice = useCallback(
+    async (isInitial: boolean = false) => {
+      if (!user?.shop || nextOffset === null || loading) return;
+      setLoading(true);
+      try {
+        const noticeRes: NoticeResponse = await getNotice(user.shop.item.id, {
+          offset: nextOffset,
+          limit: 6,
+        });
+        setShopNotice(prevShopNotice => {
+          const newItems = noticeRes.items.map(i => i.item);
+          const merged = [...prevShopNotice, ...newItems];
+          const unique = merged.filter(
+            (item, index, self) => index === self.findIndex(i => i.id === item.id)
+          );
+          return unique;
+        });
+        setNextOffset(
+          noticeRes.hasNext
+            ? isInitial
+              ? noticeRes.items.length
+              : nextOffset + noticeRes.items.length
+            : null
         );
-        return unique;
-      });
-      setNextOffset(noticeRes.hasNext ? nextOffset + noticeRes.items.length : null);
-    } catch (error) {
-      alert(error);
-    } finally {
-      setLoading(false);
-    }
-  }, [user?.shop, nextOffset, loading]);
+      } catch (error) {
+        alert(error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [user?.shop, nextOffset, loading]
+  );
 
   useEffect(() => {
     if (!observerRef.current) return;
@@ -145,8 +152,13 @@ const Myshop = () => {
                         shopId: shopData.id,
                         originalHourlyPay: shopData.originalHourlyPay,
                       };
-                      const href = `/employer/shops/${mergedNotice.shopId}/notices/${item.id}`;
-                      return <Post key={item.id} notice={mergedNotice} href={href} />;
+                      return (
+                        <Post
+                          href={`employer/shops/${shopData.id}/notices/${item.id}`}
+                          key={item.id}
+                          notice={mergedNotice}
+                        />
+                      );
                     })}
                   </div>
                   <div ref={observerRef} className='flex h-12 items-center justify-center'>
