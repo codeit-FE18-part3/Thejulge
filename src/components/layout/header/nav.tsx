@@ -24,6 +24,7 @@ const NAV_ITEMS: Record<UserRole, NavItems[]> = {
 const Nav = () => {
   const { role, isLogin, logout } = useAuth();
   const { applications } = useUserApplications();
+
   const [open, setOpen] = useState(false);
   // 읽음 처리한 알림 ID들 (간단 로컬 상태)
   const [readIds, setReadIds] = useState<Set<string>>(new Set());
@@ -43,10 +44,6 @@ const Nav = () => {
       }));
   }, [applications, readIds]);
 
-  const unreadCount = alerts.filter(a => !a.read).length;
-  const bellIcon: 'notificationOn' | 'notificationOff' =
-    unreadCount > 0 ? 'notificationOn' : 'notificationOff';
-
   const handleRead = (id: string) => {
     setReadIds(prev => {
       const next = new Set(prev);
@@ -55,9 +52,17 @@ const Nav = () => {
     });
   };
 
+  // ✅ role이 초기 undefined일 수 있어 방어
+  const currentRole: UserRole = (role ?? 'guest') as UserRole;
+
+  // ✅ 아이콘은 "패널 열림 상태"로만 토글
+  const bellIcon: 'notificationOn' | 'notificationOff' = open
+    ? 'notificationOn'
+    : 'notificationOff';
+
   return (
     <nav className={cn('flex shrink-0 items-center gap-4 text-body-m font-bold', 'desktop:gap-10')}>
-      {NAV_ITEMS[role].map(({ href, label }) => (
+      {(NAV_ITEMS[currentRole] ?? []).map(({ href, label }) => (
         <Link key={href} href={href}>
           {label}
         </Link>
@@ -74,20 +79,54 @@ const Nav = () => {
           >
             로그아웃
           </button>
-          <button type='button' aria-label='알림 확인하기' onClick={() => setOpen(true)}>
-            <Icon iconName={bellIcon} iconSize='rg' bigScreenSize='md' ariaLabel='알림' />
-          </button>
-          <div className='absolute right-4 top-[64px] z-[50] w-full max-w-[420px]'>
-            <Notification
-              alerts={alerts}
-              onRead={handleRead}
-              isOpen={open}
-              onClose={() => setOpen(false)}
+
+          {/* 알림 버튼: 토글 */}
+          <button
+            type='button'
+            aria-label='알림 확인하기'
+            aria-expanded={open}
+            aria-controls='notification-panel'
+            onClick={() => setOpen(prev => !prev)}
+            className='relative'
+          >
+            {/* 일부 메모이제이션 대비 강제 리렌더 */}
+            <Icon
+              key={open ? 'bell-on' : 'bell-off'}
+              iconName={bellIcon}
+              iconSize='rg'
+              bigScreenSize='md'
+              ariaLabel='알림'
             />
-          </div>
+          </button>
+
+          {/* 패널: 열릴 때만 렌더 + 사이즈 고정(피그마) */}
+          {open && (
+            <div
+              id='notification-panel'
+              role='dialog'
+              aria-modal='true'
+              className={cn(
+                'absolute right-2 top-[64px] z-[50]',
+                // 모바일 기본 375 x 812
+                'h-[812px] w-[375px]',
+                // 태블릿/데스크탑 368 x 419
+                'tablet:h-[419px] tablet:w-[368px]',
+                'desktop:h-[419px] desktop:w-[368px]',
+                'overflow-auto rounded-xl'
+              )}
+            >
+              <Notification
+                alerts={alerts}
+                onRead={handleRead}
+                isOpen={open}
+                onClose={() => setOpen(false)} // 내부 닫기와 연동
+              />
+            </div>
+          )}
         </>
       )}
     </nav>
   );
 };
+
 export default Nav;
