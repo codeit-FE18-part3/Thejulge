@@ -1,11 +1,20 @@
-import { forwardRef } from 'react';
+import {
+  ICONS,
+  ICON_RESPONSIVE_SIZES,
+  ICON_SIZES,
+  type IconName,
+  type IconResponsiveSize,
+  type IconSize,
+} from '@/constants/icon';
 import { cn } from '@/lib/utils/cn';
-import { ICONS, ICON_SIZES, type IconName, type IconSize } from '@/constants/icon';
+import { forwardRef } from 'react';
 interface IconProps extends React.HTMLAttributes<HTMLSpanElement> {
   iconName: IconName;
-  iconSize?: IconSize;
+  iconSize?: IconSize; // 모바일 기본 사이즈
+  bigScreenSize?: IconResponsiveSize; // PC에서 사이즈 다를때 사용
   className?: string;
-  ariaLabel?: string;
+  ariaLabel?: string; // 접근성 라벨
+  decorative?: boolean;
 }
 
 /**
@@ -16,20 +25,33 @@ interface IconProps extends React.HTMLAttributes<HTMLSpanElement> {
  */
 
 const Icon = forwardRef<HTMLSpanElement, IconProps>(
-  ({ iconName, iconSize = 'md', className, ariaLabel, ...props }, ref) => {
+  (
+    {
+      iconName,
+      iconSize = 'md',
+      bigScreenSize,
+      className,
+      ariaLabel,
+      decorative = false,
+      ...props
+    },
+    ref
+  ) => {
     const url = ICONS[iconName];
     const size = ICON_SIZES[iconSize];
+    const bigSize = bigScreenSize ? ICON_RESPONSIVE_SIZES[bigScreenSize] : '';
 
     return (
       <span
         ref={ref}
-        className={cn('ic', size, className)}
+        className={cn('ic bg-black', size, bigSize, className)}
         style={{
           maskImage: `url(${url})`,
           WebkitMaskImage: `url(${url})`,
         }}
         role='img'
-        aria-label={ariaLabel}
+        aria-label={decorative ? undefined : ariaLabel}
+        aria-hidden={decorative}
         {...props}
       />
     );

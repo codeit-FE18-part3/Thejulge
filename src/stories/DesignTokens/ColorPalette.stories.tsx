@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 
 const colors = [
   'gray-50',
@@ -7,10 +7,19 @@ const colors = [
   'gray-300',
   'gray-400',
   'gray-500',
+  'gray-600',
+  'gray-700',
+  'gray-800',
+  'gray-900',
   'red-100',
   'red-200',
   'red-300',
   'red-400',
+  'red-500',
+  'red-600',
+  'red-700',
+  'red-800',
+  'red-900',
   'blue-100',
   'blue-200',
   'green-100',
@@ -30,7 +39,7 @@ type Story = StoryObj;
 
 export const Palette: Story = {
   render: () => (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '1rem' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gap: '1rem' }}>
       {colors.map(color => (
         <div key={color} style={{ textAlign: 'center' }}>
           <div

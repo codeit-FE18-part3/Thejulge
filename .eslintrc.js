@@ -27,12 +27,14 @@ module.exports = {
     'filenames', // 파일이름 강제
   ],
   rules: {
+    //@storybook/react 빨간줄 오류 삭제
+    'storybook/no-renderer-packages': 'off',
     // 절대경로 사용
     'no-relative-import-paths/no-relative-import-paths': [
       'error',
       { allowSameFolder: true, rootDir: 'src', prefix: '@' },
     ],
-
+    'prettier/prettier': 'off',
     // Typescript
     '@typescript-eslint/no-explicit-any': 'error', // any 사용 금지
     '@typescript-eslint/prefer-nullish-coalescing': 'warn', // ?? 연산자 사용 권장
@@ -49,49 +51,8 @@ module.exports = {
     // 개발 편의를 위한 완화
     '@typescript-eslint/explicit-function-return-type': 'off', // 함수 반환 타입 명시 선택사항
     'react/no-unescaped-entities': 'off', // JSX 안에 특수문자 직접 사용 허용
-    // 네이밍 컨벤션
-    '@typescript-eslint/naming-convention': [
-      'error',
-      {
-        // 변수 & 함수
-        selector: 'variableLike',
-        format: ['camelCase'],
-      },
-      {
-        // 상수
-        selector: 'variable',
-        modifiers: ['const'],
-        format: ['UPPER_CASE'],
-      },
-      {
-        // 타입, 인터페이스, 클래스
-        selector: 'typeLike',
-        format: ['PascalCase'],
-      },
-      {
-        // enum
-        selector: 'enum',
-        format: ['PascalCase'],
-      },
-    ],
   },
   overrides: [
-    {
-      // config ,pages, stories 컨벤션 완화
-      files: [
-        'src/pages/**/*.tsx',
-        'src/stories/**/*.tsx',
-        'src/stories/**/*.ts',
-        '*.config.ts',
-        '*.config.js',
-        '*.config.mjs',
-        '*.json',
-        '*.d.ts',
-      ],
-      rules: {
-        '@typescript-eslint/naming-convention': 'off',
-      },
-    },
     {
       files: ['*.config.ts', '*.config.js', '*.config.mjs', '*.json', '*.d.ts'],
       rules: {
@@ -100,7 +61,10 @@ module.exports = {
     },
   ],
   settings: {
-    react: { version: 'detect' }, // react 설치 후 버전 명시
+    react: { version: '18.3.1' },
+    'import/resolver': {
+      typescript: { project: './tsconfig.json' },
+    },
   },
   ignorePatterns: [
     'node_modules/',

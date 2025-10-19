@@ -19,12 +19,21 @@ const config: Config = {
           300: 'var(--gray-300)',
           400: 'var(--gray-400)',
           500: 'var(--gray-500)',
+          600: 'var(--gray-600)',
+          700: 'var(--gray-700)',
+          800: 'var(--gray-800)',
+          900: 'var(--gray-900)',
         },
         red: {
           100: 'var(--red-100)',
           200: 'var(--red-200)',
           300: 'var(--red-300)',
           400: 'var(--red-400)',
+          500: 'var(--red-500)',
+          600: 'var(--red-600)',
+          700: 'var(--red-700)',
+          800: 'var(--red-800)',
+          900: 'var(--red-900)',
         },
         blue: {
           100: 'var(--blue-100)',
@@ -36,6 +45,7 @@ const config: Config = {
         },
         white: 'var(--white)',
         black: 'var(--black)',
+        background: 'var(--background)',
 
         'modal-frame': 'var(--modal-frame)',
         'modal-dimmed': 'var(--modal-dimmed)',
@@ -75,6 +85,15 @@ const config: Config = {
         mobile: '375px',
         tablet: '744px',
         desktop: '1028px',
+      },
+      boxShadow: {
+        'inset-top': '0 -4px 25px 0 rgba(0,0,0,0.1)',
+      },
+      keyframes: {
+        'skeleton-shimmer': {
+          '0%': { backgroundPosition: '-400% 0' },
+          '100%': { backgroundPosition: '400% 0' },
+        },
       },
     },
   },
