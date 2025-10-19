@@ -8,6 +8,6 @@ export type TableRowProps = {
   bio: string;
   phone: string;
   userId?: string;
-  shopId?: string;
-  noticeId?: string;
+  shopId: string;
+  noticeId: string;
 };
