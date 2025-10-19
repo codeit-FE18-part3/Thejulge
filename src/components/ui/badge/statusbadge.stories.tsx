@@ -40,7 +40,7 @@ export const PendingEmployer: Story = {
   args: {
     status: 'pending',
     userRole: 'employer',
-    onApprove: () => alert('승인!'),
+    onStatusChange: () => alert('승인!'),
     onReject: () => alert('거절!'),
   },
 };

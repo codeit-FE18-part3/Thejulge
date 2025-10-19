@@ -7,4 +7,7 @@ export type TableRowProps = {
   status: string | JSX.Element;
   bio: string;
   phone: string;
+  userId?: string;
+  shopId?: string;
+  noticeId?: string;
 };

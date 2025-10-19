@@ -176,6 +176,9 @@ function TableWithTestApi({ userRole }: { userRole: UserRole }) {
       limit={limit}
       offset={offset}
       onPageChange={setOffset}
+      onStatusUpdate={() => {}}
+      shopId=''
+      noticeId=''
     />
   );
 }
