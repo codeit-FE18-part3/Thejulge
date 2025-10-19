@@ -40,7 +40,7 @@ function useEscClose(open: boolean, onClose: () => void) {
 /** Header */
 function ModalHeader({ variant, title }: { variant: Variant; title: string }) {
   return (
-    <div className='flex flex-col items-center gap-3 px-6 pt-6 text-center'>
+    <div className='flex flex-col items-center gap-8 px-6 pt-6 text-center'>
       <span className='relative inline-flex items-center justify-center'>
         <Icon
           iconName={ICON_MAP[variant].circle}
@@ -81,13 +81,23 @@ function ModalFooter({
   onSecondary?: () => void;
 }) {
   return (
-    <div className='flex items-center justify-center gap-3 px-6 pb-6 pt-6'>
+    <div className={cn('flex items-center justify-center gap-3 px-6 pb-6 pt-10')}>
       {secondaryText && onSecondary && (
-        <Button size='md' variant='secondary' onClick={onSecondary}>
+        <Button
+          size='md'
+          variant='secondary'
+          className='flex-1 mobile:w-[calc(40%-6px)] mobile:flex-none'
+          onClick={onSecondary}
+        >
           {secondaryText}
         </Button>
       )}
-      <Button size='md' variant='primary' onClick={onPrimary}>
+      <Button
+        size='md'
+        variant='primary'
+        className='flex-1 mobile:w-[calc(40%-6px)] mobile:flex-none'
+        onClick={onPrimary}
+      >
         {primaryText}
       </Button>
     </div>
