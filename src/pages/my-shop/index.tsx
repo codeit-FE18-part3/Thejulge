@@ -145,7 +145,8 @@ const Myshop = () => {
                         shopId: shopData.id,
                         originalHourlyPay: shopData.originalHourlyPay,
                       };
-                      return <Post key={item.id} notice={mergedNotice} />;
+                      const href = `/employer/shops/${mergedNotice.shopId}/notices/${item.id}`;
+                      return <Post key={item.id} notice={mergedNotice} href={href} />;
                     })}
                   </div>
                   <div ref={observerRef} className='flex h-12 items-center justify-center'>
