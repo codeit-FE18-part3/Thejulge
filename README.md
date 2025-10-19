@@ -20,7 +20,7 @@
 
 | <img src="https://avatars.githubusercontent.com/u/59330818" width="150" height="150"/> | <img src="https://avatars.githubusercontent.com/u/213905938" width="150" height="150"/> | <img src="https://avatars.githubusercontent.com/u/214230956" width="150" height="150"/> | <img src="https://avatars.githubusercontent.com/u/214846243" width="150" height="150"/> |
 | :------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------: |
-|                위소현(팀장)<br/>[@sohyun0](https://github.com/sohyun0)                 |                 박신천(팀장)<br/>[@jeschun](https://github.com/jeschun)                 |                유인화<br/>[@gummmmmy0v0](https://github.com/gummmmmy0v0)                |                  양재영<br/>[@BaeZzi813](https://github.com/BaeZzi813)                  |
+|                위소현(팀장)<br/>[@sohyun0](https://github.com/sohyun0)                 |                    박신천<br/>[@jeschun](https://github.com/jeschun)                    |                유인화<br/>[@gummmmmy0v0](https://github.com/gummmmmy0v0)                |                  양재영<br/>[@BaeZzi813](https://github.com/BaeZzi813)                  |
 
 <br>
 
