@@ -81,8 +81,13 @@ export const UserApplicationsProvider = ({ children }: { children: ReactNode }) 
         setError('로그인이 필요합니다.');
         return;
       }
-      await postApplication(shopId, noticeId);
-      await fetchAllApplications(); // 최신화 반영
+
+      try {
+        await postApplication(shopId, noticeId);
+        await fetchAllApplications(); // 최신화
+      } catch {
+        setError('신청 중 오류가 발생했습니다.');
+      }
     },
     [user, fetchAllApplications]
   );

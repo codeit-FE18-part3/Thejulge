@@ -1,3 +1,4 @@
+import { Container, Wrapper } from '@/components/layout';
 import { Button, Modal, Notice, Table } from '@/components/ui';
 import { TableRowProps } from '@/components/ui/table/TableRowProps';
 import useAuth from '@/hooks/useAuth';
@@ -96,7 +97,6 @@ export const getServerSideProps: GetServerSideProps<{ notice: NoticeCard }> = as
 const EmployerNoticeDetailPage = ({ notice }: { notice: NoticeCard }) => {
   const headers = ['신청자', '소개', '전화번호', '상태'];
   const [data, setData] = useState<TableRowProps[]>([]);
-
   const [offset, setOffset] = useState(0);
   const limit = 5;
 
@@ -173,6 +173,9 @@ const EmployerNoticeDetailPage = ({ notice }: { notice: NoticeCard }) => {
             ? `${noticeItem.hourlyPay.toLocaleString()}원`
             : '정보 없음',
           status: app.item.status,
+          userId: userItem?.id,
+          shopId: notice.shopId,
+          noticeId: notice.id,
         };
       });
 
@@ -183,39 +186,50 @@ const EmployerNoticeDetailPage = ({ notice }: { notice: NoticeCard }) => {
   }, [notice.shopId, notice.id, offset, limit]);
 
   return (
-    <div>
-      <Notice notice={notice} className='py-10 tablet:py-16'>
-        <Button
-          size='xs38'
-          full
-          className='font-bold'
-          variant={'secondary'}
-          onClick={handleEditClick}
-          disabled={!canEdit}
-        >
-          공고 편집하기
-        </Button>
-        <Modal
-          open={modalOpen}
-          onClose={() => setModalOpen(false)}
-          variant='warning'
-          title={modal?.title ?? '유저 정보를 확인해주세요'}
-          primaryText={modal?.primaryText ?? '확인'}
-          onPrimary={modal?.onPrimary ?? (() => setModalOpen(false))}
-          secondaryText={modal?.secondaryText}
-          onSecondary={modal?.onSecondary}
-        />
-      </Notice>
-      <Table
-        headers={headers}
-        tableData={data}
-        userRole='employer'
-        total={data.length}
-        limit={limit}
-        offset={offset}
-        onPageChange={setOffset}
-      />
-    </div>
+    <Wrapper>
+      <Container isPage>
+        <div>
+          <Notice notice={notice} className='py-10 tablet:py-16'>
+            <Button
+              size='xs38'
+              full
+              className='font-bold'
+              variant={'secondary'}
+              onClick={handleEditClick}
+              disabled={!canEdit}
+            >
+              공고 편집하기
+            </Button>
+            <Modal
+              open={modalOpen}
+              onClose={() => setModalOpen(false)}
+              variant='warning'
+              title={modal?.title ?? '유저 정보를 확인해주세요'}
+              primaryText={modal?.primaryText ?? '확인'}
+              onPrimary={modal?.onPrimary ?? (() => setModalOpen(false))}
+              secondaryText={modal?.secondaryText}
+              onSecondary={modal?.onSecondary}
+            />
+          </Notice>
+          <Table
+            headers={headers}
+            tableData={data}
+            userRole='employer'
+            total={data.length}
+            limit={limit}
+            offset={offset}
+            onPageChange={setOffset}
+            onStatusUpdate={(id, newStatus) =>
+              setData(prev =>
+                prev.map(row => (row.id === id ? { ...row, status: newStatus } : row))
+              )
+            }
+            shopId={notice.shopId}
+            noticeId={notice.id}
+          />
+        </div>
+      </Container>
+    </Wrapper>
   );
 };
 

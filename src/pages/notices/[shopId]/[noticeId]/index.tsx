@@ -85,7 +85,7 @@ export const getServerSideProps: GetServerSideProps<{ notice: NoticeCard }> = as
 
 const NoticeDetail = ({ notice }: { notice: NoticeCard }) => {
   const { role, isLogin, user } = useAuth();
-  const { isApplied, applyNotice, cancelNotice, error } = useUserApplications();
+  const { isApplied, applyNotice, cancelNotice, error, refresh } = useUserApplications();
   const { showToast } = useToast();
   const { handleRecentNotice } = useRecentNotice(notice);
   const router = useRouter();
@@ -94,6 +94,8 @@ const NoticeDetail = ({ notice }: { notice: NoticeCard }) => {
 
   const status = getNoticeStatus(notice.closed, notice.startsAt);
   const canApply = useMemo(() => status === 'open', [status]);
+
+  const applied = isApplied(notice.id);
 
   // 공고 지원하기
   const handleApplyClick = useCallback(async () => {
@@ -137,7 +139,7 @@ const NoticeDetail = ({ notice }: { notice: NoticeCard }) => {
 
     // 기존 신청 여부 확인
     // 이미 신청된 상태 -> 취소 여부 모달
-    if (isApplied(notice.id)) {
+    if (applied) {
       const items = APPLY_ITEMS.employee.cancel;
       setModal({
         ...items,
@@ -146,6 +148,7 @@ const NoticeDetail = ({ notice }: { notice: NoticeCard }) => {
           try {
             await cancelNotice(notice.id);
             showToast('신청이 취소되었습니다.');
+            await refresh();
           } catch {
             showToast(error ?? '신청 취소 중 오류가 발생했습니다.');
           } finally {
@@ -178,13 +181,26 @@ const NoticeDetail = ({ notice }: { notice: NoticeCard }) => {
 
     // isApplied는 내부에서 applications에만 의존하므로 배열에 제외
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [canApply, isLogin, role, user, notice, router, applyNotice, cancelNotice, showToast, error]);
+  }, [
+    canApply,
+    isLogin,
+    role,
+    user,
+    notice,
+    router,
+    applyNotice,
+    cancelNotice,
+    showToast,
+    error,
+    refresh,
+  ]);
 
   // 최근 본 공고
   useEffect(() => {
     handleRecentNotice();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   return (
     <div>
       <Notice notice={notice} className='py-10 tablet:py-16'>

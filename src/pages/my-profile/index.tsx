@@ -2,6 +2,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
+
 import Frame from '@/components/layout/frame/frame';
 import Button from '@/components/ui/button/button';
 import Table from '@/components/ui/table/Table';
@@ -20,6 +21,8 @@ export default function MyProfileDetailPage() {
   // 테이블 페이지네이션
   const [offset, setOffset] = useState(0);
   const limit = 5;
+
+  const [tableRows, setTableRows] = useState<TableRowProps[]>([]);
 
   // 프로필 비었는지 판단 (User | null 안전)
   function isProfileEmpty(u: User | null): boolean {
@@ -49,6 +52,8 @@ export default function MyProfileDetailPage() {
         status,
         bio: '',
         phone: '',
+        shopId: a.shop.item.id,
+        noticeId: a.notice.item.id,
       };
     });
   }, [applications]);
@@ -72,6 +77,28 @@ export default function MyProfileDetailPage() {
   const currentTotal = rows.length > 0 ? applications.length : stableTotal;
 
   const pagedRows = useMemo(() => currentRows.slice(offset, offset + limit), [currentRows, offset]);
+
+  useEffect(() => {
+    const mappedRows: TableRowProps[] = applications.map(app => {
+      const a = app.item;
+      const status =
+        a.status === 'accepted' ? 'approved' : a.status === 'rejected' ? 'rejected' : 'pending';
+      return {
+        id: a.id,
+        name: a.shop.item.name,
+        hourlyPay: `${a.notice.item.hourlyPay.toLocaleString()}원`,
+        startsAt: a.notice.item.startsAt,
+        workhour: a.notice.item.workhour,
+        status,
+        bio: '',
+        phone: '',
+        shopId: a.shop.item.id,
+        noticeId: a.notice.item.id,
+      };
+    });
+
+    setTableRows(mappedRows);
+  }, [applications]);
 
   return (
     <main className='mx-auto w-full max-w-[1440px] py-6 tablet:py-8'>
@@ -186,15 +213,20 @@ export default function MyProfileDetailPage() {
                 href='/notices'
               />
             ) : (
-              <div className='mx-auto w-full lg:mx-auto lg:max-w-[1000px]'>
+              <div className='mx-auto w-full desktop:max-w-[964px]'>
                 <Table
                   headers={headers}
                   tableData={pagedRows}
                   userRole={userType}
-                  total={currentTotal}
+                  total={applications.length}
                   limit={limit}
                   offset={offset}
                   onPageChange={setOffset}
+                  onStatusUpdate={(id, newStatus) =>
+                    setTableRows(prev =>
+                      prev.map(row => (row.id === id ? { ...row, status: newStatus } : row))
+                    )
+                  }
                 />
               </div>
             )}
