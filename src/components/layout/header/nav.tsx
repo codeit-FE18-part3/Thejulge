@@ -32,7 +32,7 @@ const Nav = () => {
 
   // 1) 서버 알림 불러오기 (사장님/알바 공통)
   useEffect(() => {
-    if (!isLogin || !user?.id) {
+    if (!isLogin || !user?.id || role !== 'employer') {
       setApiAlerts([]);
       return;
     }
@@ -105,7 +105,7 @@ const Nav = () => {
         </Link>
       ))}
 
-      {isLogin && (
+      {isLogin && role === 'employee' && (
         <>
           <button
             type='button'
