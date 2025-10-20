@@ -133,12 +133,23 @@ const EmployerNoticeRegisterPage = () => {
             requiredMark
             value={time ? { date: time, period: time.getHours() >= 12 ? '오후' : '오전' } : null}
             onChange={(value: TimeValue | null) => {
-              if (value && value.date < new Date()) {
+              if (!value) return;
+
+              const selectedDate = date ?? new Date();
+
+              const hours = value.date.getHours();
+              const minutes = value.date.getMinutes();
+
+              const combinedDateTime = new Date(selectedDate);
+              combinedDateTime.setHours(hours, minutes, 0, 0);
+
+              if (combinedDateTime < new Date()) {
                 setPastTimeModal(true);
                 setTime(null);
                 return;
               }
-              setTime(value?.date ?? null);
+
+              setTime(combinedDateTime);
             }}
           />
         </div>
