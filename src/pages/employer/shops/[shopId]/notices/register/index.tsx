@@ -135,18 +135,14 @@ const EmployerNoticeRegisterPage = () => {
             onChange={(value: TimeValue | null) => {
               if (!value) return;
 
-              // dateInput에서 선택한 날짜
               const selectedDate = date ?? new Date();
 
-              // timeInput에서 선택한 시간
               const hours = value.date.getHours();
               const minutes = value.date.getMinutes();
 
-              // date + time 합치기
               const combinedDateTime = new Date(selectedDate);
               combinedDateTime.setHours(hours, minutes, 0, 0);
 
-              // 과거 시간인지 체크
               if (combinedDateTime < new Date()) {
                 setPastTimeModal(true);
                 setTime(null);
