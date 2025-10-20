@@ -1,4 +1,4 @@
-import { Container, Wrapper } from '@/components/layout';
+import { Container } from '@/components/layout';
 import { Button, DateInput, Input, Modal, TimeInput } from '@/components/ui';
 import useAuth from '@/hooks/useAuth';
 import axiosInstance from '@/lib/axios';
@@ -98,82 +98,80 @@ const EmployerNoticeEditPage = () => {
   if (!user?.shop) return null;
 
   return (
-    <Wrapper>
-      <Container isPage>
-        <p className='mb-4 text-3xl font-bold'>공고 편집</p>
+    <Container isPage>
+      <p className='mb-4 text-3xl font-bold'>공고 편집</p>
 
-        <form onSubmit={handleSubmit} className='flex w-full flex-col gap-4'>
-          <div className='grid grid-cols-1 gap-4 tablet:grid-cols-2 tablet:gap-6'>
-            <Input
-              id='wage'
-              label='시급'
-              requiredMark
-              placeholder='12,500'
-              inputMode='numeric'
-              suffix='원'
-              value={wage}
-              onChange={e => setWage(e.currentTarget.value.replace(/\D+/g, ''))}
-            />
+      <form onSubmit={handleSubmit} className='flex w-full flex-col gap-4'>
+        <div className='grid grid-cols-1 gap-4 tablet:grid-cols-2 tablet:gap-6'>
+          <Input
+            id='wage'
+            label='시급'
+            requiredMark
+            placeholder='12,500'
+            inputMode='numeric'
+            suffix='원'
+            value={wage}
+            onChange={e => setWage(e.currentTarget.value.replace(/\D+/g, ''))}
+          />
 
-            <Input
-              id='workhour'
-              label='업무 시간'
-              requiredMark
-              placeholder='4'
-              inputMode='numeric'
-              suffix='시간'
-              value={workhour?.toString() ?? ''}
-              onChange={e => setWorkhour(Number(e.currentTarget.value))}
-            />
+          <Input
+            id='workhour'
+            label='업무 시간'
+            requiredMark
+            placeholder='4'
+            inputMode='numeric'
+            suffix='시간'
+            value={workhour?.toString() ?? ''}
+            onChange={e => setWorkhour(Number(e.currentTarget.value))}
+          />
 
-            <DateInput
-              label='시작 날짜'
-              requiredMark
-              value={date ?? undefined}
-              onChange={selectedDate =>
-                setDate(selectedDate instanceof Date ? selectedDate : new Date(selectedDate))
-              }
-            />
+          <DateInput
+            label='시작 날짜'
+            requiredMark
+            value={date ?? undefined}
+            onChange={selectedDate =>
+              setDate(selectedDate instanceof Date ? selectedDate : new Date(selectedDate))
+            }
+          />
 
-            <TimeInput label='시작 시간' requiredMark value={time} onChange={setTime} />
-          </div>
+          <TimeInput label='시작 시간' requiredMark value={time} onChange={setTime} />
+        </div>
 
-          <div className='flex flex-col gap-2'>
-            <label htmlFor='description' className='text-sm font-medium'>
-              공고 설명 <span className='text-red-500'>*</span>
-            </label>
-            <textarea
-              id='description'
-              name='description'
-              className='rounded-md border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-400'
-              rows={4}
-              placeholder='공고에 대한 설명을 입력하세요.'
-              value={description}
-              onChange={e => setDescription(e.target.value)}
-            />
-          </div>
+        <div className='flex flex-col gap-2'>
+          <label htmlFor='description' className='text-sm font-medium'>
+            공고 설명 <span className='text-red-500'>*</span>
+          </label>
+          <textarea
+            id='description'
+            name='description'
+            className='rounded-md border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-400'
+            rows={4}
+            placeholder='공고에 대한 설명을 입력하세요.'
+            value={description}
+            onChange={e => setDescription(e.target.value)}
+          />
+        </div>
 
-          <Button
-            type='submit'
-            variant='primary'
-            size='lg'
-            className='mt-5 w-full'
-            disabled={!wage || !date || !time || !workhour || !description}
-          >
-            등록하기
-          </Button>
-        </form>
+        <Button
+          type='submit'
+          variant='primary'
+          size='lg'
+          className='mt-5 w-full'
+          disabled={!wage || !date || !time || !workhour || !description}
+        >
+          등록하기
+        </Button>
+      </form>
 
-        <Modal
-          open={modalOpen}
-          onClose={handleModalClose}
-          title='편집 완료'
-          variant='success'
-          primaryText='확인'
-          onPrimary={handleModalClose}
-        />
-      </Container>
-    </Wrapper>
+      <Modal
+        open={modalOpen}
+        onClose={handleModalClose}
+        title='편집 완료'
+        variant='success'
+        primaryText='확인'
+        onPrimary={handleModalClose}
+      />
+    </Container>
   );
 };
 
