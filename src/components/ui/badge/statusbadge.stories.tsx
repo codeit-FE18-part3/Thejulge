@@ -15,7 +15,6 @@ type Story = StoryObj<typeof StatusBadge>;
 export const Accept: Story = {
   args: {
     status: 'accepted',
-    userRole: 'employer',
   },
 };
 
@@ -23,7 +22,6 @@ export const Accept: Story = {
 export const Reject: Story = {
   args: {
     status: 'rejected',
-    userRole: 'employer',
   },
 };
 
@@ -31,7 +29,6 @@ export const Reject: Story = {
 export const PendingEmployee: Story = {
   args: {
     status: 'pending',
-    userRole: 'employee',
   },
 };
 
@@ -39,8 +36,5 @@ export const PendingEmployee: Story = {
 export const PendingEmployer: Story = {
   args: {
     status: 'pending',
-    userRole: 'employer',
-    onStatusChange: () => alert('승인!'),
-    onReject: () => alert('거절!'),
   },
 };
