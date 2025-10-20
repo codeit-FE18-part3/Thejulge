@@ -1,4 +1,3 @@
-// src/api/alerts.ts
 import axios from '@/lib/axios';
 import type { ApiResponse, PaginatedResponse } from '@/types/api';
 import type { Notice } from '@/types/notice';
