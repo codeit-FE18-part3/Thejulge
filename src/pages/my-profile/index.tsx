@@ -43,7 +43,7 @@ export default function MyProfileDetailPage() {
     return applications.map((app: ApiResponse<ApplicationItem>) => {
       const a = app.item;
       const status =
-        a.status === 'accepted' ? 'approved' : a.status === 'rejected' ? 'rejected' : 'pending';
+        a.status === 'accepted' ? 'accepted' : a.status === 'rejected' ? 'rejected' : 'pending';
 
       return {
         id: a.id,
