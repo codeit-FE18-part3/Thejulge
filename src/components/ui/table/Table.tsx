@@ -33,13 +33,11 @@ export default function Table({
   noticeId,
 }: TableProps) {
   return (
-    <div className='py-[60px]'>
-      <div className='px-8 text-xl font-bold md:px-10 lg:mx-auto lg:max-w-[1000px] lg:px-0'>
-        <h2 className='text-heading-l font-semibold'>
-          {userRole === 'employer' ? '신청자 목록' : '신청 내역'}
-        </h2>
-      </div>
-      <div className='m-7 overflow-hidden rounded-lg border bg-white lg:mx-auto lg:max-w-[1000px]'>
+    <>
+      <h2 className='mb-4 text-heading-l font-bold tablet:mb-8'>
+        {userRole === 'employer' ? '신청자 목록' : '신청 내역'}
+      </h2>
+      <div className='overflow-hidden rounded-lg border bg-white'>
         <div className='scroll-bar overflow-x-auto'>
           <table className='w-full table-fixed border-collapse'>
             <thead>
@@ -48,7 +46,7 @@ export default function Table({
                   <th
                     key={index}
                     className={cn(
-                      'md:borde-r-0 bg-red-100 px-2 py-3 text-left text-xs font-normal',
+                      'bg-red-100 px-2 py-3 text-left text-body-l font-normal md:border-0',
                       index < headers.length - 1 && 'border-r md:border-r-0',
                       index === 0 && 'sticky left-0 z-10 w-[200px]',
                       index > 0 && index < headers.length - 1 && 'w-[245px]',
@@ -76,10 +74,12 @@ export default function Table({
           </table>
         </div>
 
-        <div className='flex justify-center px-3 py-2'>
-          <Pagination total={total} limit={limit} offset={offset} onPageChange={onPageChange} />
-        </div>
+        {offset >= 2 && (
+          <div className='flex justify-center px-3 py-2'>
+            <Pagination total={total} limit={limit} offset={offset} onPageChange={onPageChange} />
+          </div>
+        )}
       </div>
-    </div>
+    </>
   );
 }

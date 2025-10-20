@@ -82,7 +82,7 @@ export default function MyProfileDetailPage() {
   const pagedRows = useMemo(() => currentRows.slice(offset, offset + limit), [currentRows, offset]);
 
   return (
-    <main className='mx-auto w-full max-w-[1440px] py-6 tablet:py-8'>
+    <>
       {/* ───────────────── 상단 영역 ───────────────── */}
       {profileIsEmpty ? (
         // ✅ 2중 컨테이너 제거: Frame만 단독 렌더
@@ -191,22 +191,20 @@ export default function MyProfileDetailPage() {
             />
           ) : (
             <Container as='section' isPage className='pt-0'>
-              <div className='mx-auto w-full lg:mx-auto lg:max-w-[1000px]'>
-                <Table
-                  headers={headers}
-                  tableData={pagedRows}
-                  userRole={userType}
-                  total={currentTotal}
-                  limit={limit}
-                  offset={offset}
-                  onPageChange={setOffset}
-                  onStatusUpdate={() => {}} // ✅ 이 페이지에서는 상태 변경 없음(필수 prop 무해한 no-op)
-                />
-              </div>
+              <Table
+                headers={headers}
+                tableData={pagedRows}
+                userRole={userType}
+                total={currentTotal}
+                limit={limit}
+                offset={offset}
+                onPageChange={setOffset}
+                onStatusUpdate={() => {}} // ✅ 이 페이지에서는 상태 변경 없음(필수 prop 무해한 no-op)
+              />
             </Container>
           )}
         </section>
       )}
-    </main>
+    </>
   );
 }
