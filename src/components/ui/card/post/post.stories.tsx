@@ -31,6 +31,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     notice: baseNotice,
+    href: '',
   },
 };
 
@@ -44,6 +45,7 @@ export const Expired: Story = {
       originalHourlyPay: 13000,
       shopId: 'notice-002',
     },
+    href: '',
   },
 };
 
@@ -58,5 +60,6 @@ export const Closed: Story = {
       startsAt: '2023-07-01T09:00:00Z',
       shopId: 'notice-003',
     },
+    href: '',
   },
 };

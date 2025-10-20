@@ -2,7 +2,6 @@ import { cardLayout, CardStatusVariant } from '@/components/ui/card/card.styles'
 import CardBadge from '@/components/ui/card/cardBadge';
 import CardImage from '@/components/ui/card/cardImage';
 import CardInfo from '@/components/ui/card/cardInfo';
-import useAuth from '@/hooks/useAuth';
 import { getTime } from '@/lib/utils/dateFormatter';
 import { formatNumber } from '@/lib/utils/formatNumber';
 import { getNoticeStatus } from '@/lib/utils/getNoticeStatus';
@@ -12,31 +11,19 @@ import { postFrame, postImageDimmed } from './post.styles';
 
 interface PostProps {
   notice: PostCard;
+  href: string;
 }
 const STATUS_LABEL = {
   expired: '지난 공고',
   closed: '공고 마감',
 } as const;
 
-const Post = ({ notice }: PostProps) => {
-  const { user } = useAuth();
-  const {
-    id,
-    hourlyPay,
-    startsAt,
-    workhour,
-    closed,
-    originalHourlyPay,
-    imageUrl,
-    name,
-    address1,
-    shopId,
-  } = notice;
+const Post = ({ notice, href = '' }: PostProps) => {
+  const { hourlyPay, startsAt, workhour, closed, originalHourlyPay, imageUrl, name, address1 } =
+    notice;
   const status = getNoticeStatus(closed, startsAt);
   const { date, startTime, endTime } = getTime(startsAt, workhour);
   const statusVariant: CardStatusVariant = status === 'open' ? 'open' : 'inactive';
-  const href =
-    user && user.shop ? `/employer/shops/${shopId}/notices/${id}` : `/notices/${shopId}/${id}`;
 
   return (
     <Link href={href} className={postFrame()} aria-label={`${name} 공고 상세로 이동`}>

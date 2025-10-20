@@ -31,7 +31,8 @@ export async function getAllUserApplications({
 
 // 가게의 특정 공고 지원 등록
 export const postApplication = async (shopId: string, noticeId: string) => {
-  await axiosInstance.post(`/shops/${shopId}/notices/${noticeId}/applications`);
+  const res = await axiosInstance.post(`/shops/${shopId}/notices/${noticeId}/applications`);
+  return res.data;
 };
 
 // 가게의 특정 공고 지원 취소

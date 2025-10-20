@@ -1,3 +1,4 @@
+import { Container } from '@/components/layout';
 import { Button, Modal, Notice, Table } from '@/components/ui';
 import { TableRowProps } from '@/components/ui/table/TableRowProps';
 import useAuth from '@/hooks/useAuth';
@@ -87,17 +88,15 @@ export const getServerSideProps: GetServerSideProps<{ notice: NoticeCard }> = as
     const noticeRes = await axiosInstance.get(`shops/${shopId}/notices/${noticeId}`);
     return { props: { notice: toNoticeCard(noticeRes.data) } };
   } catch {
-    return {
-      notFound: true,
-    };
+    return { notFound: true };
   }
 };
 
 const EmployerNoticeDetailPage = ({ notice }: { notice: NoticeCard }) => {
   const headers = ['신청자', '소개', '전화번호', '상태'];
   const [data, setData] = useState<TableRowProps[]>([]);
-
   const [offset, setOffset] = useState(0);
+  const [total, setTotal] = useState(0); // ✅ 전체 개수
   const limit = 5;
 
   const { role, isLogin, user } = useAuth();
@@ -109,7 +108,6 @@ const EmployerNoticeDetailPage = ({ notice }: { notice: NoticeCard }) => {
   const isOwner = user?.shop?.item.id === notice.shopId;
   const canEdit = useMemo(() => status === 'open' && isOwner, [status, isOwner]);
 
-  // 공고 편집하기
   const handleEditClick = useCallback(() => {
     if (!canEdit) return;
 
@@ -149,14 +147,17 @@ const EmployerNoticeDetailPage = ({ notice }: { notice: NoticeCard }) => {
     router.push(`/employer/shops/${notice.shopId}/notices/${notice.id}/edit`);
   }, [canEdit, isLogin, role, user, notice, router]);
 
-  // 신청자 불러오기
-
+  // 신청자 불러오기 (페이지네이션)
   useEffect(() => {
     const fetchApplications = async () => {
-      const res = await axiosInstance.get<{ items: ApplicationTableApiResponse[] }>(
-        `/shops/${notice.shopId}/notices/${notice.id}/applications`,
-        { params: { offset, limit } }
-      );
+      const res = await axiosInstance.get<{
+        items: ApplicationTableApiResponse[];
+        total?: number;
+        count?: number;
+        hasNext?: boolean;
+      }>(`/shops/${notice.shopId}/notices/${notice.id}/applications`, {
+        params: { offset, limit },
+      });
 
       const tableData: TableRowProps[] = res.data.items.map(app => {
         const userItem = app.item.user?.item;
@@ -173,17 +174,33 @@ const EmployerNoticeDetailPage = ({ notice }: { notice: NoticeCard }) => {
             ? `${noticeItem.hourlyPay.toLocaleString()}원`
             : '정보 없음',
           status: app.item.status,
+          userId: userItem?.id,
+          shopId: notice.shopId,
+          noticeId: notice.id,
         };
       });
 
       setData(tableData);
+
+      // total 적용
+      const apiTotal = res.data.total ?? res.data.count;
+      if (typeof apiTotal === 'number') {
+        setTotal(apiTotal);
+      } else {
+        const hasNext = res.data.hasNext ?? tableData.length === limit;
+        const guessed = offset + tableData.length + (hasNext ? 1 : 0);
+        setTotal(guessed);
+      }
     };
 
     fetchApplications();
   }, [notice.shopId, notice.id, offset, limit]);
 
+  // 첫 페이지에서도 페이지네이션 보이도록 표시용 offset
+  const displayOffset = total > limit ? (offset === 0 ? 2 : offset) : offset;
+
   return (
-    <div>
+    <>
       <Notice notice={notice} className='py-10 tablet:py-16'>
         <Button
           size='xs38'
@@ -206,16 +223,24 @@ const EmployerNoticeDetailPage = ({ notice }: { notice: NoticeCard }) => {
           onSecondary={modal?.onSecondary}
         />
       </Notice>
-      <Table
-        headers={headers}
-        tableData={data}
-        userRole='employer'
-        total={data.length}
-        limit={limit}
-        offset={offset}
-        onPageChange={setOffset}
-      />
-    </div>
+
+      <Container isPage>
+        <Table
+          headers={headers}
+          tableData={data}
+          userRole='employer'
+          total={total} // ✅ 전체 개수
+          limit={limit}
+          offset={displayOffset} // ✅ 표시용 offset
+          onPageChange={setOffset}
+          onStatusUpdate={(id, newStatus) =>
+            setData(prev => prev.map(row => (row.id === id ? { ...row, status: newStatus } : row)))
+          }
+          shopId={notice.shopId}
+          noticeId={notice.id}
+        />
+      </Container>
+    </>
   );
 };
 

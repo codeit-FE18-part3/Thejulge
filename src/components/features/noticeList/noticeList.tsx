@@ -24,9 +24,10 @@ const NoticeList = ({ notices, q, isLoading, isInitialized, reset, error }: Noti
 
   return (
     <div className='grid gap-x-4 gap-y-8 sm:grid-cols-2 desktop:grid-cols-3'>
-      {notices.map(notice => (
-        <Post key={notice.id} notice={notice} />
-      ))}
+      {notices.map(notice => {
+        const href = `/notices/${notice.shopId}/${notice.id}`;
+        return <Post key={notice.id} notice={notice} href={href} />;
+      })}
     </div>
   );
 };

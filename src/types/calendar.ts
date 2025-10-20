@@ -42,6 +42,11 @@ export type CalendarDay = {
 // Time Selector 관련
 export type Period = '오전' | '오후';
 
+export interface TimeValue {
+  date: Date;
+  period: Period;
+}
+
 export interface TimeSelectorProps {
   value?: string;
   period: Period;

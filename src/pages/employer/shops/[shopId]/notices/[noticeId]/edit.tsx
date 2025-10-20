@@ -1,6 +1,8 @@
+import { Container } from '@/components/layout';
 import { Button, DateInput, Input, Modal, TimeInput } from '@/components/ui';
 import useAuth from '@/hooks/useAuth';
 import axiosInstance from '@/lib/axios';
+import { TimeValue } from '@/types/calendar';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
@@ -18,7 +20,7 @@ const EmployerNoticeEditPage = () => {
 
   const [wage, setWage] = useState('');
   const [date, setDate] = useState<Date | null>(null);
-  const [time, setTime] = useState<Date | null>(null);
+  const [time, setTime] = useState<TimeValue | null>(null);
   const [workhour, setWorkhour] = useState<number>();
   const [description, setDescription] = useState('');
 
@@ -45,8 +47,11 @@ const EmployerNoticeEditPage = () => {
         setDescription(notice.description);
 
         const startDate = new Date(notice.startsAt);
+        setTime({
+          date: startDate,
+          period: startDate.getHours() >= 12 ? '오후' : '오전',
+        });
         setDate(startDate);
-        setTime(startDate);
       } catch {
         alert('공고 정보를 불러오는 중 오류가 발생했습니다.');
         router.back();
@@ -65,7 +70,7 @@ const EmployerNoticeEditPage = () => {
     if (!user?.shop || !noticeId) return;
 
     const combinedDateTime = new Date(date);
-    combinedDateTime.setHours(time.getHours(), time.getMinutes(), 0, 0);
+    combinedDateTime.setHours(time.date.getHours(), time.date.getMinutes(), 0, 0);
 
     const payload: NoticePayload = {
       hourlyPay: Number(wage),
@@ -93,7 +98,7 @@ const EmployerNoticeEditPage = () => {
   if (!user?.shop) return null;
 
   return (
-    <div className='p-4'>
+    <Container isPage>
       <p className='mb-4 text-3xl font-bold'>공고 편집</p>
 
       <form onSubmit={handleSubmit} className='flex w-full flex-col gap-4'>
@@ -129,17 +134,12 @@ const EmployerNoticeEditPage = () => {
             }
           />
 
-          <TimeInput
-            label='시작 시간'
-            requiredMark
-            value={time ?? undefined}
-            onChange={(selectedTime: Date | null) => setTime(selectedTime)}
-          />
+          <TimeInput label='시작 시간' requiredMark value={time} onChange={setTime} />
         </div>
 
         <div className='flex flex-col gap-2'>
           <label htmlFor='description' className='text-sm font-medium'>
-            공고 설명
+            공고 설명 <span className='text-red-500'>*</span>
           </label>
           <textarea
             id='description'
@@ -171,7 +171,7 @@ const EmployerNoticeEditPage = () => {
         primaryText='확인'
         onPrimary={handleModalClose}
       />
-    </div>
+    </Container>
   );
 };
 

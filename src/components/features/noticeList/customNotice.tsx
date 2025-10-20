@@ -20,11 +20,14 @@ const CustomNoticeList = () => {
         />
       ) : (
         <HorizontalScroll as='ul' className='flex gap-x-4 gap-y-8 px-3 desktop:px-8'>
-          {notices.map(notice => (
-            <li key={notice.id} className='min-w-[310px] flex-initial'>
-              <Post notice={notice} />
-            </li>
-          ))}
+          {notices.map(notice => {
+            const href = `/notices/${notice.shopId}/${notice.id}`;
+            return (
+              <li key={notice.id} className='min-w-[310px] flex-initial'>
+                <Post notice={notice} href={href} />
+              </li>
+            );
+          })}
         </HorizontalScroll>
       )}
     </>

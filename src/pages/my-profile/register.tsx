@@ -9,12 +9,11 @@ import { useEffect, useState } from 'react';
 
 import { ADDRESS_CODE, type AddressCode } from '@/constants/dropdown';
 
-/** 폼 타입 */
 type ProfileForm = {
   name: string;
   phone: string;
   region: AddressCode | '';
-  bio: string;
+  bio: string; // bio는 선택
 };
 
 export default function MyProfileRegisterPage() {
@@ -33,15 +32,13 @@ export default function MyProfileRegisterPage() {
   const [regionErrorMessage, setRegionErrorMessage] = useState<string | null>(null);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isDoneOpen, setIsDoneOpen] = useState(false); // 완료 모달
-  const [isCancelOpen, setIsCancelOpen] = useState(false); // 취소 확인 모달
+  const [isDoneOpen, setIsDoneOpen] = useState(false);
+  const [isCancelOpen, setIsCancelOpen] = useState(false);
 
-  // 로그인 가드
   useEffect(() => {
     if (!isLogin) router.replace('/login');
   }, [isLogin, router]);
 
-  // 기존 값 프리필(컨텍스트 user 사용)
   useEffect(() => {
     if (!isLogin || !user) return;
     setFormState({
@@ -76,12 +73,11 @@ export default function MyProfileRegisterPage() {
 
     setIsSubmitting(true);
     try {
-      //  서버 반영 + 컨텍스트 동기화
       await updateUser({
         name: formState.name.trim(),
         phone: formState.phone.trim(),
         address: formState.region,
-        bio: formState.bio,
+        bio: formState.bio, // 선택값: 빈 문자열 가능
       });
       setIsDoneOpen(true);
     } finally {
@@ -91,7 +87,7 @@ export default function MyProfileRegisterPage() {
 
   return (
     <main className='relative mx-auto w-full max-w-[960px] px-4 py-6 tablet:py-8'>
-      {/* 우상단 닫기(X) 버튼 */}
+      {/* 닫기 */}
       <button
         type='button'
         aria-label='프로필 등록 취소'
@@ -100,6 +96,7 @@ export default function MyProfileRegisterPage() {
       >
         <Icon iconName='close' iconSize='md' ariaLabel='닫기' />
       </button>
+
       <h1 className='mb-6 text-heading-l font-semibold'>내 프로필</h1>
 
       <form
@@ -113,7 +110,7 @@ export default function MyProfileRegisterPage() {
           <div className='flex flex-col'>
             <Input
               id='name'
-              label='이름'
+              label='이름*' // 문구만 유지(필수)
               placeholder='입력'
               value={formState.name}
               onChange={e => {
@@ -126,13 +123,14 @@ export default function MyProfileRegisterPage() {
               required
               error={nameErrorMessage ?? undefined}
             />
+            {/* ❌ 중복 메시지 제거: 아래 커스텀 <p> 삭제 */}
           </div>
 
           {/* 연락처 */}
           <div className='flex flex-col'>
             <Input
               id='phone'
-              label='연락처'
+              label='연락처*' // 문구만 유지(필수)
               placeholder='010-1234-5678'
               value={formState.phone}
               onChange={e => {
@@ -149,12 +147,13 @@ export default function MyProfileRegisterPage() {
               required
               error={phoneErrorMessage ?? undefined}
             />
+            {/* ❌ 중복 메시지 제거: 아래 커스텀 <p> 삭제 */}
           </div>
 
           {/* 선호 지역 */}
           <div className='flex flex-col'>
             <label htmlFor='region' className='mb-2 text-body-m'>
-              선호 지역*
+              선호 지역* {/* ← * 제거 */}
             </label>
             <Dropdown<AddressCode>
               name='region'
@@ -170,12 +169,14 @@ export default function MyProfileRegisterPage() {
               className='w-full'
             />
             {regionErrorMessage && (
-              <p className='mt-1 text-caption text-[var(--red-500)]'>{regionErrorMessage}</p>
+              <p className='mt-1 text-caption text-[var(--red-500)]' role='alert'>
+                {regionErrorMessage}
+              </p>
             )}
           </div>
         </div>
 
-        {/* 소개(선택) */}
+        {/* 소개(선택) → 소개 */}
         <div className='mt-4'>
           <label htmlFor='bio' className='mb-2 block text-body-m'>
             소개
@@ -189,7 +190,6 @@ export default function MyProfileRegisterPage() {
           />
         </div>
 
-        {/* 등록 버튼 */}
         <div className='mt-6 flex justify-center'>
           <Button
             type='submit'
@@ -204,7 +204,6 @@ export default function MyProfileRegisterPage() {
         </div>
       </form>
 
-      {/* 등록 완료 모달 */}
       <Modal
         open={isDoneOpen}
         onClose={() => setIsDoneOpen(false)}
@@ -217,7 +216,6 @@ export default function MyProfileRegisterPage() {
         }}
       />
 
-      {/* 취소 확인 모달 */}
       <Modal
         open={isCancelOpen}
         onClose={() => setIsCancelOpen(false)}
