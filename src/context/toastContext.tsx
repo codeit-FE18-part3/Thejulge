@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -15,6 +16,7 @@ export const useToast = () => {
 
 const ToastProvider = ({ children }: { children: ReactNode }) => {
   const [message, setMessage] = useState<string | null>(null);
+  const router = useRouter();
 
   const showToast = (msg: string) => {
     setMessage(msg);
@@ -30,7 +32,18 @@ const ToastProvider = ({ children }: { children: ReactNode }) => {
     return () => {
       clearTimeout(timer);
     };
-  });
+  }, [message]);
+
+  useEffect(() => {
+    const handleRouteChange = () => {
+      setMessage(null);
+    };
+
+    router.events.on('routeChangeStart', handleRouteChange);
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange);
+    };
+  }, [router]);
 
   const toastRoot = typeof window !== 'undefined' ? document.getElementById('toast-root') : null;
 
@@ -43,7 +56,7 @@ const ToastProvider = ({ children }: { children: ReactNode }) => {
             message ? (
               <div
                 role='alert'
-                className='fixed top-[30%] left-1/2 z-[1] -translate-x-1/2 rounded-[5px] bg-red-300 px-4 py-[10px] text-white'
+                className='fixed left-1/2 top-[30%] z-[1] -translate-x-1/2 rounded-[5px] bg-red-300 px-4 py-[10px] text-white'
               >
                 {message}
               </div>
