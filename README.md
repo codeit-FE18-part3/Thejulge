@@ -13,26 +13,18 @@
 
 ## 👥 팀 & 역할 (RnR)
 
-| <img src="https://avatars.githubusercontent.com/u/59330818" width="150" height="150"/> | <img src="https://avatars.githubusercontent.com/u/213905938" width="150" height="150"/> | <img src="https://avatars.githubusercontent.com/u/214230956" width="150" height="150"/> | <img src="https://avatars.githubusercontent.com/u/214846243" width="150" height="150"/> |
+| <img src="https://avatars.githubusercontent.com/u/59330818" width="150" height="150"/> | <img src="https://avatars.githubusercontent.com/u/213905938" width="150" height="150"/> | <img src="https://avatars.githubusercontent.com/u/214846243" width="150" height="150"/> | <img src="https://avatars.githubusercontent.com/u/214230956" width="150" height="150"/> |
 | :------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------: |
-|                위소현(팀장)<br/>[@sohyun0](https://github.com/sohyun0)                 |                    박신천<br/>[@jeschun](https://github.com/jeschun)                    |                유인화<br/>[@gummmmmy0v0](https://github.com/gummmmmy0v0)                |                  양재영<br/>[@BaeZzi813](https://github.com/BaeZzi813)                  |
+|                위소현(팀장)<br/>[@sohyun0](https://github.com/sohyun0)                 |                    박신천<br/>[@jeschun](https://github.com/jeschun)                    |                  양재영<br/>[@BaeZzi813](https://github.com/BaeZzi813)                  |                유인화<br/>[@gummmmmy0v0](https://github.com/gummmmmy0v0)                |
 
 <br>
 
-| 구성원 | 공통 작업 | UI 컴포넌트 | 페이지 |
-
-| 팀원전원 | 디자인 및 기능 QA / 본인 작업관련 문서 | | |
-
-| 박신천 | 인풋, 모달, 버튼 | 로그인, 회원가입, 내프로필 등록, 상세 |
-
-| 양재영 | 시연영상 준비 | 공통 프레임, 푸터, 토스트, 페이지네이션 | 가게 정보 등록, 상세 |
-
-| 위소현 | 발표 | 초기 프로젝트 셋팅 / 공용 문서 작성 및 관리(노션) | 헤더, 필터, 드롭다운, post,
-컨테이너, 스켈레톤 UI, 컬러, 폰트, 아이콘 | 공고 리스트, 상세 |
-
-| 유인화 | 발표자료 준비 | 테이블, 알림, 캘린더 | 가게 공고 등록, 상세 |
-
-> 담당 범위는 개발 중 상호 협의로 조정될 수 있음.
+|      구성원       |                   GitHub ID                    |              역할              |                       공통 작업                        |                              UI 컴포넌트                              |                    페이지                     |
+| :---------------: | :--------------------------------------------: | :----------------------------: | :----------------------------------------------------: | :-------------------------------------------------------------------: | :-------------------------------------------: |
+| **위소현 (팀장)** |     [@sohyun0](https://github.com/sohyun0)     |       프로젝트 관리/발표       |    초기 프로젝트 셋팅, 공용 문서 작성 및 관리(노션)    | 헤더, 필터, 드롭다운, Post, 컨테이너, 스켈레톤 UI, 컬러, 폰트, 아이콘 |            공고 리스트, 공고 상세             |
+|    **박신천**     |     [@jeschun](https://github.com/jeschun)     |        프론트엔드 개발         |         디자인 및 기능 QA, 본인 작업 관련 문서         |                           인풋, 모달, 버튼                            | 로그인, 회원가입, 내 프로필 등록, 프로필 상세 |
+|    **양재영**     |   [@BaeZzi813](https://github.com/BaeZzi813)   |        프론트엔드 개발         | 시연 영상 준비, 디자인 및 기능 QA, 본인 작업 관련 문서 |                공통 프레임, 푸터, 토스트, 페이지네이션                |           가게 정보 등록, 가게 상세           |
+|    **유인화**     | [@gummmmmy0v0](https://github.com/gummmmmy0v0) | 프론트엔드 개발/발표 자료 준비 | 발표 자료 준비, 디자인 및 기능 QA, 본인 작업 관련 문서 |                         테이블, 알림, 캘린더                          |           가게 공고 등록, 공고 상세           |
 
 ---
 
