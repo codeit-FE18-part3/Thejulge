@@ -1,14 +1,12 @@
 import Icon from '@/components/ui/icon/icon';
+import useClickOutside from '@/hooks/useClickOutside';
+import useEscapeKey from '@/hooks/useEscapeKey';
 import { cn } from '@/lib/utils/cn';
 import { Notice } from '@/types/notice';
 import { Shop } from '@/types/shop';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import NotificationMessage from './NotificationMessage';
 
-const NOTI_STYLE = {
-  controlled: '',
-  uncontrolled: '',
-};
 export interface Alert {
   id: string;
   createdAt: string;
@@ -29,10 +27,23 @@ export default function Notification({ alerts, onRead, isOpen, onClose }: Notifi
   const controlled = typeof isOpen === 'boolean';
   const [internalOpen, setInternalOpen] = useState(false);
   const open = controlled ? (isOpen as boolean) : internalOpen;
+  const panelRef = useRef<HTMLDivElement>(null);
   const notificationCount = alerts.filter(alert => !alert.read).length;
   const SORTED_ALERTS = [...alerts].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
+
+  // 외부 클릭 및 ESC 키로 닫기
+  const close = () => (controlled ? onClose?.() : setInternalOpen(false));
+  useClickOutside(panelRef, () => {
+    if (!open) return;
+    close();
+  });
+  useEscapeKey(e => {
+    if (!open) return;
+    e.stopPropagation();
+    close();
+  });
 
   return (
     <>
@@ -55,6 +66,8 @@ export default function Notification({ alerts, onRead, isOpen, onClose }: Notifi
       <div
         role='dialog'
         aria-modal='true'
+        aria-hidden={!open}
+        ref={panelRef}
         className={cn(
           'w-full overflow-hidden bg-red-100',
           'fixed right-0 top-0 z-10 h-dvh max-h-dvh border border-gray-300',
@@ -76,7 +89,7 @@ export default function Notification({ alerts, onRead, isOpen, onClose }: Notifi
             <p className='font-medium'>알림이 없습니다.</p>
           </div>
         ) : (
-          <div className='scroll-bar flex h-full w-full flex-col items-center gap-4 max-h-[calc(100%-48px)] md:max-h-[calc(460px-96px)]'>
+          <div className='scroll-bar flex h-full max-h-[calc(100%-48px)] w-full flex-col items-center gap-4 md:max-h-[calc(460px-96px)]'>
             {SORTED_ALERTS.map(alert => (
               <NotificationMessage key={alert.id} alert={alert} onRead={onRead} />
             ))}
