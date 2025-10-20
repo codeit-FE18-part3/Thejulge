@@ -153,7 +153,7 @@ export default function MyProfileRegisterPage() {
           {/* 선호 지역 */}
           <div className='flex flex-col'>
             <label htmlFor='region' className='mb-2 text-body-m'>
-              선호 지역 {/* ← * 제거 */}
+              선호 지역* {/* ← * 제거 */}
             </label>
             <Dropdown<AddressCode>
               name='region'

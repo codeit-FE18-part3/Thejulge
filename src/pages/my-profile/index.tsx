@@ -80,7 +80,7 @@ export default function MyProfileDetailPage() {
   const currentTotal = rows.length > 0 ? applications.length : stableTotal;
 
   const pagedRows = useMemo(() => currentRows.slice(offset, offset + limit), [currentRows, offset]);
-
+  const displayOffset = currentTotal > limit ? (offset === 0 ? 2 : offset) : offset;
   return (
     <>
       {/* ───────────────── 상단 영역 ───────────────── */}
@@ -197,7 +197,7 @@ export default function MyProfileDetailPage() {
                 userRole={userType}
                 total={currentTotal}
                 limit={limit}
-                offset={offset}
+                offset={displayOffset}
                 onPageChange={setOffset}
                 onStatusUpdate={() => {}} // ✅ 이 페이지에서는 상태 변경 없음(필수 prop 무해한 no-op)
               />
