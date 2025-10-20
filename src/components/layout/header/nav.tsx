@@ -52,10 +52,10 @@ const Nav = () => {
     });
   };
 
-  // ✅ role이 초기 undefined일 수 있어 방어
+  // role이 초기 undefined일 수 있어 방어
   const currentRole: UserRole = (role ?? 'guest') as UserRole;
 
-  // ✅ 아이콘은 "패널 열림 상태"로만 토글
+  // 아이콘은 "패널 열림 상태"로만 토글
   const bellIcon: 'notificationOn' | 'notificationOff' = open
     ? 'notificationOn'
     : 'notificationOff';
@@ -69,17 +69,18 @@ const Nav = () => {
       ))}
 
       {isLogin && (
-        <>
-          <button
-            type='button'
-            onClick={e => {
-              e.preventDefault();
-              logout('/');
-            }}
-          >
-            로그아웃
-          </button>
-
+        <button
+          type='button'
+          onClick={e => {
+            e.preventDefault();
+            logout('/');
+          }}
+        >
+          로그아웃
+        </button>
+      )}
+      {role === 'employee' && (
+        <div className='relative'>
           {/* 알림 버튼: 토글 */}
           <button
             type='button'
@@ -101,29 +102,14 @@ const Nav = () => {
 
           {/* 패널: 열릴 때만 렌더 + 사이즈 고정(피그마) */}
           {open && (
-            <div
-              id='notification-panel'
-              role='dialog'
-              aria-modal='true'
-              className={cn(
-                'absolute right-2 top-[64px] z-[50]',
-                // 모바일 기본 375 x 812
-                'h-[812px] w-[375px]',
-                // 태블릿/데스크탑 368 x 419
-                'tablet:h-[419px] tablet:w-[368px]',
-                'desktop:h-[419px] desktop:w-[368px]',
-                'overflow-auto rounded-xl'
-              )}
-            >
-              <Notification
-                alerts={alerts}
-                onRead={handleRead}
-                isOpen={open}
-                onClose={() => setOpen(false)} // 내부 닫기와 연동
-              />
-            </div>
+            <Notification
+              alerts={alerts}
+              onRead={handleRead}
+              isOpen={open}
+              onClose={() => setOpen(false)} // 내부 닫기와 연동
+            />
           )}
-        </>
+        </div>
       )}
     </nav>
   );
