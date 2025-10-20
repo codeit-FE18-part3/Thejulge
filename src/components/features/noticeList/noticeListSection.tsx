@@ -40,15 +40,16 @@ const NoticeListSection = ({ q, initialFilters }: NoticeListSectionProps) => {
         isInitialized={isInitialized}
         reset={reset}
       />
-      {!isLoading && (
-        <Pagination
-          total={pagination.count}
-          limit={pagination.limit}
-          offset={pagination.offset}
-          onPageChange={next => fetchNotices({ offset: next })}
-          className='mt-8 tablet:mt-10'
-        />
-      )}
+      <div className='mt-8 tablet:mt-10 min-h-[40px]'>
+        {!isLoading && (
+          <Pagination
+            total={pagination.count}
+            limit={pagination.limit}
+            offset={pagination.offset}
+            onPageChange={next => fetchNotices({ offset: next })}
+          />
+        )}
+      </div>
     </Container>
   );
 };
