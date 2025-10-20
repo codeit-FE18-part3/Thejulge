@@ -1,3 +1,4 @@
+// src/components/layout/header/nav.tsx (예시 경로)
 import { getUserAlerts, markAlertRead } from '@/api/alerts';
 import { Icon } from '@/components/ui';
 import Notification, { type Alert } from '@/components/ui/modal/notification/Notification';
@@ -32,7 +33,7 @@ const Nav = () => {
 
   // 1) 서버 알림 불러오기 (사장님/알바 공통)
   useEffect(() => {
-    if (!isLogin || !user?.id || role !== 'employer') {
+    if (!isLogin || !user?.id) {
       setApiAlerts([]);
       return;
     }
@@ -72,7 +73,6 @@ const Nav = () => {
   // 3) 실제 표시할 알림: 서버 결과가 있으면 우선, 없으면(특히 직원) fallback
   const alerts: Alert[] = useMemo(() => {
     const base = apiAlerts.length > 0 ? apiAlerts : fallbackAlertsForEmployee;
-    // 로컬 읽음 세트 반영(서버 알림에도 적용)
     return base.map(a => (readIds.has(a.id) ? { ...a, read: true } : a));
   }, [apiAlerts, fallbackAlertsForEmployee, readIds]);
 
@@ -105,48 +105,49 @@ const Nav = () => {
         </Link>
       ))}
 
-      {isLogin && role === 'employee' && (
-        <>
+      {/* 로그인한 누구나 로그아웃 노출 */}
+      {isLogin && (
+        <button
+          type='button'
+          onClick={e => {
+            e.preventDefault();
+            logout('/');
+          }}
+        >
+          로그아웃
+        </button>
+      )}
+
+      {/* ✅ 사장님(employer)에게만 알림 버튼 숨김 */}
+      {isLogin && role !== 'employer' && (
+        <div className='relative'>
           <button
             type='button'
-            onClick={e => {
-              e.preventDefault();
-              logout('/');
-            }}
+            aria-label='알림 확인하기'
+            aria-expanded={open}
+            aria-controls='notification-panel'
+            onClick={() => setOpen(v => !v)}
+            className='relative'
           >
-            로그아웃
+            <Icon
+              key={open ? 'bell-on' : 'bell-off'}
+              iconName={bellIcon}
+              iconSize='rg'
+              bigScreenSize='md'
+              ariaLabel='알림'
+              className={bellColor}
+            />
           </button>
 
-          {/* 로그인 사용자는 누구나 알림 버튼 노출 (사장님 포함) */}
-          <div className='relative'>
-            <button
-              type='button'
-              aria-label='알림 확인하기'
-              aria-expanded={open}
-              aria-controls='notification-panel'
-              onClick={() => setOpen(v => !v)}
-              className='relative'
-            >
-              <Icon
-                key={open ? 'bell-on' : 'bell-off'}
-                iconName={bellIcon}
-                iconSize='rg'
-                bigScreenSize='md'
-                ariaLabel='알림'
-                className={bellColor}
-              />
-            </button>
-
-            {open && (
-              <Notification
-                alerts={alerts}
-                onRead={handleRead}
-                isOpen={open}
-                onClose={() => setOpen(false)}
-              />
-            )}
-          </div>
-        </>
+          {open && (
+            <Notification
+              alerts={alerts}
+              onRead={handleRead}
+              isOpen={open}
+              onClose={() => setOpen(false)}
+            />
+          )}
+        </div>
       )}
     </nav>
   );
