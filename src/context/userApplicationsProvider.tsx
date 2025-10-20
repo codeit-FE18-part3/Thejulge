@@ -1,4 +1,4 @@
-// context/UserApplicationsProvider.tsx
+
 import { getAllUserApplications, postApplication, putApplication } from '@/api/applications';
 import useAuth from '@/hooks/useAuth';
 import { ApiResponse } from '@/types/api';

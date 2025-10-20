@@ -1,4 +1,3 @@
-// src/components/ui/input/input.stories.tsx
 import Button from '@/components/ui/button/button';
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import { useState } from 'react';

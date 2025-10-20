@@ -1,4 +1,3 @@
-// src/components/ui/dropdown/dropdown.stories.tsx
 import { ADDRESS_CODE, CATEGORY_CODE, SORT_CODE } from '@/constants/dropdown';
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import { useState } from 'react';
