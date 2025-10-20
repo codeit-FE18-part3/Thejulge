@@ -3,13 +3,16 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 
+import { Container } from '@/components/layout'; // ✅ my-shop과 동일 패턴
 import Frame from '@/components/layout/frame/frame';
 import Button from '@/components/ui/button/button';
 import Table from '@/components/ui/table/Table';
-import type { TableRowProps } from '@/components/ui/table/TableRowProps';
+
 import { ICONS, ICON_SIZES } from '@/constants/icon';
 import { useUserApplications } from '@/context/userApplicationsProvider';
 import useAuth from '@/hooks/useAuth';
+
+import type { TableRowProps } from '@/components/ui/table/TableRowProps';
 import type { ApiResponse } from '@/types/api';
 import type { ApplicationItem } from '@/types/applications';
 import type { User, UserType } from '@/types/user';
@@ -21,8 +24,6 @@ export default function MyProfileDetailPage() {
   // 테이블 페이지네이션
   const [offset, setOffset] = useState(0);
   const limit = 5;
-
-  const [tableRows, setTableRows] = useState<TableRowProps[]>([]);
 
   // 프로필 비었는지 판단 (User | null 안전)
   function isProfileEmpty(u: User | null): boolean {
@@ -37,12 +38,13 @@ export default function MyProfileDetailPage() {
   const headers: string[] = ['가게명', '근무일시', '시급', '상태'];
   const userType: UserType = 'employee';
 
-  // 서버 응답 → TableRowProps 매핑
+  // 서버 응답 → TableRowProps 매핑 (shopId/noticeId 포함)
   const rows: TableRowProps[] = useMemo(() => {
     return applications.map((app: ApiResponse<ApplicationItem>) => {
       const a = app.item;
       const status =
         a.status === 'accepted' ? 'approved' : a.status === 'rejected' ? 'rejected' : 'pending';
+
       return {
         id: a.id,
         name: a.shop.item.name,
@@ -52,6 +54,7 @@ export default function MyProfileDetailPage() {
         status,
         bio: '',
         phone: '',
+        // ✅ TableRow가 요구하는 키 채움
         shopId: a.shop.item.id,
         noticeId: a.notice.item.id,
       };
@@ -78,46 +81,20 @@ export default function MyProfileDetailPage() {
 
   const pagedRows = useMemo(() => currentRows.slice(offset, offset + limit), [currentRows, offset]);
 
-  useEffect(() => {
-    const mappedRows: TableRowProps[] = applications.map(app => {
-      const a = app.item;
-      const status =
-        a.status === 'accepted' ? 'approved' : a.status === 'rejected' ? 'rejected' : 'pending';
-      return {
-        id: a.id,
-        name: a.shop.item.name,
-        hourlyPay: `${a.notice.item.hourlyPay.toLocaleString()}원`,
-        startsAt: a.notice.item.startsAt,
-        workhour: a.notice.item.workhour,
-        status,
-        bio: '',
-        phone: '',
-        shopId: a.shop.item.id,
-        noticeId: a.notice.item.id,
-      };
-    });
-
-    setTableRows(mappedRows);
-  }, [applications]);
-
   return (
     <main className='mx-auto w-full max-w-[1440px] py-6 tablet:py-8'>
-      {/* 공통 컨테이너: Table과 좌측선/폭 동일 */}
-      <div className='mx-auto w-full max-w-full px-8 md:px-10 lg:mx-auto lg:max-w-[1000px] lg:px-0'>
-        {profileIsEmpty ? (
-          <>
-            <h1 className='mb-6 text-heading-l font-semibold'>내 프로필</h1>
-            <div className='mx-auto w-full'>
-              <Frame
-                title=''
-                content='내 프로필을 등록하고 원하는 가게에 지원해 보세요.'
-                buttonText='내 프로필 등록하기'
-                href='/my-profile/register'
-              />
-            </div>
-          </>
-        ) : (
-          // ✅ 데스크탑에서 제목과 카드가 같은 flex 라인에 놓이도록
+      {/* ───────────────── 상단 영역 ───────────────── */}
+      {profileIsEmpty ? (
+        // ✅ 2중 컨테이너 제거: Frame만 단독 렌더
+        <Frame
+          title='내 프로필'
+          content='내 프로필을 등록하고 원하는 가게에 지원해 보세요.'
+          buttonText='내 프로필 등록하기'
+          href='/my-profile/register'
+        />
+      ) : (
+        // ✅ 공용 Container로 감싸서 my-shop과 동일한 레이아웃 패턴
+        <Container as='section' isPage>
           <div className='desktop:flex desktop:items-start desktop:gap-8'>
             <h1 className='mb-6 text-heading-l font-semibold desktop:mb-0 desktop:w-[200px] desktop:shrink-0 desktop:pt-2'>
               내 프로필
@@ -185,52 +162,49 @@ export default function MyProfileDetailPage() {
               </div>
             </section>
           </div>
-        )}
-      </div>
+        </Container>
+      )}
 
-      {/* 하단: 신청 내역 — 프로필 있고 로그인 상태일 때만 */}
+      {/* ──────────────── 하단: 신청 내역 ──────────────── */}
       {!profileIsEmpty && isLogin && (
-        <section className='mt-8 bg-[var(--gray-50)] py-8'>
-          <div className='mx-auto w-full max-w-full px-8 md:px-10 lg:mx-auto lg:max-w-[1000px] lg:px-0'>
-            {isLoading && currentRows.length === 0 ? (
-              <>
-                <div className='px-0 text-xl font-bold'>
-                  <h2 className='text-heading-l font-semibold'>신청 내역</h2>
-                </div>
-                <div className='m-7 overflow-hidden rounded-lg border bg-white lg:mx-auto lg:max-w-[1000px]'>
-                  <div className='h-[48px] bg-[var(--red-100)]' />
-                  {[...Array(5)].map((_, i) => (
-                    <div key={i} className='h-[56px] border-t bg-white last:border-b' />
-                  ))}
-                  <div className='flex justify-center px-3 py-2' />
-                </div>
-              </>
-            ) : currentRows.length === 0 ? (
-              <Frame
-                title='신청 내역'
-                content='마음에 드는 공고를 찾아 지원해 보세요.'
-                buttonText='공고 보러가기'
-                href='/notices'
-              />
-            ) : (
-              <div className='mx-auto w-full desktop:max-w-[964px]'>
+        <section className='mt-8 bg-[var(--gray-50)] pb-8 pt-0 tablet:pt-8'>
+          {isLoading && currentRows.length === 0 ? (
+            <Container as='section' isPage className='pt-0'>
+              <div className='px-0 text-xl font-bold'>
+                <h2 className='text-heading-l font-semibold'>신청 내역</h2>
+              </div>
+              <div className='m-7 overflow-hidden rounded-lg border bg-white lg:mx-auto lg:max-w-[1000px]'>
+                <div className='h-[48px] bg-[var(--red-100)]' />
+                {[...Array(5)].map((_, i) => (
+                  <div key={i} className='h-[56px] border-t bg-white last:border-b' />
+                ))}
+                <div className='flex justify-center px-3 py-2' />
+              </div>
+            </Container>
+          ) : currentRows.length === 0 ? (
+            // ✅ 2중 컨테이너 제거: Frame만 단독 렌더
+            <Frame
+              title='신청 내역'
+              content='마음에 드는 공고를 찾아 지원해 보세요.'
+              buttonText='공고 보러가기'
+              href='/notices'
+            />
+          ) : (
+            <Container as='section' isPage className='pt-0'>
+              <div className='mx-auto w-full lg:mx-auto lg:max-w-[1000px]'>
                 <Table
                   headers={headers}
                   tableData={pagedRows}
                   userRole={userType}
-                  total={applications.length}
+                  total={currentTotal}
                   limit={limit}
                   offset={offset}
                   onPageChange={setOffset}
-                  onStatusUpdate={(id, newStatus) =>
-                    setTableRows(prev =>
-                      prev.map(row => (row.id === id ? { ...row, status: newStatus } : row))
-                    )
-                  }
+                  onStatusUpdate={() => {}} // ✅ 이 페이지에서는 상태 변경 없음(필수 prop 무해한 no-op)
                 />
               </div>
-            )}
-          </div>
+            </Container>
+          )}
         </section>
       )}
     </main>
