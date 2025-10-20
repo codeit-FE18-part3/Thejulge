@@ -77,9 +77,8 @@ const Nav = () => {
   }, [apiAlerts, fallbackAlertsForEmployee, readIds]);
 
   const unreadCount = alerts.filter(a => !a.read).length;
-  const bellIcon: 'notificationOn' | 'notificationOff' = open
-    ? 'notificationOn'
-    : 'notificationOff';
+  const bellIcon: 'notificationOn' | 'notificationOff' =
+    open || unreadCount > 0 ? 'notificationOn' : 'notificationOff';
   const bellColor = open || unreadCount > 0 ? 'bg-red-400' : 'bg-black';
 
   // 알림 읽음 처리(서버 + 로컬 동기화)
@@ -136,9 +135,6 @@ const Nav = () => {
                 ariaLabel='알림'
                 className={bellColor}
               />
-              {unreadCount > 0 && (
-                <span className='absolute -right-1 -top-1 block h-2.5 w-2.5 rounded-full bg-red-400' />
-              )}
             </button>
 
             {open && (
