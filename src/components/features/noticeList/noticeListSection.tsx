@@ -32,20 +32,14 @@ const NoticeListSection = ({ q, initialFilters }: NoticeListSectionProps) => {
           onFilterSubmit={filter => fetchNotices(filter)}
         />
       </div>
-      {/* 닫힌 공고는 목록에서 제외 */}
-      {(() => {
-        const visibleNotices = notices.filter(notice => !notice.closed);
-        return (
-          <NoticeList
-            q={q}
-            notices={visibleNotices}
-            isLoading={isLoading}
-            error={error}
-            isInitialized={isInitialized}
-            reset={reset}
-          />
-        );
-      })()}
+      <NoticeList
+        q={q}
+        notices={notices}
+        isLoading={isLoading}
+        error={error}
+        isInitialized={isInitialized}
+        reset={reset}
+      />
       {!isLoading && (
         <Pagination
           total={pagination.count}
