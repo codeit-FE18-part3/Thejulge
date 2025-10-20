@@ -28,8 +28,8 @@ const NoticeListSection = ({ q, initialFilters }: NoticeListSectionProps) => {
         <NoticeListHeader q={q} />
         <NoticeListFilter
           filters={filters}
-          onSortChange={sort => fetchNotices({ sort })}
-          onFilterSubmit={filter => fetchNotices(filter)}
+          onSortChange={sort => fetchNotices({ sort, offset: 0 })}
+          onFilterSubmit={filter => fetchNotices({ ...filter, offset: 0 })}
         />
       </div>
       <NoticeList
