@@ -37,16 +37,16 @@ export default function NotificationMessage({
           <ResultBadge result={result} />
           <p
             className={clsx('text-sm', {
-              'text-[var(--gray-400)]': read,
+              'text-gray-400': read,
             })}
           >
             {`${shopName} (${DATE_RANGE.date} ${DATE_RANGE.startTime} ~ 
             ${DATE_RANGE.endTime}) 공고 지원이 `}
             <span
               className={clsx({
-                'text-[var(--gray-500)]': read,
-                'text-[var(--blue-200)]': !read && result === 'accepted',
-                'text-[var(--red-500)]': !read && result === 'rejected',
+                'text-gray-400': read,
+                'text-blue-200': !read && result === 'accepted',
+                'text-red-400': !read && result === 'rejected',
               })}
             >
               {RESULT_TEXT}

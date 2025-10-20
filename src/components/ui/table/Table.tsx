@@ -1,4 +1,5 @@
 import { Pagination } from '@/components/ui';
+import { StatusType } from '@/components/ui/badge/StatusBadge';
 import { TableRowProps } from '@/components/ui/table/TableRowProps';
 import { cn } from '@/lib/utils/cn';
 import { UserRole } from '@/types/user';
@@ -12,6 +13,11 @@ interface TableProps {
   limit: number;
   offset: number;
   onPageChange: (newOffset: number) => void;
+  onStatusUpdate: (id: string, newStatus: StatusType, shopId?: string, noticeId?: string) => void;
+  shopId?: string;
+  noticeId?: string;
+  applyNotice?: (shopId: string, noticeId: string) => void;
+  cancelNotice?: (shopId: string, noticeId: string) => void;
 }
 
 export default function Table({
@@ -22,6 +28,9 @@ export default function Table({
   limit,
   offset,
   onPageChange,
+  onStatusUpdate,
+  shopId,
+  noticeId,
 }: TableProps) {
   return (
     <div className='py-[60px]'>
@@ -53,7 +62,15 @@ export default function Table({
             </thead>
             <tbody>
               {tableData.map(row => (
-                <TableRow key={row.id} {...row} rowData={row} userRole={userRole} />
+                <TableRow
+                  key={row.id}
+                  {...row}
+                  rowData={row}
+                  userRole={userRole}
+                  shopId={shopId}
+                  noticeId={noticeId}
+                  onStatusUpdate={onStatusUpdate}
+                />
               ))}
             </tbody>
           </table>
