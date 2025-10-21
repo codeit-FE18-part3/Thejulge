@@ -43,7 +43,7 @@ export default function MyProfileDetailPage() {
     return applications.map((app: ApiResponse<ApplicationItem>) => {
       const a = app.item;
       const status =
-        a.status === 'accepted' ? 'approved' : a.status === 'rejected' ? 'rejected' : 'pending';
+        a.status === 'accepted' ? 'accepted' : a.status === 'rejected' ? 'rejected' : 'pending';
 
       return {
         id: a.id,
@@ -187,7 +187,7 @@ export default function MyProfileDetailPage() {
               title='신청 내역'
               content='마음에 드는 공고를 찾아 지원해 보세요.'
               buttonText='공고 보러가기'
-              href='/notices'
+              href='/'
             />
           ) : (
             <Container as='section' isPage className='pt-0'>

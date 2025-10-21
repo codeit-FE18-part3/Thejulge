@@ -28,8 +28,8 @@ const NoticeListSection = ({ q, initialFilters }: NoticeListSectionProps) => {
         <NoticeListHeader q={q} />
         <NoticeListFilter
           filters={filters}
-          onSortChange={sort => fetchNotices({ sort })}
-          onFilterSubmit={filter => fetchNotices(filter)}
+          onSortChange={sort => fetchNotices({ sort, offset: 0 })}
+          onFilterSubmit={filter => fetchNotices({ ...filter, offset: 0 })}
         />
       </div>
       <NoticeList
@@ -40,15 +40,16 @@ const NoticeListSection = ({ q, initialFilters }: NoticeListSectionProps) => {
         isInitialized={isInitialized}
         reset={reset}
       />
-      {!isLoading && (
-        <Pagination
-          total={pagination.count}
-          limit={pagination.limit}
-          offset={pagination.offset}
-          onPageChange={next => fetchNotices({ offset: next })}
-          className='mt-8 tablet:mt-10'
-        />
-      )}
+      <div className='mt-8 tablet:mt-10 min-h-[40px]'>
+        {!isLoading && (
+          <Pagination
+            total={pagination.count}
+            limit={pagination.limit}
+            offset={pagination.offset}
+            onPageChange={next => fetchNotices({ offset: next })}
+          />
+        )}
+      </div>
     </Container>
   );
 };
