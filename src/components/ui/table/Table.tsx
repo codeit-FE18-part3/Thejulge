@@ -58,7 +58,7 @@ export default function Table({
                 ))}
               </tr>
             </thead>
-            <tbody>
+            <tbody className='[&>tr:last-child>td]:border-b-0'>
               {tableData.map(row => (
                 <TableRow
                   key={row.id}

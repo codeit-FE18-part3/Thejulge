@@ -41,14 +41,15 @@ const NoticeListSection = ({ q, initialFilters }: NoticeListSectionProps) => {
         reset={reset}
       />
       <div className='mt-8 tablet:mt-10 min-h-[40px]'>
-        {!isLoading && (
-          <Pagination
-            total={pagination.count}
-            limit={pagination.limit}
-            offset={pagination.offset}
-            onPageChange={next => fetchNotices({ offset: next })}
-          />
-        )}
+        <Pagination
+          total={pagination.count}
+          limit={pagination.limit}
+          offset={pagination.offset}
+          onPageChange={next => {
+            if (isLoading) return; // 로딩 중이면 페이지 전환 무시 (깜빡임 방지)
+            fetchNotices({ offset: next });
+          }}
+        />
       </div>
     </Container>
   );
