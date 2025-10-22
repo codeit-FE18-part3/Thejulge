@@ -18,7 +18,7 @@ const NoticeList = ({ notices, q, isLoading, isInitialized, reset, error }: Noti
     <SkeletonUI count={6} className='min-h-[270px] target:min-h-[276px] desktop:min-h-[344px]' />;
   }
 
-  if (notices.length === 0) {
+  if (!isLoading && notices.length === 0) {
     return <NoticeEmpty q={q} onReset={() => reset()} />;
   }
 
